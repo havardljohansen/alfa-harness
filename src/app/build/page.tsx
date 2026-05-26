@@ -2,6 +2,7 @@ import { circuits } from "@/data/harness/circuits";
 import { resolvedWires, allNodes } from "@/data/harness";
 import { diodes } from "@/data/harness/diodes";
 import { complianceNotes } from "@/data/harness/compliance";
+import { buildOrder } from "@/data/harness/build-order";
 
 const nodeName = new Map(allNodes.map((n) => [n.id, n.name]));
 const compById = new Map(complianceNotes.map((c) => [c.id, c]));
@@ -10,12 +11,41 @@ export default function BuildSheets() {
   return (
     <div className="space-y-6">
       <div className="no-print">
-        <h1 className="text-xl font-bold">Build sheets</h1>
+        <h1 className="text-xl font-bold">Build order & sheets</h1>
         <p className="text-muted text-sm mt-0.5">
-          One section per circuit — the wires to make, with labels and gauges. Print this page
-          (Cmd/Ctrl-P) to take into the garage.
+          The recommended sequence to assemble the harness (with the parts each step needs),
+          followed by one wiring sheet per circuit. Print (Cmd/Ctrl-P) to take into the garage.
         </p>
       </div>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Recommended build order</h2>
+        <div className="grid md:grid-cols-2 gap-3">
+          {buildOrder.map((p) => (
+            <div key={p.id} className="rounded-lg border bg-panel p-3 break-inside-avoid">
+              <div className="font-semibold">{p.title}</div>
+              <div className="text-xs text-muted italic mt-0.5">{p.why}</div>
+              <ol className="mt-2 space-y-1 text-sm list-decimal list-inside">
+                {p.steps.map((s, i) => (
+                  <li key={i}>{s.text}</li>
+                ))}
+              </ol>
+              <div className="mt-2 pt-2 border-t">
+                <div className="text-[11px] uppercase tracking-wide text-muted mb-1">Parts for this step</div>
+                <div className="flex flex-wrap gap-1">
+                  {p.parts.map((part, i) => (
+                    <span key={i} className="text-[11px] px-1.5 py-0.5 rounded bg-panel-2">
+                      {part}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <h2 className="text-lg font-semibold no-print">Per-circuit wiring sheets</h2>
 
       {circuits.map((c) => {
         const ws = resolvedWires.filter((w) => w.circuit === c.id);

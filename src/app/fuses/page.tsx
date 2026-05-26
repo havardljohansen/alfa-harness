@@ -1,6 +1,7 @@
 import { fuseBlocks, relays } from "@/data/harness/relays";
 import { fuses } from "@/data/harness/fuses";
 import { connectors } from "@/data/harness/connectors";
+import { BlockGrid, ConnectorGrid } from "@/components/layout-grids";
 
 export default function FusesPage() {
   return (
@@ -28,6 +29,12 @@ export default function FusesPage() {
                 {blockFuses.filter((f) => f.ratingA > 0).length}/{b.fuseWays} fuses ·{" "}
                 {blockRelays.length} relays
               </span>
+            </div>
+            <div className="p-3 border-b">
+              <div className="text-xs uppercase tracking-wide text-muted mb-1.5">
+                Suggested layout <span className="normal-case text-[10px]">(confirm cavity orientation against the datasheet)</span>
+              </div>
+              <BlockGrid block={b} blockFuses={blockFuses} blockRelays={blockRelays} />
             </div>
             <div className="grid lg:grid-cols-2 gap-0">
               <div className="p-3 lg:border-r">
@@ -96,14 +103,7 @@ export default function FusesPage() {
               <div className="text-xs text-muted mt-1">
                 {c.pins.length}/{c.ways} pins used
               </div>
-              <ol className="mt-2 space-y-0.5 text-xs">
-                {c.pins.map((p) => (
-                  <li key={p.pin} className="flex gap-2" style={p.reserved ? { opacity: 0.5 } : undefined}>
-                    <span className="font-mono text-muted w-5">{p.pin}</span>
-                    <span className="label-chip">{p.wireLabel}</span>
-                  </li>
-                ))}
-              </ol>
+              <ConnectorGrid connector={c} />
             </div>
           ))}
         </div>

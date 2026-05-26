@@ -137,6 +137,13 @@ export function validateModel(): ValidationIssue[] {
     if (used > b.fuseWays) issues.push({ severity: "warn", where: b.id, message: `${used} fuses > ${b.fuseWays} ways` });
   }
 
+  // Relay positions within block capacity (PDM holds 2, each RTMR holds 5).
+  for (const b of fuseBlocks) {
+    const used = relays.filter((r) => r.mountedIn === b.id).length;
+    if (used > b.relayWays)
+      issues.push({ severity: "warn", where: b.id, message: `${used} relays > ${b.relayWays} relay positions` });
+  }
+
   // Each fuse's rating must not exceed the ampacity of the LOAD-carrying wires
   // it protects. 'signal' wires are control taps (relay coils, senders) — they
   // carry milliamps and are intentionally fed off a load fuse, so exempt them.

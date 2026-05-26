@@ -53,10 +53,10 @@ export const complianceNotes: ComplianceNote[] = [
   },
   {
     id: "fuel-pump-cutoff",
-    severity: "caution",
-    topic: "Electric fuel pump safety cut-off",
-    text: "An electric pump should stop when the engine stops and in a crash. Run the pump relay coil through ignition AND add an inertia switch or oil-pressure safety so the pump can't keep running/spraying fuel with the engine off. This is a fire-safety/roadworthiness point, not just good practice. The design provisions the cut-off wire.",
-    ref: "Fire safety / roadworthiness (added electric pump)",
+    severity: "info",
+    topic: "Electric fuel pump (low-pressure carb)",
+    text: "The pump is plain ignition-switched — it runs key-on and stops key-off, which is the common, simple setup for a low-pressure (~2–4 psi) carburettor pump. An inertia/crash cut-off is optional here (the low pressure means a stalled-but-running pump dribbles rather than sprays). If you ever fit a high-pressure EFI pump, add an inertia switch in the relay-coil wire — then it becomes a real fire-safety item.",
+    ref: "Good practice (low- vs high-pressure pump)",
   },
   {
     id: "o2-future",

@@ -16,6 +16,7 @@ export const fuseBlocks: FuseBlock[] = [
     zone: "engine-front",
     fuseWays: 9,
     relayWays: 2,
+    grid: { fuseCols: 3, relayCols: 2 },
     note: "9-circuit, 100 A, IP69K. Holds the low/high-beam relays and the four headlight fuses. Closest to the front lamps → shortest heavy runs.",
   },
   {
@@ -27,6 +28,7 @@ export const fuseBlocks: FuseBlock[] = [
     zone: "engine-front",
     fuseWays: 10,
     relayWays: 5,
+    grid: { fuseCols: 5, relayCols: 5 },
     note: "Input stud fed by the ignition main relay. All positions hot only in RUN.",
   },
   {
@@ -38,7 +40,8 @@ export const fuseBlocks: FuseBlock[] = [
     zone: "engine-front",
     fuseWays: 10,
     relayWays: 5,
-    note: "Input stud fed direct from the battery. Hot at all times (hazard, horn, brake, tail/position, interior, lighter).",
+    grid: { fuseCols: 5, relayCols: 5 },
+    note: "Input stud fed direct from the battery. Hot at all times (hazard, horn, brake, tail/position, interior).",
   },
   {
     id: "rtmr-rear",
@@ -49,7 +52,8 @@ export const fuseBlocks: FuseBlock[] = [
     zone: "engine-front",
     fuseWays: 12,
     relayWays: 0,
-    note: "Non-bussed: each output independently fed. Allocated to relay outputs / rear-bound circuits, or kept as spare. Per-circuit inputs make it ideal where sources differ.",
+    grid: { fuseCols: 6, relayCols: 0 },
+    note: "Non-bussed: each output independently fed. Currently a true spare (nothing mounted) — keep for rear-bound circuits or future expansion.",
   },
 ];
 
@@ -113,14 +117,14 @@ export const relays: RelayAssignment[] = [
     id: "rly-fuel",
     name: "Fuel-pump relay",
     type: "SPST",
-    fn: "Carries the electric fuel pump; coil via ignition + inertia/oil-pressure cut-off.",
+    fn: "Carries the low-pressure carb fuel pump; coil straight off the ignition bus (runs key-on).",
     mountedIn: "rtmr-ign",
     partRef: SPST,
     coilFrom: "ign-run",
     coilTriggerLabel: "FUEL.TRG",
     commonFrom: "bus",
     out87: "Fuel pump (FUEL.OUT)",
-    note: "Coil routed through the inertia/oil-pressure safety so the pump can't run with the engine stopped.",
+    note: "Plain ignition-switched — simplest robust option for a low-pressure carb pump. Optional inertia cut-off only worth it for a high-pressure EFI pump.",
   },
   {
     id: "rly-ignmain",

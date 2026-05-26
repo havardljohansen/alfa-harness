@@ -15,7 +15,7 @@ import { relays, fuseBlocks } from "./relays";
 import { fuses } from "./fuses";
 import { switchComponents } from "./components";
 
-export type IgnitionPos = "0" | "I" | "II" | "III";
+export type IgnitionPos = "off" | "run" | "start";
 
 export interface SimState {
   ignition: IgnitionPos;
@@ -39,10 +39,9 @@ const GROUND_NODES = [ep("battery", "-"), ep("gnd-eng", "g"), ep("gnd-dash", "g"
 const HOT_NODES = [ep("battery", "+")];
 
 const IGN_POSITION_NAME: Record<IgnitionPos, string> = {
-  "0": "0 — Off",
-  I: "I — Lights/Acc",
-  II: "II — Run",
-  III: "III — Start",
+  off: "Off",
+  run: "Run",
+  start: "Start",
 };
 
 // Relays whose coil is grounded by the load side (85 = +12, 86 = switched ground).

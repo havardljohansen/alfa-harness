@@ -23,7 +23,7 @@ export interface Scenario {
   expect: Expectation;
 }
 
-const off: SimState = { ignition: "0", switches: {} };
+const off: SimState = { ignition: "off", switches: {} };
 
 export const scenarios: Scenario[] = [
   {
@@ -44,7 +44,7 @@ export const scenarios: Scenario[] = [
   {
     id: "position-keyoff",
     story: "Key out, headlight switch to Position → side/tail/plate lamps light (they must work key-off).",
-    state: { ignition: "0", switches: { "sw-headlight": "Position" } },
+    state: { ignition: "off", switches: { "sw-headlight": "Position" } },
     expect: {
       live: [
         ["park-fl", "58"],
@@ -58,7 +58,7 @@ export const scenarios: Scenario[] = [
   {
     id: "headlights-need-key",
     story: "Key out, headlight switch to Head + dip → headlights stay OFF (gated by the key); position lamps still on.",
-    state: { ignition: "0", switches: { "sw-headlight": "Head", "sw-dipflash": "Dip" } },
+    state: { ignition: "off", switches: { "sw-headlight": "Head", "sw-dipflash": "Dip" } },
     expect: {
       dead: [
         ["hl-L", "56b"],
@@ -69,9 +69,9 @@ export const scenarios: Scenario[] = [
     },
   },
   {
-    id: "low-beams-key-I",
-    story: "Key to position I, Head + Dip → both low beams light; high beams stay off.",
-    state: { ignition: "I", switches: { "sw-headlight": "Head", "sw-dipflash": "Dip" } },
+    id: "low-beams-run",
+    story: "Key on (Run), Head + Dip → both low beams light; high beams stay off.",
+    state: { ignition: "run", switches: { "sw-headlight": "Head", "sw-dipflash": "Dip" } },
     expect: {
       live: [
         ["hl-L", "56b"],
@@ -85,7 +85,7 @@ export const scenarios: Scenario[] = [
   {
     id: "high-beams",
     story: "Key I, Head + Main → both high beams + blue tell-tale light.",
-    state: { ignition: "I", switches: { "sw-headlight": "Head", "sw-dipflash": "Main" } },
+    state: { ignition: "run", switches: { "sw-headlight": "Head", "sw-dipflash": "Main" } },
     expect: {
       live: [
         ["hl-L", "56a"],
@@ -98,7 +98,7 @@ export const scenarios: Scenario[] = [
   {
     id: "ign-main-relay",
     story: "Key to Run → the ignition main relay closes and the ignition bus comes alive.",
-    state: { ignition: "II", switches: {} },
+    state: { ignition: "run", switches: {} },
     expect: {
       live: [["rtmr-ign", "BUS"]],
       relaysOn: ["rly-ignmain"],
@@ -107,7 +107,7 @@ export const scenarios: Scenario[] = [
   {
     id: "turn-left-run",
     story: "Key Run, indicate Left → left turn relay energises, right does not.",
-    state: { ignition: "II", switches: { "sw-turn": "Left" } },
+    state: { ignition: "run", switches: { "sw-turn": "Left" } },
     expect: {
       relaysOn: ["rly-turnL"],
       relaysOff: ["rly-turnR"],
@@ -118,13 +118,13 @@ export const scenarios: Scenario[] = [
   {
     id: "turn-needs-key",
     story: "Key out, indicate Left → nothing happens (turn switch is ignition-fed).",
-    state: { ignition: "0", switches: { "sw-turn": "Left" } },
+    state: { ignition: "off", switches: { "sw-turn": "Left" } },
     expect: { relaysOff: ["rly-turnL", "rly-turnR"] },
   },
   {
     id: "hazard-keyoff",
     story: "Key out, hazards On → BOTH turn relays energise and all four indicators flash.",
-    state: { ignition: "0", switches: { "sw-hazard": "On" } },
+    state: { ignition: "off", switches: { "sw-hazard": "On" } },
     expect: {
       relaysOn: ["rly-turnL", "rly-turnR"],
       live: [
@@ -139,7 +139,7 @@ export const scenarios: Scenario[] = [
     id: "diode-tell-isolation",
     story:
       "Indicate Left → the green tell-tale lights via its diode, but the RIGHT turn output stays dead (the tell-tale OR-ing diodes stop one side back-feeding the other).",
-    state: { ignition: "II", switches: { "sw-turn": "Left" } },
+    state: { ignition: "run", switches: { "sw-turn": "Left" } },
     expect: {
       live: [["wl-turn", "L"]],
       dead: [["rly-turnR", "87"]],
@@ -148,7 +148,7 @@ export const scenarios: Scenario[] = [
   {
     id: "brake-keyoff",
     story: "Key out, brake pressed → both stop lamps light (brake works key-off).",
-    state: { ignition: "0", switches: { "sw-brake": "Pressed" } },
+    state: { ignition: "off", switches: { "sw-brake": "Pressed" } },
     expect: {
       live: [
         ["tail-rl", "54"],
@@ -159,7 +159,7 @@ export const scenarios: Scenario[] = [
   {
     id: "horn-keyoff",
     story: "Key out, horn pressed → horn relay closes and the horns sound (constant-fed).",
-    state: { ignition: "0", switches: { "sw-horn": "Pressed" } },
+    state: { ignition: "off", switches: { "sw-horn": "Pressed" } },
     expect: {
       relaysOn: ["rly-horn"],
       live: [["horn-hi", "in"]],
@@ -168,7 +168,7 @@ export const scenarios: Scenario[] = [
   {
     id: "wipers-low",
     story: "Key Run, wipers Low → low relay closes, motor 53 runs; the vintage switch carries no motor current.",
-    state: { ignition: "II", switches: { "sw-wiper": "Low" } },
+    state: { ignition: "run", switches: { "sw-wiper": "Low" } },
     expect: {
       relaysOn: ["rly-wlow"],
       relaysOff: ["rly-whigh"],
@@ -179,7 +179,7 @@ export const scenarios: Scenario[] = [
   {
     id: "wipers-high",
     story: "Key Run, wipers High → high relay closes, motor 53b runs.",
-    state: { ignition: "II", switches: { "sw-wiper": "High" } },
+    state: { ignition: "run", switches: { "sw-wiper": "High" } },
     expect: {
       relaysOn: ["rly-whigh"],
       live: [["wiper", "53b"]],
@@ -188,7 +188,7 @@ export const scenarios: Scenario[] = [
   {
     id: "wipers-park",
     story: "Key Run, wipers Off → low relay drops out and the NC contact feeds 53a so the motor self-parks.",
-    state: { ignition: "II", switches: { "sw-wiper": "Off" } },
+    state: { ignition: "run", switches: { "sw-wiper": "Off" } },
     expect: {
       relaysOff: ["rly-wlow"],
       live: [["wiper", "53a"]],
@@ -198,7 +198,7 @@ export const scenarios: Scenario[] = [
   {
     id: "fan-high",
     story: "Key Run, heater fan High → fan relay closes, blower runs; the switch carries only coil current.",
-    state: { ignition: "II", switches: { "sw-heaterfan": "High" } },
+    state: { ignition: "run", switches: { "sw-heaterfan": "High" } },
     expect: {
       relaysOn: ["rly-fan"],
       live: [["heater-fan", "in"]],
@@ -207,16 +207,16 @@ export const scenarios: Scenario[] = [
   {
     id: "fuel-run",
     story: "Key Run, inertia switch closed → fuel-pump relay energises and the pump runs.",
-    state: { ignition: "II", switches: {}, fuelSafetyOpen: false },
+    state: { ignition: "run", switches: {}, fuelSafetyOpen: false },
     expect: {
       relaysOn: ["rly-fuel"],
       live: [["fuel-pump", "in"]],
     },
   },
   {
-    id: "fuel-safety",
-    story: "Key Run but inertia/oil-pressure cut-off OPEN → fuel pump must NOT run (fire safety).",
-    state: { ignition: "II", switches: {}, fuelSafetyOpen: true },
+    id: "fuel-safety-optional",
+    story: "OPTIONAL (high-pressure pump only): if an inertia cut-off is fitted and trips, the pump stops even key-on.",
+    state: { ignition: "run", switches: {}, fuelSafetyOpen: true },
     expect: {
       relaysOff: ["rly-fuel"],
       dead: [["fuel-pump", "in"]],
@@ -231,7 +231,7 @@ export const scenarios: Scenario[] = [
   {
     id: "tail-position",
     story: "Key out, light switch to Position → rear tails + both plate lamps + green tell-tale light (switched, not always-on).",
-    state: { ignition: "0", switches: { "sw-headlight": "Position" } },
+    state: { ignition: "off", switches: { "sw-headlight": "Position" } },
     expect: {
       live: [
         ["tail-rl", "58"],
@@ -245,37 +245,37 @@ export const scenarios: Scenario[] = [
   {
     id: "flash-to-pass",
     story: "Key on, headlights OFF, flick Flash → high beams fire (flash-to-pass must work without the headlight switch).",
-    state: { ignition: "I", switches: { "sw-headlight": "Off", "sw-dipflash": "Flash" } },
+    state: { ignition: "run", switches: { "sw-headlight": "Off", "sw-dipflash": "Flash" } },
     expect: { relaysOn: ["rly-high"], live: [["hl-L", "56a"]] },
   },
   {
     id: "main-needs-headlight",
     story: "Key on, headlights OFF, dip switch to Main (not flash) → high beam stays OFF (normal beams still need the headlight switch).",
-    state: { ignition: "I", switches: { "sw-headlight": "Off", "sw-dipflash": "Main" } },
+    state: { ignition: "run", switches: { "sw-headlight": "Off", "sw-dipflash": "Main" } },
     expect: { relaysOff: ["rly-high", "rly-low"] },
   },
   {
     id: "flash-needs-key",
     story: "Key out, flick Flash → nothing (flash is ignition-fed).",
-    state: { ignition: "0", switches: { "sw-dipflash": "Flash" } },
+    state: { ignition: "off", switches: { "sw-dipflash": "Flash" } },
     expect: { relaysOff: ["rly-high"] },
   },
   {
     id: "starter-relay",
     story: "Key to Start → the starter relay closes and passes battery to the solenoid (the ign switch only carries coil current).",
-    state: { ignition: "III", switches: {} },
+    state: { ignition: "start", switches: {} },
     expect: { relaysOn: ["rly-starter"], live: [["starter", "50"]] },
   },
   {
     id: "starter-only-on-start",
     story: "Key in Run (not Start) → starter relay is off.",
-    state: { ignition: "II", switches: {} },
+    state: { ignition: "run", switches: {} },
     expect: { relaysOff: ["rly-starter"], dead: [["starter", "50"]] },
   },
   {
     id: "side-repeaters",
     story: "Indicate Left → the LEFT side marker/repeater flashes with it; the right stays dark.",
-    state: { ignition: "II", switches: { "sw-turn": "Left" } },
+    state: { ignition: "run", switches: { "sw-turn": "Left" } },
     expect: { live: [["side-l", "in"]], dead: [["side-r", "in"]] },
   },
 ];

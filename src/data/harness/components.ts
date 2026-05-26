@@ -82,27 +82,19 @@ const ignitionSwitch: SwitchComponent = {
   zone: "dash",
   terminals: [
     t("30", "Constant battery in", "30"),
-    t("P1", "Position I out — lights enable / accessory", "15a"),
-    t("15", "RUN out — ignition", "15"),
+    t("15", "RUN out — ignition + headlight enable", "15"),
     t("50", "START out — cranking", "50"),
   ],
   positions: [
-    { name: "0 — Off", closes: [] },
-    { name: "I — Lights/Acc", closes: [["30", "P1"]], note: "First detent: energises the headlight-enable relay." },
+    { name: "Off", closes: [] },
+    { name: "Run", closes: [["30", "15"]], note: "Feeds ignition AND the headlight-enable, so the beams need the key on." },
     {
-      name: "II — Run",
+      name: "Start",
       closes: [
-        ["30", "P1"],
-        ["30", "15"],
-      ],
-    },
-    {
-      name: "III — Start",
-      closes: [
-        ["30", "P1"],
         ["30", "15"],
         ["30", "50"],
       ],
+      note: "Spring-returns to Run.",
     },
   ],
 };
@@ -252,7 +244,7 @@ const switches: SwitchComponent[] = [
     zone: "dash",
     terminals: [
       t("30c", "Constant in — position lamps", "30"),
-      t("30i", "Ignition pos-I in — beam enable", "15a"),
+      t("30i", "Ignition (Run) in — beam enable", "15"),
       t("58", "Position lamps out", "58"),
       t("56", "Beam enable out → dip switch", "56"),
     ],
@@ -261,7 +253,7 @@ const switches: SwitchComponent[] = [
       { name: "Position", closes: [["30c", "58"]] },
       { name: "Head", closes: [["30c", "58"], ["30i", "56"]] },
     ],
-    note: "Dual-pole: position lamps run off CONSTANT (key-off OK); the beam-enable feed comes from ignition position I, so the beam relays can only fire with the key in. Carries only coil + small position-lamp current.",
+    note: "Dual-pole: position lamps run off CONSTANT (key-off OK); the beam-enable feed comes from ignition Run, so the beam relays can only fire with the key on. Carries only coil + small position-lamp current.",
   },
   {
     id: "sw-dipflash",
@@ -580,15 +572,6 @@ const comfort: (DeviceComponent | SwitchComponent)[] = [
     kind: "pump",
     zone: "rear",
     terminals: [t("in", "Power (from fuel relay)", "30"), t("g", "Ground", "31")],
-  },
-  {
-    id: "fuel-safety",
-    name: "Inertia / oil-pressure cut-off (recommended)",
-    kind: "sensor",
-    zone: "rear",
-    future: true,
-    terminals: [t("in", "Pump-relay coil", "86"), t("out", "Continue to ground/coil", "")],
-    note: "Opens the pump-relay coil in a crash or with no oil pressure. See compliance: fuel-pump-cutoff.",
   },
 ];
 

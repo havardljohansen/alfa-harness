@@ -146,6 +146,8 @@ export interface FuseBlock {
   zone: ZoneId;
   fuseWays: number;
   relayWays: number;
+  /** How many columns to draw the fuse / relay positions in (physical layout). */
+  grid: { fuseCols: number; relayCols: number };
   note?: string;
 }
 
