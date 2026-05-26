@@ -34,6 +34,7 @@ export const scenarios: Scenario[] = [
       live: [["rtmr-const", "BUS"]],
       dead: [
         ["park-fl", "58"],
+        ["tail-rl", "58"], // rear tails must be OFF too (regression guard for the always-on bug)
         ["hl-L", "56b"],
         ["rtmr-ign", "BUS"], // ignition bus dead until the main relay closes
       ],
@@ -226,5 +227,55 @@ export const scenarios: Scenario[] = [
     story: "Key out → fuel pump never runs.",
     state: off,
     expect: { relaysOff: ["rly-fuel"], dead: [["fuel-pump", "in"]] },
+  },
+  {
+    id: "tail-position",
+    story: "Key out, light switch to Position → rear tails + both plate lamps + green tell-tale light (switched, not always-on).",
+    state: { ignition: "0", switches: { "sw-headlight": "Position" } },
+    expect: {
+      live: [
+        ["tail-rl", "58"],
+        ["tail-rr", "58"],
+        ["plate", "58"],
+        ["plate-r", "58"],
+        ["wl-park", "in"],
+      ],
+    },
+  },
+  {
+    id: "flash-to-pass",
+    story: "Key on, headlights OFF, flick Flash → high beams fire (flash-to-pass must work without the headlight switch).",
+    state: { ignition: "I", switches: { "sw-headlight": "Off", "sw-dipflash": "Flash" } },
+    expect: { relaysOn: ["rly-high"], live: [["hl-L", "56a"]] },
+  },
+  {
+    id: "main-needs-headlight",
+    story: "Key on, headlights OFF, dip switch to Main (not flash) → high beam stays OFF (normal beams still need the headlight switch).",
+    state: { ignition: "I", switches: { "sw-headlight": "Off", "sw-dipflash": "Main" } },
+    expect: { relaysOff: ["rly-high", "rly-low"] },
+  },
+  {
+    id: "flash-needs-key",
+    story: "Key out, flick Flash → nothing (flash is ignition-fed).",
+    state: { ignition: "0", switches: { "sw-dipflash": "Flash" } },
+    expect: { relaysOff: ["rly-high"] },
+  },
+  {
+    id: "starter-relay",
+    story: "Key to Start → the starter relay closes and passes battery to the solenoid (the ign switch only carries coil current).",
+    state: { ignition: "III", switches: {} },
+    expect: { relaysOn: ["rly-starter"], live: [["starter", "50"]] },
+  },
+  {
+    id: "starter-only-on-start",
+    story: "Key in Run (not Start) → starter relay is off.",
+    state: { ignition: "II", switches: {} },
+    expect: { relaysOff: ["rly-starter"], dead: [["starter", "50"]] },
+  },
+  {
+    id: "side-repeaters",
+    story: "Indicate Left → the LEFT side marker/repeater flashes with it; the right stays dark.",
+    state: { ignition: "II", switches: { "sw-turn": "Left" } },
+    expect: { live: [["side-l", "in"]], dead: [["side-r", "in"]] },
   },
 ];

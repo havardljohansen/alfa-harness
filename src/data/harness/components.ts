@@ -154,6 +154,22 @@ const lamps: DeviceComponent[] = [
     terminals: [t("R", "Right flash feed", "C3"), t("g", "Ground", "31")],
   },
   {
+    id: "side-l",
+    name: "Side marker/repeater LEFT (front fender)",
+    kind: "lamp",
+    zone: "engine-front",
+    terminals: [t("in", "Flash feed (with LH turn)", "C2"), t("g", "Ground", "31")],
+    note: "Factory 'Side Signal'. Wired as an EU repeater (flashes with the indicator). For a steady US-style marker, feed from the position circuit instead.",
+  },
+  {
+    id: "side-r",
+    name: "Side marker/repeater RIGHT (front fender)",
+    kind: "lamp",
+    zone: "engine-front",
+    terminals: [t("in", "Flash feed (with RH turn)", "C3"), t("g", "Ground", "31")],
+    note: "Factory 'Side Signal'. Repeater wiring — see side-l.",
+  },
+  {
     id: "tail-rl",
     name: "Tail/position + brake LEFT",
     kind: "lamp",
@@ -183,10 +199,18 @@ const lamps: DeviceComponent[] = [
   },
   {
     id: "plate",
-    name: "Number-plate light",
+    name: "Number-plate light LEFT",
     kind: "lamp",
     zone: "rear",
     terminals: [t("58", "Position feed", "58"), t("g", "Ground", "31")],
+  },
+  {
+    id: "plate-r",
+    name: "Number-plate light RIGHT",
+    kind: "lamp",
+    zone: "rear",
+    terminals: [t("58", "Position feed", "58"), t("g", "Ground", "31")],
+    note: "Factory car has two plate lamps (split across fuses 4 & 5 originally).",
   },
   {
     id: "reverse",
@@ -244,11 +268,16 @@ const switches: SwitchComponent[] = [
     name: "Dip / flash (column)",
     kind: "switch",
     zone: "dash",
-    terminals: [t("56", "From headlight switch", "56"), t("56b", "Dip / low relay coil", "56b"), t("56a", "Main / high relay coil", "56a")],
+    terminals: [
+      t("56", "From headlight switch (Head-gated)", "56"),
+      t("flash", "Flash feed — direct from ign pos-I", "15a"),
+      t("56b", "Dip / low relay coil", "56b"),
+      t("56a", "Main / high relay coil", "56a"),
+    ],
     positions: [
       { name: "Dip", closes: [["56", "56b"]] },
       { name: "Main", closes: [["56", "56a"]] },
-      { name: "Flash", closes: [["56", "56a"]], note: "Spring-loaded flash-to-pass — energises high-beam relay regardless of headlight switch." },
+      { name: "Flash", closes: [["flash", "56a"]], note: "Spring-loaded flash-to-pass — fed straight from ign pos-I, so it works with the headlight switch OFF." },
     ],
   },
   {
@@ -457,6 +486,14 @@ const instruments: DeviceComponent[] = [
     kind: "warning-light",
     zone: "dash",
     terminals: [t("in", "From high-beam feed", "56a"), t("g", "Ground", "31")],
+  },
+  {
+    id: "wl-park",
+    name: "Tell-tale — position/parking (green)",
+    kind: "warning-light",
+    zone: "dash",
+    terminals: [t("in", "From switched position feed", "58"), t("g", "Ground", "31")],
+    note: "Factory dash had a parking-lights tell-tale alongside the main-beam one.",
   },
   {
     id: "wl-turn",

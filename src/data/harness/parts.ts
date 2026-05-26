@@ -261,6 +261,15 @@ export const bomGaps: BomGap[] = [
     suggestion: "16 mm² (6 AWG) B+; 60–80 A mega-fuse at the battery.",
   },
   {
+    id: "main-fusing",
+    item: "MIDI/MEGA fuse holders + fuses at the battery (+ optional master cut-off)",
+    qty: "2–3",
+    category: "fuse",
+    reason:
+      "The battery→constant-bus and battery→PDM main feeds are otherwise unfused (fire risk). Add a ~60–80 A on the constant feed and ~40 A on the PDM feed, plus the alternator B+ mega-fuse. A battery master cut-off is a cheap classic-car safety add.",
+    suggestion: "Littelfuse/Blue Sea MIDI holders; battery isolator switch.",
+  },
+  {
     id: "ground",
     item: "Ground bus / ring terminals / braid straps",
     qty: "3 ground points + engine-to-body strap",
