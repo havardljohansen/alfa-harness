@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0b0e13;
+  --panel: #141922;
+  --panel-2: #1b212c;
+  --border: #2a323f;
+  --fg: #e7ecf3;
+  --muted: #93a1b5;
+  --accent: #d23b2e; /* Alfa red */
+  --accent-2: #e8b04b; /* amber */
+  --live: #f5c451; /* powered */
+  --ground: #6b7787;
+  --ok: #46c46a;
+  --warn: #e8a23b;
+  --err: #e2554a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-live: var(--live);
+  --color-ground: var(--ground);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-err: var(--err);
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Dymo-style wire label */
+.label-chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  background: #f3f4ee;
+  color: #111;
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+  border: 1px solid #cdd0c4;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 2px #f3f4ee, 0 0 0 1px #00000022;
+}
+
+table.wtable {
+  border-collapse: collapse;
+  width: 100%;
+}
+table.wtable th,
+table.wtable td {
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.55rem;
+  text-align: left;
+  vertical-align: top;
+  font-size: 0.82rem;
+}
+table.wtable th {
+  background: var(--panel-2);
+  color: var(--muted);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+table.wtable tr:nth-child(even) td {
+  background: #0f141c;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+}

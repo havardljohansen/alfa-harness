@@ -1,0 +1,98 @@
+# Auto-generated from the harness model — do not edit by hand.
+# Dashboard-disconnect bulkhead plugs (Aptiv/Delphi GT 280, 12-way).
+
+connectors:
+  bh1-1_A_dash:
+    type: GT 280 12-way (female / dash)
+    pincount: 12
+    pinlabels: ["GND.DASH", "CHG.L", "STRT.50", "IGN.30.+B", "IGN.MAIN.TRG", "TURN.SW.+I", "HAZ.+B", "GAUGE.+I", "TEMP.SIG", "OILP.SIG", "OIL.WL", "TACH.SIG"]
+  bh1-1_B_engine:
+    type: GT 280 12-way (male / engine)
+    pincount: 12
+    pinlabels: ["GND.DASH", "CHG.L", "STRT.50", "IGN.30.+B", "IGN.MAIN.TRG", "TURN.SW.+I", "HAZ.+B", "GAUGE.+I", "TEMP.SIG", "OILP.SIG", "OIL.WL", "TACH.SIG"]
+  bh1-2_A_dash:
+    type: GT 280 12-way (female / dash)
+    pincount: 12
+    pinlabels: ["WL.+I", "ILL.SW", "WIPE.+I", "WIPE.LO.TRG", "WIPE.HI.TRG", "FAN.+I", "FAN.TRG", "FAN.LOW.EN", "INT.+B", "O2.+I", "O2.SIG", ""]
+  bh1-2_B_engine:
+    type: GT 280 12-way (male / engine)
+    pincount: 12
+    pinlabels: ["WL.+I", "ILL.SW", "WIPE.+I", "WIPE.LO.TRG", "WIPE.HI.TRG", "FAN.+I", "FAN.TRG", "FAN.LOW.EN", "INT.+B", "O2.+I", "O2.SIG", ""]
+  bh2-1_A_dash:
+    type: GT 280 12-way (female / dash)
+    pincount: 12
+    pinlabels: ["HL.LO.TRG", "HL.HI.TRG", "HL.HI.TELL", "POS.SW", "POS.OUT.L", "POS.OUT.R", "TURN.L.TRG", "TURN.R.TRG", "TURN.L.COM", "TURN.R.COM", "TURN.TELL.L", "TURN.TELL.R"]
+  bh2-1_B_engine:
+    type: GT 280 12-way (male / engine)
+    pincount: 12
+    pinlabels: ["HL.LO.TRG", "HL.HI.TRG", "HL.HI.TELL", "POS.SW", "POS.OUT.L", "POS.OUT.R", "TURN.L.TRG", "TURN.R.TRG", "TURN.L.COM", "TURN.R.COM", "TURN.TELL.L", "TURN.TELL.R"]
+  bh2-2_A_dash:
+    type: GT 280 12-way (female / dash)
+    pincount: 12
+    pinlabels: ["HAZ.L.TRG", "HAZ.R.TRG", "HORN.TRG", "", "", "", "", "", "", "", "", ""]
+  bh2-2_B_engine:
+    type: GT 280 12-way (male / engine)
+    pincount: 12
+    pinlabels: ["HAZ.L.TRG", "HAZ.R.TRG", "HORN.TRG", "", "", "", "", "", "", "", "", ""]
+  bh3_A_dash:
+    type: GT 280 12-way (female / dash)
+    pincount: 12
+    pinlabels: ["TAIL.L", "TAIL.R", "TURN.L.OUT.R", "TURN.R.OUT.R", "BRK.OUT.L", "BRK.OUT.R", "REV.OUT", "FUEL.SIG", "FUEL.OUT", "", "", ""]
+  bh3_B_engine:
+    type: GT 280 12-way (male / engine)
+    pincount: 12
+    pinlabels: ["TAIL.L", "TAIL.R", "TURN.L.OUT.R", "TURN.R.OUT.R", "BRK.OUT.L", "BRK.OUT.R", "REV.OUT", "FUEL.SIG", "FUEL.OUT", "", "", ""]
+
+cables:
+  bh1-1_cable:
+    wirecount: 12
+    colors: [BK, BK, BK, BK, BK, BK, BK, BK, BK, BK, BK, BK]   # single colour — see Dymo labels
+    length: 0.70 # m
+    wirelabels: ["GND.DASH", "CHG.L", "STRT.50", "IGN.30.+B", "IGN.MAIN.TRG", "TURN.SW.+I", "HAZ.+B", "GAUGE.+I", "TEMP.SIG", "OILP.SIG", "OIL.WL", "TACH.SIG"]
+    notes: "Ignition feeds, sender signals (temp/oil/tach), charge lamp, dash power, wiper/fan coil feeds. The main firewall crossing. | gauges (mm2): 6/0.75/1.5"
+  bh1-2_cable:
+    wirecount: 11
+    colors: [BK, BK, BK, BK, BK, BK, BK, BK, BK, BK, BK]   # single colour — see Dymo labels
+    length: 0.70 # m
+    wirelabels: ["WL.+I", "ILL.SW", "WIPE.+I", "WIPE.LO.TRG", "WIPE.HI.TRG", "FAN.+I", "FAN.TRG", "FAN.LOW.EN", "INT.+B", "O2.+I", "O2.SIG"]
+    notes: "Ignition feeds, sender signals (temp/oil/tach), charge lamp, dash power, wiper/fan coil feeds. The main firewall crossing. | gauges (mm2): 0.75"
+  bh2-1_cable:
+    wirecount: 12
+    colors: [BK, BK, BK, BK, BK, BK, BK, BK, BK, BK, BK, BK]   # single colour — see Dymo labels
+    length: 1.30 # m
+    wirelabels: ["HL.LO.TRG", "HL.HI.TRG", "HL.HI.TELL", "POS.SW", "POS.OUT.L", "POS.OUT.R", "TURN.L.TRG", "TURN.R.TRG", "TURN.L.COM", "TURN.R.COM", "TURN.TELL.L", "TURN.TELL.R"]
+    notes: "Relay-coil triggers and low-current lighting from the dash switches: headlight enable/low/high, turn L/R, hazard, horn, position feed, tell-tales. | gauges (mm2): 0.75/1.5"
+  bh2-2_cable:
+    wirecount: 3
+    colors: [BK, BK, BK]   # single colour — see Dymo labels
+    length: 1.30 # m
+    wirelabels: ["HAZ.L.TRG", "HAZ.R.TRG", "HORN.TRG"]
+    notes: "Relay-coil triggers and low-current lighting from the dash switches: headlight enable/low/high, turn L/R, hazard, horn, position feed, tell-tales. | gauges (mm2): 0.75"
+  bh3_cable:
+    wirecount: 9
+    colors: [BK, BK, BK, BK, BK, BK, BK, BK, BK]   # single colour — see Dymo labels
+    length: 0.80 # m
+    wirelabels: ["TAIL.L", "TAIL.R", "TURN.L.OUT.R", "TURN.R.OUT.R", "BRK.OUT.L", "BRK.OUT.R", "REV.OUT", "FUEL.SIG", "FUEL.OUT"]
+    notes: "To the boot: tail, brake, rear turn, plate, reverse, fuel pump, tank sender. | gauges (mm2): 1.5/0.75/2.5"
+
+connections:
+  -
+    - bh1-1_A_dash: [1,2,3,4,5,6,7,8,9,10,11,12]
+    - bh1-1_cable: [1,2,3,4,5,6,7,8,9,10,11,12]
+    - bh1-1_B_engine: [1,2,3,4,5,6,7,8,9,10,11,12]
+  -
+    - bh1-2_A_dash: [1,2,3,4,5,6,7,8,9,10,11]
+    - bh1-2_cable: [1,2,3,4,5,6,7,8,9,10,11]
+    - bh1-2_B_engine: [1,2,3,4,5,6,7,8,9,10,11]
+  -
+    - bh2-1_A_dash: [1,2,3,4,5,6,7,8,9,10,11,12]
+    - bh2-1_cable: [1,2,3,4,5,6,7,8,9,10,11,12]
+    - bh2-1_B_engine: [1,2,3,4,5,6,7,8,9,10,11,12]
+  -
+    - bh2-2_A_dash: [1,2,3]
+    - bh2-2_cable: [1,2,3]
+    - bh2-2_B_engine: [1,2,3]
+  -
+    - bh3_A_dash: [1,2,3,4,5,6,7,8,9]
+    - bh3_cable: [1,2,3,4,5,6,7,8,9]
+    - bh3_B_engine: [1,2,3,4,5,6,7,8,9]

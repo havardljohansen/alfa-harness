@@ -1,0 +1,7 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, 11 wires	0.7	m	bh1-2_cable
+2	Cable, 12 wires	2	m	bh1-1_cable, bh2-1_cable
+3	Cable, 3 wires	1.3	m	bh2-2_cable
+4	Cable, 9 wires	0.8	m	bh3_cable
+5	Connector, GT 280 12-way (female / dash), 12 pins	5		bh1-1_A_dash, bh1-2_A_dash, bh2-1_A_dash, bh2-2_A_dash, bh3_A_dash
+6	Connector, GT 280 12-way (male / engine), 12 pins	5		bh1-1_B_engine, bh1-2_B_engine, bh2-1_B_engine, bh2-2_B_engine, bh3_B_engine

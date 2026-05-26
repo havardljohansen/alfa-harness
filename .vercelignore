@@ -1,0 +1,7 @@
+# Keep the deploy upload to just the app source.
+.venv
+reference
+harness
+docs
+*.pdf
+.claude
