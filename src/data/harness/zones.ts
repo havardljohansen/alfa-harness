@@ -44,8 +44,11 @@ export const zones: Zone[] = [
 // ---------------------------------------------------------------------------
 // Harness route distances between adjacent zones (mm, along the loom — not
 // straight-line). EDIT THESE with real measurements from the car to make the
-// deduced wire lengths exact. Values below are conservative estimates for a
-// ~4.08 m Giulia GT.
+// deduced wire lengths exact. Estimates per the factory drawing: 4080 mm long,
+// 2350 mm wheelbase, 730/1000 mm front/rear overhang, 1580 mm wide / 1324 mm
+// track. The ~4.08 m length was already the calibration basis (long runs
+// unchanged); the WIDTH is the new bit — the cross-car L→R jumpers (front park,
+// rear tail/brake) carry ~1.3 m of slack for it, not the 350 mm intra-zone hop.
 // ---------------------------------------------------------------------------
 export const zoneLinks: ZoneLink[] = [
   { from: "battery", to: "engine-front", routeMm: 900, measure: "Battery post → front cross-panel (PDM + front-lamp area), along the inner wing." },
