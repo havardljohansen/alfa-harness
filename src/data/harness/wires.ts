@@ -33,6 +33,11 @@ export const wires: Wire[] = [
   // Per-module ground trunks: each module's ground block runs ONE thick cable
   // back to the engine-bay/battery hub (gnd-eng). No body-as-return reliance,
   // no daisy-chaining one module's return through another.
+  // (A thin parallel backup ground + a chassis-bond backup were both considered
+  // 2026-05-27 and declined: a regular-gauge wire can't carry a high-current
+  // module's full return if the primary trunk fails — so it's not a true backup —
+  // and a chassis bond reintroduces the body-return we're avoiding. The heavy
+  // stud trunk + a good ring terminal is the reliable path.)
   { id: "w-gnd-front", label: "GND.FRONT", name: "Front-clip ground block → battery hub", circuit: "c-power", from: { component: "gnd-front", terminal: "g" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "feed", route: ["engine-front"], note: "Detaches with the front clip (heavy ring/stud, not through the BH4 signal plug)." },
   { id: "w-gnd-dash", label: "GND.DASH", name: "Dash ground block → battery hub", circuit: "c-power", from: { component: "gnd-dash", terminal: "g" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "feed", route: ["dash", "engine-rear"], note: "Heavy ring/stud cable to the hub — NOT through BH1 (6 mm² won't fit the MP280 connector terminals, and a ground belongs on a stud, not a signal pin). Matches the front/rear ground trunks." },
   { id: "w-gnd-rear", label: "GND.REAR", name: "Rear ground block → battery hub (direct, not via dash)", circuit: "c-power", from: { component: "gnd-rear", terminal: "g" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "feed", route: ["rear", "cabin", "dash", "engine-rear", "engine-front"] },
