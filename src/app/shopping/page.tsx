@@ -1,4 +1,4 @@
-import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, buildWirePlan } from "@/data/harness";
+import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, buildWirePlan, recommendedSpares } from "@/data/harness";
 import { ownedParts, bomGaps, terminalByGauge } from "@/data/harness/parts";
 import { connectorBom, mouserUrl } from "@/data/harness/connectors";
 import { externalSuggestions } from "@/data/harness/external-suppliers";
@@ -91,6 +91,36 @@ export default function ShoppingPage() {
                     <a href={mouser(p.mouserPn ?? p.mfgPn)} target="_blank" rel="noreferrer" className="text-accent underline font-mono">
                       {p.mouserPn ?? p.mfgPn}
                     </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-lg font-semibold mb-2">Recommended spares — keep in the car</h2>
+        <p className="text-xs text-muted mb-2 max-w-3xl">
+          Every relay is one of two interchangeable 35&nbsp;A parts, so one of each turns ANY relay failure into a
+          30-second roadside plug-swap — the ignition-main relay especially is a single point of failure for the
+          whole car. Plus a couple of each fuse rating that&apos;s actually fitted.
+        </p>
+        <div className="overflow-auto border rounded-lg">
+          <table className="wtable">
+            <thead>
+              <tr><th>Spare</th><th>Qty</th><th>Covers</th><th>MFG PN</th></tr>
+            </thead>
+            <tbody>
+              {recommendedSpares().map((s, i) => (
+                <tr key={i}>
+                  <td className="text-xs">{s.label}</td>
+                  <td className="font-mono">{s.qty}</td>
+                  <td className="text-xs text-muted">{s.covers}</td>
+                  <td className="text-xs">
+                    {s.mfgPn ? (
+                      <a href={mouser(s.mouserPn ?? s.mfgPn)} target="_blank" rel="noreferrer" className="text-accent underline font-mono">{s.mfgPn}</a>
+                    ) : <span className="text-muted">—</span>}
                   </td>
                 </tr>
               ))}

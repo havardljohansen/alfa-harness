@@ -340,12 +340,12 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "relay-base-extra",
-    item: "SPST relay — 1 more (for the deferred washer pump) + optional spares",
-    qty: "1 (+ spares)",
+    item: "SPST relay ×1 — for the deferred washer pump",
+    qty: "1",
     category: "relay",
     reason:
-      "The 6 SPST + 5 SPDT you own are all allocated to the in-use circuits. The washer pump (deferred) is relay-driven so its period-correct button stays a low-current trigger — that needs one more SPST (ISO-280, Song Chuan 301-1A-C-R1-U03-12VDC), which reserves the constant-RTMR's last cavity. Buy it with the pump. Add 1–2 further spares if you want headlight redundancy.",
-    suggestion: "Song Chuan 301-1A-C-R1-U03-12VDC (same as owned) ×1 for the washer + spares.",
+      "The 6 SPST + 5 SPDT you own are all allocated; the deferred washer needs one more SPST (it reserves the constant-RTMR's last cavity). Buy it with the pump. (Spare relays to carry for limp-home are listed under 'Recommended spares'.)",
+    suggestion: "Song Chuan 301-1A-C-R1-U03-12VDC (same as owned) ×1.",
   },
   {
     id: "washer",

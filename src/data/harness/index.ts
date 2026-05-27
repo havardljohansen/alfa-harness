@@ -325,6 +325,31 @@ export function fuseShoppingList(): FuseLine[] {
 }
 
 // ---------------------------------------------------------------------------
+// Recommended spares — keep these in the car. Every relay is one of TWO
+// interchangeable 35 A parts, so one of each covers ANY relay failure (a
+// roadside plug-swap; the ignition-main relay is a single point of failure for
+// the whole car). Plus a couple of each fuse rating actually fitted.
+// ---------------------------------------------------------------------------
+export interface SpareItem {
+  kind: "relay" | "fuse";
+  label: string;
+  qty: number;
+  mfgPn?: string;
+  mouserPn?: string;
+  covers?: string;
+}
+export function recommendedSpares(): SpareItem[] {
+  const out: SpareItem[] = [];
+  const spst = ownedParts.find((p) => p.mfgPn === "301-1A-C-R1-U03-12VDC");
+  const spdt = ownedParts.find((p) => p.mfgPn === "301-1C-S-R1-12VDC");
+  if (spst) out.push({ kind: "relay", label: "ISO-280 SPST relay (35 A)", qty: 1, mfgPn: spst.mfgPn, mouserPn: spst.mouserPn, covers: "ign-main, beams, horn, fuel, fan, washer" });
+  if (spdt) out.push({ kind: "relay", label: "ISO-280 SPDT relay (35 A)", qty: 1, mfgPn: spdt.mfgPn, mouserPn: spdt.mouserPn, covers: "turn L/R, wiper low/high, starter" });
+  const ratings = [...new Set(fuses.filter((f) => f.ratingA > 0).map((f) => f.ratingA))].sort((a, b) => a - b);
+  for (const r of ratings) out.push({ kind: "fuse", label: `MINI / ATM blade fuse — ${r} A`, qty: 2, covers: `every ${r} A position` });
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // Complete from-scratch BOM — one flat, orderable list with quantities. Drives
 // the Shopping spreadsheet + CSV export. Terminal/seal/spade counts are
 // estimates (+~20% spares); discrete parts are exact.
