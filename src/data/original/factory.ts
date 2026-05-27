@@ -164,7 +164,7 @@ export const factoryComponents: FactoryComponent[] = [
   { name: "Hazard flashers", status: "added", modern: "All-four flash via the turn relays; works key-off." },
   { name: "Electric fuel pump", status: "added", modern: "Relay-driven, ignition-switched (low-pressure carb pump)." },
   { name: "Ignition main relay", status: "added", modern: "Offloads the worn ignition switch; feeds the whole ignition bus." },
-  { name: "Dedicated star grounds", status: "added", modern: "Engine-bay / dash / rear ground buses." },
+  { name: "Dedicated star grounds", status: "added", modern: "Per-module ground blocks (front clip / dash / rear), each with one thick trunk back to the engine-bay/battery hub — replaces the factory body-return." },
   { name: "O2 sensor + AFR gauge", status: "added", modern: "Provisioned (ignition-fed, fused, capped) for the future." },
 ];
 
@@ -175,4 +175,5 @@ export const factoryArchitectureNotes = [
   "Lights are independent of the ignition (light switch fed from the battery).",
   "Mechanical fuel pump (no electric pump in the factory car).",
   "Loads switched directly by their dash switches — almost no relays (only the horn).",
+  "Grounds returned through the body/chassis — no dedicated ground wiring (the classic reliability weak point the modern star-ground replaces).",
 ];
