@@ -25,6 +25,18 @@ const isBlock = (id: string) => { const k = node.get(id)?.kind; return k === "fu
 const connName = new Map(logicalBulkheads.map((c) => [c.id, c.name]));
 const physForLogical = (id: string) => connectors.filter((c) => c.id === id || c.id.startsWith(id + "-"));
 const isConnector = (id: string) => connName.has(id);
+// Ground is a common rail, not a hub: routing every load into one gnd node makes
+// a star that swamps the picture. Keep it OUT of the graph and show it as a rail.
+const isGround = (id: string) => node.get(id)?.kind === "ground";
+// Lane assignment: connectors are the left boundary, end-of-line devices the
+// right lane; power blocks (and switches) fall in the middle by themselves.
+const DEVICE_KINDS = new Set(["lamp", "warning-light", "horn", "motor", "pump", "gauge", "sender", "sensor"]);
+const layerConstraint = (id: string): string | undefined => {
+  if (isConnector(id)) return "FIRST";
+  const k = node.get(id)?.kind;
+  if (k && DEVICE_KINDS.has(k)) return "LAST";
+  return undefined;
+};
 
 const GROUP_COLOR: Record<CircuitGroup, string> = {
   power: "#9aa7b8", charging: "#e8b04b", starting: "#c98a4b", ignition: "#e2554a",
@@ -71,7 +83,7 @@ function shortName(name: string) {
 export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
   const base = useMemo(() => {
     const mod = harnessModules.find((m) => m.id === moduleId);
-    if (!mod) return { items: [] as { id: string; num: number }[], rfEdges: [] as Edge[] };
+    if (!mod) return { items: [] as { id: string; num: number }[], rfEdges: [] as Edge[], grounds: [] as string[] };
     const inModule = new Set(mod.componentIds);
     const ownedConn = new Set(moduleConnectors[moduleId] ?? []);
     // Resolve a wire end to its diagram node: in-module parts collapse relays
@@ -84,11 +96,15 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
     };
     const wires = resolvedWires.filter((w) => inModule.has(w.from.component) || inModule.has(w.to.component));
     const ids: string[] = [];
+    const grounds = new Set<string>();
     const rfEdges: Edge[] = [];
     for (const w of wires) {
       const s = resolve(w.from.component, w.via);
       const t = resolve(w.to.component, w.via);
       if (s === t) continue; // inside a single block — see its layout below
+      // Ground stays off the routed graph; collect it for the rail below.
+      if (isGround(s)) { grounds.add(s); continue; }
+      if (isGround(t)) { grounds.add(t); continue; }
       if (!ids.includes(s)) ids.push(s);
       if (!ids.includes(t)) ids.push(t);
       rfEdges.push({
@@ -98,7 +114,7 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
       });
     }
     const items = ids.map((id, i) => ({ id, num: i + 1 }));
-    return { items, rfEdges };
+    return { items, rfEdges, grounds: [...grounds] };
   }, [moduleId]);
 
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -109,10 +125,17 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
       id: "root",
       layoutOptions: {
         "elk.algorithm": "layered", "elk.direction": "RIGHT",
-        "elk.layered.spacing.nodeNodeBetweenLayers": "55", "elk.spacing.nodeNode": "22",
+        "elk.layered.spacing.nodeNodeBetweenLayers": "90", "elk.spacing.nodeNode": "20",
         "elk.edgeRouting": "ORTHOGONAL",
+        // Honour the FIRST/LAST lane pins instead of overriding them for routing.
+        "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+        "elk.layered.crossingMinimization.semiInteractive": "true",
       },
-      children: base.items.map((it) => ({ id: it.id, width: 132, height: 30 })),
+      children: base.items.map((it) => {
+        const lc = layerConstraint(it.id);
+        const layoutOptions: Record<string, string> = lc ? { "elk.layered.layering.layerConstraint": lc } : {};
+        return { id: it.id, width: 132, height: 30, layoutOptions };
+      }),
       edges: base.rfEdges.map((e) => ({ id: e.id, sources: [e.source], targets: [e.target] })),
     };
     let live = true;
@@ -152,6 +175,18 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
           <Controls showInteractive={false} />
         </ReactFlow>
       </div>
+
+      {/* Ground rail — kept off the routed graph so it doesn't fan into a star. */}
+      {base.grounds.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mt-2 text-[11px] border rounded px-2 py-1 bg-panel">
+          <span className="uppercase tracking-wide text-muted">Ground rail</span>
+          <span aria-hidden className="text-base leading-none">⏚</span>
+          {base.grounds.map((g) => (
+            <span key={g} className="label-chip">{node.get(g)?.name ?? g}</span>
+          ))}
+          <span className="text-muted">— every load in this module lands here; one thick trunk to the hub.</span>
+        </div>
+      )}
 
       {/* Connector figures: the pin layout of each plug this module crosses */}
       {connItems.map((l) => (
