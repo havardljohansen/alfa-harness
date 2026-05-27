@@ -34,7 +34,7 @@ export const wires: Wire[] = [
   // back to the engine-bay/battery hub (gnd-eng). No body-as-return reliance,
   // no daisy-chaining one module's return through another.
   { id: "w-gnd-front", label: "GND.FRONT", name: "Front-clip ground block → battery hub", circuit: "c-power", from: { component: "gnd-front", terminal: "g" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "feed", route: ["engine-front"], note: "Detaches with the front clip (heavy ring/stud, not through the BH4 signal plug)." },
-  { id: "w-gnd-dash", label: "GND.DASH", name: "Dash ground block → battery hub", circuit: "c-power", from: { component: "gnd-dash", terminal: "g" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "feed", route: ["dash", "engine-rear"], via: ["bh1"] },
+  { id: "w-gnd-dash", label: "GND.DASH", name: "Dash ground block → battery hub", circuit: "c-power", from: { component: "gnd-dash", terminal: "g" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "feed", route: ["dash", "engine-rear"], note: "Heavy ring/stud cable to the hub — NOT through BH1 (6 mm² won't fit the MP280 connector terminals, and a ground belongs on a stud, not a signal pin). Matches the front/rear ground trunks." },
   { id: "w-gnd-rear", label: "GND.REAR", name: "Rear ground block → battery hub (direct, not via dash)", circuit: "c-power", from: { component: "gnd-rear", terminal: "g" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "feed", route: ["rear", "cabin", "dash", "engine-rear", "engine-front"] },
 
   // =========================================================================
