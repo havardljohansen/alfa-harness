@@ -1,8 +1,5 @@
 import { harnessModules } from "@/data/harness/modules";
-import { ElkModuleDiagram } from "@/components/elk-module-diagram";
-
-// public/ assets are served under the GH Pages base path in production.
-const basePath = process.env.GH_PAGES === "true" ? "/alfa-harness" : "";
+import { CircleModuleDiagram } from "@/components/circle-module-diagram";
 
 export default function ModulesPage() {
   return (
@@ -10,32 +7,12 @@ export default function ModulesPage() {
       <div className="no-print">
         <h1 className="text-xl font-bold">Detachable modules — diagram & build</h1>
         <p className="text-muted text-sm mt-0.5 max-w-3xl">
-          Each module as a compact node diagram: wires are drawn only where they actually run, power blocks
-          collapse to a single box, and a wire leaving the module ends at the connector it plugs through (its
-          boundary). Numbered figure-reference boxes below the diagram show each part&apos;s real layout — the
-          PDM/RTMR relay&amp;fuse grid, each connector&apos;s pin map, and the lamps/horns/blinkers as symbols —
-          followed by how to build the module. Print (Cmd/Ctrl-P) to take into the garage.
+          Each module as a circular routing diagram: every box is a part, placed around the ring in the order that
+          minimises total connection length (so neighbours on the ring are closely wired). Toggle a connection above
+          the diagram, or click a box to isolate one component — its pin/relay layout (tinted with its wire colours)
+          drops in right below. Followed by how to build the module. Print (Cmd/Ctrl-P) to take into the garage.
         </p>
       </div>
-
-      {/* Pictorial-style sample (schemdraw) for comparison */}
-      <section className="rounded-lg border border-amber-700/50 bg-panel">
-        <div className="px-3 py-2 border-b">
-          <h2 className="font-semibold">Pictorial style — sample (front headlights)</h2>
-          <p className="text-xs text-muted mt-0.5">
-            A <strong>schemdraw</strong> sample in the factory-PDF style — real component symbols (relays, lamps,
-            grounds) + labelled wires — for comparison with the interactive node diagrams below. Trade-off: looks
-            like the PDF, but each circuit is hand-laid-out (more work, doesn&apos;t auto-sync from the model as
-            cleanly) and it&apos;s a static image.
-          </p>
-        </div>
-        <div className="p-3">
-          <div className="rounded bg-white p-3 inline-block max-w-full overflow-auto">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`${basePath}/diagrams/sample-front-headlight.svg`} alt="Front headlight pictorial schematic sample" className="max-w-full" />
-          </div>
-        </div>
-      </section>
 
       {harnessModules.map((m) => (
         <section key={m.id} className="rounded-lg border bg-panel break-inside-avoid">
@@ -44,33 +21,9 @@ export default function ModulesPage() {
             <p className="text-xs text-muted mt-0.5">{m.summary}</p>
           </div>
 
-          {/* Diagram — interactive, fits the container (pan/zoom) */}
+          {/* Circular routing diagram + toggles + per-component detail */}
           <div className="p-3 border-b">
-            <div className="flex items-baseline justify-between mb-1.5">
-              <div className="text-[11px] uppercase tracking-wide text-muted">Wiring diagram <span className="normal-case">— drag/scroll to pan, scroll to zoom</span></div>
-              <a href={`${basePath}/diagrams/mod-${m.id}.svg`} target="_blank" rel="noreferrer" className="text-[11px] text-accent underline no-print">
-                detailed WireViz drawing ↗
-              </a>
-            </div>
-            <ElkModuleDiagram moduleId={m.id} />
-            <p className="text-[10px] text-muted mt-1">
-              ELK auto-layout. Boxes are numbered + named; the key below shows each part&apos;s symbol + terminals.
-              Solid = this module; dashed/dimmed = off-module parts it plugs into. Wires coloured by circuit.
-            </p>
-
-            <details className="mt-2 no-print">
-              <summary className="text-[11px] text-accent cursor-pointer">
-                Compare: Graphviz <span className="font-mono">dot</span> layout (orthogonal routing — fewer overlapping wires) ↓
-              </summary>
-              <div className="rounded border bg-panel p-2 mt-1.5 overflow-auto">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`${basePath}/diagrams/dot-${m.id}.svg`} alt={`${m.name} — Graphviz dot layout`} className="max-w-full" />
-              </div>
-              <p className="text-[10px] text-muted mt-1">
-                Same model, same connector-boundary / collapsed-block rules — but laid out by Graphviz <span className="font-mono">dot</span>
-                {" "}(right-angle wire routing + crossing minimisation, the classic schematic look). Static image; wire labels are floated (xlabels).
-              </p>
-            </details>
+            <CircleModuleDiagram moduleId={m.id} />
           </div>
 
           {/* Build */}
