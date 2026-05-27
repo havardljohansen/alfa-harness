@@ -1,6 +1,7 @@
-import { tierTotals, fuseShoppingList, terminationTally } from "@/data/harness";
+import { tierTotals, fuseShoppingList, terminationTally, completeBom } from "@/data/harness";
 import { ownedParts, bomGaps } from "@/data/harness/parts";
 import { connectorBom, mouserUrl } from "@/data/harness/connectors";
+import { BomCsv } from "@/components/bom-csv";
 
 const owned = (pn: string) => ownedParts.find((p) => p.mfgPn === pn)?.qtyOwned ?? 0;
 // Mouser keyword search — works for both Mouser PNs and MFG PNs.
@@ -41,6 +42,42 @@ export default function ShoppingPage() {
           gender can&apos;t be ordered wrong; terminal/seal figures are estimates from the wire schedule.
         </p>
       </div>
+
+      {/* Spreadsheet / CSV */}
+      <section>
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+          <h2 className="text-lg font-semibold">Spreadsheet — every line with quantity</h2>
+          <BomCsv rows={completeBom()} />
+        </div>
+        <p className="text-muted text-xs mb-2">
+          One flat orderable list. Discrete parts (centres, relays, connectors, fuses) are exact; terminals/seals/spades
+          carry ~20% spares; wire is metres incl. waste. CSV columns: Qty, Mouser PN, MFG PN, Description, Category —
+          importable to a Mouser BOM or a spreadsheet.
+        </p>
+        <div className="overflow-auto border rounded-lg max-h-[28rem]">
+          <table className="wtable">
+            <thead>
+              <tr><th className="w-16">Qty</th><th>Part</th><th>Mouser PN</th><th>MFG PN</th></tr>
+            </thead>
+            <tbody>
+              {completeBom().map((r, i) => (
+                <tr key={i}>
+                  <td className="font-mono font-semibold whitespace-nowrap">{r.qty}</td>
+                  <td className="text-xs">{r.desc}</td>
+                  <td className="text-xs">
+                    {r.mouserPn ? (
+                      <a href={mouser(r.mouserPn)} target="_blank" rel="noreferrer" className="text-accent underline font-mono">{r.mouserPn}</a>
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )}
+                  </td>
+                  <td className="font-mono text-xs text-muted">{r.mfgPn || "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {/* Core parts */}
       <section>

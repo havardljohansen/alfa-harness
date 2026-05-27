@@ -280,10 +280,18 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "loom",
-    item: "Convoluted tubing / heat-shrink / Dymo heat-shrink cartridges / grommets",
+    item: "Convoluted tubing / adhesive heat-shrink / Dymo heat-shrink cartridges / grommets / cable ties / loom tape",
     qty: "as needed",
     category: "consumable",
-    reason: "Loom protection, bulkhead grommets and the printed wire labels themselves.",
+    reason: "Loom protection, bulkhead grommets, the printed wire labels themselves, plus cable ties + cloth loom tape to dress and secure the bundles.",
+  },
+  {
+    id: "battery-terminals",
+    item: "Battery terminal clamps + heavy cable lugs/boots",
+    qty: "2 posts + lugs",
+    category: "consumable",
+    reason: "The battery + (to PDM + constant bus + starter) and battery − (to the ground hub) need proper post clamps and heavy ring lugs with insulating boots — distinct from the in-harness MP280 terminals.",
+    suggestion: "Brass/lead post clamps to suit the battery; 16–25 mm² ring lugs + red/black boots.",
   },
   {
     id: "fan-low",
@@ -326,6 +334,57 @@ export const bomGaps: BomGap[] = [
     reason:
       "Indicators are LED. The flasher feeds the turn-relay commons, so it carries the (tiny) LED load — a thermal flasher won't flash. Use an ISO-280-footprint electronic / load-independent flasher so it drops into the spare rtmr-const relay slot (confirm the 49/49a/31 pinout maps to the cavity).",
     suggestion: "ISO-280 electronic flasher (e.g. the GT/ISO-280-terminal automotive flashers from Swe-Check / Tridon EP-series equivalents); or a standard 3-pin LED electronic flasher mounted next to the block.",
+  },
+  // --- Specialty tools (one-time; not consumed in the harness) ---------------
+  {
+    id: "tool-mp280-crimp",
+    item: "Metri-Pack 280 crimp tool (open-barrel, double-crimp: wire + seal)",
+    qty: "1",
+    category: "tool",
+    reason:
+      "The whole car is on MP280 terminals — every connector/block/relay end needs a proper open-barrel crimp (core + seal). A generic insulated-terminal crimper won't do it right.",
+    suggestion: "An open-barrel ratchet crimper sized for MP280 (≈0.3–3 mm² / 22–12 AWG), e.g. an IWISS/Engineer PA-style with open-barrel dies.",
+  },
+  {
+    id: "tool-term-release",
+    item: "GT 280 / MP280 terminal release (extraction) tool",
+    qty: "1 set",
+    category: "tool",
+    reason: "To back terminals out of GT 280 / MP280 cavities cleanly when fixing a mis-pin or re-pinning the bulkheads — you will need this.",
+    suggestion: "Aptiv/Delphi MP280 release tool, or a generic automotive terminal-removal kit that includes the 2.8 mm size.",
+  },
+  {
+    id: "tool-lug-crimp",
+    item: "Heavy-lug crimper (hex / hydraulic) for ring terminals",
+    qty: "1",
+    category: "tool",
+    reason: "The battery/starter/ground-hub rings are 6–25 mm² — too big for the MP280 crimper. Needs a proper lug crimper.",
+    suggestion: "Hex or hydraulic lug crimper covering 6–25 mm² (10–4 AWG).",
+  },
+  {
+    id: "tool-label",
+    item: "Dymo Rhino label printer (heat-shrink cartridges)",
+    qty: "1",
+    category: "tool",
+    reason: "One wire colour throughout — the printed heat-shrink labels ARE the wire identity. The printer is the tool; the cartridges are the consumable (in the loom line).",
+    suggestion: "Dymo Rhino 4200/5200/6000 with IND heat-shrink tube cartridges in the gauges you use.",
+  },
+  {
+    id: "tool-heatgun",
+    item: "Heat gun + automotive wire strippers + a multimeter / test light",
+    qty: "1 each",
+    category: "tool",
+    reason: "Heat gun for the Dymo shrink labels + adhesive heat-shrink; strippers for clean cuts; a meter/test light to verify each circuit against its build sheet as you bring it up.",
+    suggestion: "Any decent heat gun; auto-stripper; a basic DMM or a 12 V test light.",
+  },
+  {
+    id: "diodes",
+    item: "Signal / flyback diodes (1N4007, or 1N4148 for the tell-tales)",
+    qty: "6 + spares (buy a 10-pack)",
+    category: "component",
+    reason:
+      "4 inline signal diodes — hazard→turn isolation (×2) and the single turn tell-tale OR-ed from both sides (×2) — plus 2 relay-coil flyback diodes (fuel + ignition-main). All on ≤0.2 A signal/coil wires. The 2 flyback diodes are only needed if the Song Chuan relays lack built-in coil suppression — check the relay datasheet first.",
+    suggestion: "1N4007 (1 A) general purpose; 1N4148 fine for the tell-tale OR-ing.",
   },
   {
     id: "term-16-14",

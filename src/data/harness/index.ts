@@ -6,9 +6,9 @@ import { fuses } from "./fuses";
 import { circuits } from "./circuits";
 import { wires } from "./wires";
 import { diodes } from "./diodes";
-import { connectors, connectorPairsNeeded, connectorPairsOwned } from "./connectors";
+import { connectors, connectorPairsNeeded, connectorPairsOwned, connectorBom } from "./connectors";
 import { complianceNotes } from "./compliance";
-import { ownedParts, bomGaps } from "./parts";
+import { ownedParts, bomGaps, terminalByGauge } from "./parts";
 import { resolveWire, wireTotalsByGauge, wireTotalsByTier, wiresByBand } from "./derive";
 import { moduleOf } from "./modules";
 
@@ -253,6 +253,32 @@ export function terminationTally(): TerminationTally {
   return { mp280, mp280Male, mp280Female, seals, spade, ring };
 }
 
+/** MP280 terminal estimate broken down by wire gauge AND gender — for ordering
+ *  the right terminal PN per gauge. Each bulkhead crossing = 1 male + 1 female
+ *  at the wire's gauge; block/relay/PDM rear ends counted female. Estimate. */
+export function terminalsByGaugeGender(): Array<{ mm2: number; gender: "male" | "female"; count: number }> {
+  const counts = new Map<string, number>();
+  const add = (mm2: number, gender: "male" | "female", n = 1) =>
+    counts.set(`${mm2}|${gender}`, (counts.get(`${mm2}|${gender}`) ?? 0) + n);
+  for (const w of resolvedWires) {
+    const vias = w.via?.length ?? 0;
+    if (vias) {
+      add(w.recMm2, "male", vias);
+      add(w.recMm2, "female", vias);
+    }
+    for (const end of [w.from, w.to]) {
+      const kind = nodesById.get(end.component)?.kind ?? "";
+      if (MP280_KINDS.has(kind)) add(w.recMm2, "female");
+    }
+  }
+  return [...counts.entries()]
+    .map(([k, count]) => {
+      const [mm2, gender] = k.split("|");
+      return { mm2: Number(mm2), gender: gender as "male" | "female", count };
+    })
+    .sort((a, b) => a.mm2 - b.mm2 || a.gender.localeCompare(b.gender));
+}
+
 export function fuseShoppingList(): FuseLine[] {
   const byRating = new Map<number, number>();
   for (const f of fuses) {
@@ -262,6 +288,64 @@ export function fuseShoppingList(): FuseLine[] {
   return [...byRating.entries()]
     .map(([ratingA, fitted]) => ({ ratingA, fitted, buy: fitted + Math.max(2, Math.ceil(fitted / 2)) }))
     .sort((a, b) => a.ratingA - b.ratingA);
+}
+
+// ---------------------------------------------------------------------------
+// Complete from-scratch BOM — one flat, orderable list with quantities. Drives
+// the Shopping spreadsheet + CSV export. Terminal/seal/spade counts are
+// estimates (+~20% spares); discrete parts are exact.
+// ---------------------------------------------------------------------------
+export interface BomLine {
+  qty: string;
+  mouserPn: string;
+  mfgPn: string;
+  desc: string;
+  category: string;
+}
+
+export function completeBom(): BomLine[] {
+  const L: BomLine[] = [];
+  const spares = (n: number) => String(Math.ceil(n * 1.2));
+  const mp = (pn?: string) => (pn && /^\d/.test(pn) ? `829-${pn.replace(/-L$/, "")}` : "");
+
+  // 1 — Power centres + relays
+  for (const p of ownedParts.filter((p) => p.category === "distribution" || p.category === "relay"))
+    L.push({ qty: String(p.qtyOwned), mouserPn: p.mouserPn ?? "", mfgPn: p.mfgPn, desc: p.desc.split(" / ")[0].split(" — ")[0], category: "power/relay" });
+
+  // 2 — Connectors (male + female per size)
+  for (const c of connectorBom) {
+    L.push({ qty: String(c.pairsNeeded), mouserPn: c.male.mouserPn, mfgPn: c.male.mfgPn, desc: `${c.ways}-way GT 280 — MALE (${c.use})`, category: "connector" });
+    L.push({ qty: String(c.pairsNeeded), mouserPn: c.female.mouserPn, mfgPn: c.female.mfgPn, desc: `${c.ways}-way GT 280 — FEMALE`, category: "connector" });
+  }
+  const halves = connectorBom.reduce((n, c) => n + c.pairsNeeded * 2, 0);
+  L.push({ qty: String(halves), mouserPn: "829-15436200", mfgPn: "15436200", desc: "GT 280 secondary lock / TPA (one per connector half)", category: "connector" });
+
+  // 3 — Terminals by gauge × gender (+spares)
+  for (const t of terminalsByGaugeGender()) {
+    const spec = terminalByGauge.find((s) => s.mm2 === t.mm2);
+    if (!spec || spec.isRing) continue;
+    const pn = t.gender === "male" ? spec.malePn : spec.femalePn;
+    L.push({ qty: spares(t.count), mouserPn: mp(pn), mfgPn: pn ?? "", desc: `MP280 terminal ${spec.awg} AWG (${t.mm2} mm²) — ${t.gender.toUpperCase()}${spec.owned ? "" : " — BUY"}`, category: "terminal" });
+  }
+
+  // 4 — Seals / spades / rings (totals + spares)
+  const term = terminationTally();
+  L.push({ qty: spares(term.seals), mouserPn: "", mfgPn: "15324982 / -81 / -85", desc: "MP280 single-wire seals (match seal size to wire gauge)", category: "terminal" });
+  L.push({ qty: spares(term.spade), mouserPn: "829-170187-2", mfgPn: "170187-2 / 1217084-1", desc: "Faston spade receptacles — device ends (250 + 187 series)", category: "terminal" });
+  L.push({ qty: String(term.ring), mouserPn: "", mfgPn: "assorted", desc: "Ring terminals — battery / ground / B+ studs (6 / 16 / 25 mm²)", category: "terminal" });
+
+  // 5 — Fuses
+  for (const f of fuseShoppingList()) L.push({ qty: String(f.buy), mouserPn: "", mfgPn: `MINI ${f.ratingA}A`, desc: `MINI/ATM blade fuse ${f.ratingA} A (incl. spares)`, category: "fuse" });
+
+  // 6 — Wire (metres incl. waste)
+  for (const t of tierTotals) L.push({ qty: `${t.withWasteM} m`, mouserPn: "", mfgPn: `${t.tier.mm2} mm²`, desc: `Automotive wire ${t.tier.mm2} mm² / ${t.tier.awg} AWG`, category: "wire" });
+
+  // 7 — Remaining gaps (PWM, diodes, flasher, grounds, main fusing, loom… not already counted above)
+  const skip = new Set(["wire", "mini-fuses", "gauge-connectors", "term-16-14"]);
+  for (const g of bomGaps.filter((g) => !skip.has(g.id)))
+    L.push({ qty: g.qty, mouserPn: "", mfgPn: "", desc: `${g.item}${g.suggestion ? ` — ${g.suggestion}` : ""}`, category: "other" });
+
+  return L;
 }
 
 // ---------------------------------------------------------------------------

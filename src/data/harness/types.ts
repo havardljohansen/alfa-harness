@@ -330,7 +330,8 @@ export type PartCategory =
   | "fuse"
   | "charging"
   | "consumable"
-  | "component";
+  | "component"
+  | "tool";
 
 export interface PartItem {
   mfgPn: string;
