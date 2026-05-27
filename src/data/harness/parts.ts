@@ -318,6 +318,7 @@ export const bomGaps: BomGap[] = [
     qty: "1 (optional)",
     category: "component",
     reason: "Only needed if you implement the switch's low position as a reduced-speed setting.",
+    suggestion: "Aftermarket (not Mouser) — a 10–20 A 12 V PWM motor controller, or a blower dropping resistor.",
   },
   {
     id: "gauge-connectors",
@@ -335,7 +336,7 @@ export const bomGaps: BomGap[] = [
     category: "component",
     reason:
       "Panel illumination now runs as one circuit through a PWM dimmer; the 3-way instrument-light switch picks two brightness presets. A simple low-side LED/bulb PWM dimmer (with a rotary pot, or two preset inputs) carries the small lamp load.",
-    suggestion: "Any 12 V automotive LED PWM dimmer rated ≥ 3 A is plenty for panel lamps.",
+    suggestion: "Aftermarket (not Mouser) — any 12 V LED PWM dimmer module rated ≥ 3 A (Amazon/eBay/icstation, ~$8–15).",
   },
   {
     id: "relay-base-extra",
@@ -352,7 +353,7 @@ export const bomGaps: BomGap[] = [
     category: "component",
     reason:
       "Indicators are LED. The flasher feeds the turn-relay commons, so it carries the (tiny) LED load — a thermal flasher won't flash. Use an ISO-280-footprint electronic / load-independent flasher so it drops into the spare rtmr-const relay slot (confirm the 49/49a/31 pinout maps to the cavity).",
-    suggestion: "ISO-280 electronic flasher (e.g. the GT/ISO-280-terminal automotive flashers from Swe-Check / Tridon EP-series equivalents); or a standard 3-pin LED electronic flasher mounted next to the block.",
+    suggestion: "Aftermarket (not Mouser) — an ISO-280-terminal electronic flasher (Swe-Check) to drop in the RTMR slot, or a standard 3-pin electronic LED flasher (Memotronics EF32RLNP, Custom LED ELFR-1, Painless 80230) mounted next to the block.",
   },
   // --- Specialty tools (one-time; not consumed in the harness) ---------------
   {
