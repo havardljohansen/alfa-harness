@@ -46,13 +46,15 @@ export const fuseBlocks: FuseBlock[] = [
 ];
 
 // ===========================================================================
-// Relay allocation — 6 SPST + 5 SPDT = exactly the 11 owned.
+// Relay allocation — 6 SPST + 5 SPDT = the 11 owned, all in use NOW. Plus one
+// FUTURE SPST (washer) provisioned in the spare constant-RTMR slot — bought and
+// fitted with the deferred electric washer pump, so it isn't counted as owned.
 // ISO-280 pinout: 85/86 coil, 30 common, 87 NO, 87a NC (SPDT only).
 // "as much as possible on relays" — every meaningful load is relay-driven and
 // every tired switch carries only coil current.
 // ===========================================================================
 export const relays: RelayAssignment[] = [
-  // --- SPST (6) -------------------------------------------------------------
+  // --- SPST (6 in use + 1 future washer) ------------------------------------
   {
     id: "rly-low",
     name: "Low-beam relay",
@@ -125,6 +127,20 @@ export const relays: RelayAssignment[] = [
     coilTriggerLabel: "IGN.MAIN.TRG",
     commonFrom: "battery",
     out87: "Ignition bus input stud (rtmr-ign)",
+  },
+  {
+    id: "rly-washer",
+    name: "Washer-pump relay (FUTURE / provisioned)",
+    type: "SPST",
+    fn: "Keeps the period-correct dash washer button a low-current TRIGGER — the relay carries the modern electric pump. Takes the spare constant-RTMR slot; buy + fit the relay with the (deferred) pump.",
+    mountedIn: "rtmr-const",
+    partRef: SPST,
+    future: true,
+    coilFrom: "switched",
+    coilTriggerLabel: "WASH.TRG",
+    commonFrom: "bus",
+    out87: "Electric washer pump (WASH.OUT)",
+    note: "Provisioned: occupies the last constant-RTMR relay slot but isn't bought yet (the 11 owned cover everything in use now). Vintage-look dash controls stay triggers; the modern pump hides behind this relay.",
   },
 
   // --- SPDT (5) -------------------------------------------------------------

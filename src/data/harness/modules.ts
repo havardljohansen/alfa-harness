@@ -38,11 +38,11 @@ export const harnessModules: HarnessModule[] = [
       "starter", "wiper", "heater-fan", "washer-pump", "fan-resistor", "instr-pwm",
       "snd-temp", "snd-oil", "sw-oillight", "o2-sensor", "sw-brake", "sw-reverse",
       "rly-horn", "rly-fan", "rly-fuel", "rly-ignmain", "rly-turnL", "rly-turnR",
-      "rly-wlow", "rly-whigh", "rly-starter", "gnd-eng",
+      "rly-wlow", "rly-whigh", "rly-starter", "rly-washer", "gnd-eng",
     ],
     contains: [
       "RTMR constant bus + RTMR ignition bus",
-      "Relays: ignition-main, starter, fuel, horn, turn L/R, wiper low/high, fan",
+      "Relays: ignition-main, starter, fuel, horn, turn L/R, wiper low/high, fan, washer (future, in the spare constant-RTMR slot)",
       "Instrument-light PWM dimmer + heater-fan PWM/resistor (loom-side)",
       "Engine devices fed from the bus: coil, distributor, alternator sense, temp/oil senders, wiper motor, electric washer pump (install deferred), blower motor",
     ],
@@ -140,7 +140,7 @@ export const harnessModules: HarnessModule[] = [
     ],
     steps: [
       "Build the cluster harness on the bench: gauge feeds, sender signals, tell-tales, illumination output from the dimmer.",
-      "Wire the switches as low-current only — they trigger relay coils / select lines, never carry loads. Exception: the washer push button carries the washer-pump current (~3 A) directly — run its feed/out leads to the pump connector and cap them (pump install is deferred).",
+      "Wire the switches as low-current only — they trigger relay coils / select lines, never carry loads (the period-correct washer button included: it triggers rly-washer in the engine bay, which carries the deferred electric pump).",
       "Land all dash grounds on the dash block; route its trunk to BH1.",
       "Terminate into the BH1 + BH2 connector halves; fit the isolation diodes on the signal side.",
       "Bench-test against the dash plugs before refitting the dash.",

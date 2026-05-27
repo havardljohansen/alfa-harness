@@ -382,15 +382,15 @@ const switches: SwitchComponent[] = [
   },
   {
     id: "sw-washer",
-    name: "Washer push button (momentary)",
+    name: "Washer push button (momentary, period-correct)",
     kind: "switch",
     zone: "dash",
-    terminals: [t("in", "Fused +12 feed (wiper/washer fuse)", ""), t("out", "→ electric washer pump", "")],
+    terminals: [t("in", "Ignition feed (low current)", ""), t("out", "→ washer-pump relay coil", "")],
     positions: [
       { name: "Released", closes: [] },
-      { name: "Pressed", closes: [["in", "out"]], note: "High-side feed to the washer pump while held." },
+      { name: "Pressed", closes: [["in", "out"]], note: "Triggers the washer-pump relay coil only — the vintage button carries no load." },
     ],
-    note: "Drives the electric washer pump (the factory foot pump is retired in the rebuild). Physical pump install is DEFERRED — the feed is run and capped at the pump connector; fitting the pump is plug-in.",
+    note: "Period-correct dash button kept as a LOW-CURRENT TRIGGER: it drives rly-washer and the modern electric pump hides behind the relay (vintage look, no load on the button). Factory foot pump retired. Relay + pump install is DEFERRED — provisioned and capped; fitting is plug-in.",
   },
 ];
 
@@ -415,7 +415,8 @@ const motors: DeviceComponent[] = [
     name: "Washer pump (electric — install deferred)",
     kind: "pump",
     zone: "engine-rear",
-    terminals: [t("53c", "Power (from washer button)", "53c"), t("g", "Ground", "31")],
+    future: true,
+    terminals: [t("53c", "Power (from washer relay)", "53c"), t("g", "Ground", "31")],
   },
   {
     id: "heater-fan",

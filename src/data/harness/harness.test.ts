@@ -17,9 +17,10 @@ describe("model integrity", () => {
     expect(errors, errors.map((e) => `${e.where}: ${e.message}`).join("\n")).toEqual([]);
   });
 
-  it("uses no more relays than owned (6 SPST + 5 SPDT)", () => {
-    const spdt = relays.filter((r) => r.type === "SPDT").length;
-    const spst = relays.filter((r) => r.type === "SPST").length;
+  it("uses no more relays than owned (6 SPST + 5 SPDT) — provisioned/future relays excluded", () => {
+    // future relays (e.g. the deferred washer pump's) take a slot but aren't bought yet.
+    const spdt = relays.filter((r) => r.type === "SPDT" && !r.future).length;
+    const spst = relays.filter((r) => r.type === "SPST" && !r.future).length;
     expect(spdt).toBeLessThanOrEqual(ownedParts.find((p) => p.mfgPn === "301-1C-S-R1-12VDC")!.qtyOwned);
     expect(spst).toBeLessThanOrEqual(ownedParts.find((p) => p.mfgPn === "301-1A-C-R1-U03-12VDC")!.qtyOwned);
   });

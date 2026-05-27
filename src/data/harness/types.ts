@@ -131,6 +131,9 @@ export interface RelayAssignment {
   /** Loads on the normally-open (87) and, for SPDT, normally-closed (87a). */
   out87: string;
   out87a?: string;
+  /** Provisioned for a deferred/future load — occupies a physical slot but
+   *  isn't counted against owned stock yet (e.g. the deferred washer pump). */
+  future?: boolean;
   note?: string;
 }
 

@@ -116,9 +116,10 @@ export function validateModel(): ValidationIssue[] {
     }
   }
 
-  // Relay count vs owned stock.
-  const spdtUsed = relays.filter((r) => r.type === "SPDT").length;
-  const spstUsed = relays.filter((r) => r.type === "SPST").length;
+  // Relay count vs owned stock (future/provisioned relays take a slot but
+  // aren't bought yet, so they don't count against owned stock).
+  const spdtUsed = relays.filter((r) => r.type === "SPDT" && !r.future).length;
+  const spstUsed = relays.filter((r) => r.type === "SPST" && !r.future).length;
   const spdtOwned = ownedParts.find((p) => p.mfgPn === "301-1C-S-R1-12VDC")?.qtyOwned ?? 0;
   const spstOwned = ownedParts.find((p) => p.mfgPn === "301-1A-C-R1-U03-12VDC")?.qtyOwned ?? 0;
   if (spdtUsed > spdtOwned) issues.push({ severity: "error", where: "relays", message: `${spdtUsed} SPDT used > ${spdtOwned} owned` });
