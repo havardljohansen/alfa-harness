@@ -380,6 +380,18 @@ const switches: SwitchComponent[] = [
       { name: "Pressed", closes: [["in", "g"]], note: "Grounds the horn-relay coil — switch only carries coil current." },
     ],
   },
+  {
+    id: "sw-washer",
+    name: "Washer push button (momentary)",
+    kind: "switch",
+    zone: "dash",
+    terminals: [t("in", "Fused +12 feed (wiper/washer fuse)", ""), t("out", "→ electric washer pump", "")],
+    positions: [
+      { name: "Released", closes: [] },
+      { name: "Pressed", closes: [["in", "out"]], note: "High-side feed to the washer pump while held." },
+    ],
+    note: "Drives the electric washer pump (the factory foot pump is retired in the rebuild). Physical pump install is DEFERRED — the feed is run and capped at the pump connector; fitting the pump is plug-in.",
+  },
 ];
 
 // ===========================================================================
@@ -400,10 +412,10 @@ const motors: DeviceComponent[] = [
   },
   {
     id: "washer-pump",
-    name: "Washer pump",
+    name: "Washer pump (electric — install deferred)",
     kind: "pump",
     zone: "engine-rear",
-    terminals: [t("53c", "Power", "53c"), t("g", "Ground", "31")],
+    terminals: [t("53c", "Power (from washer button)", "53c"), t("g", "Ground", "31")],
   },
   {
     id: "heater-fan",

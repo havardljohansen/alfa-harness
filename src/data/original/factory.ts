@@ -148,7 +148,7 @@ export const factoryComponents: FactoryComponent[] = [
   { name: "Instrument lights + switch", status: "preserved", modern: "Switch fed from ignition (Run)." },
   // Comfort
   { name: "Wipers (2-speed self-park) + switch", status: "modernized", modern: "Bosch motor; switch triggers low/high relays; self-park via the low relay." },
-  { name: "Washer — manual foot pump (its contact triggers the wipers)", status: "modernized", modern: "Factory item is a foot pump: squirts fluid mechanically AND its contact runs the wipers — no electric pump. Modern rebuild currently fits a separate electric washer pump on its own momentary push (OPEN: could instead keep the foot pump and just trigger the wiper relay)." },
+  { name: "Washer — manual foot pump (its contact triggers the wipers)", status: "modernized", modern: "Factory item is a foot pump: squirts fluid mechanically and its contact runs the wipers. Rebuild retires the foot pump for an electric washer pump on a dash push button (off the wiper/washer fuse, pump grounds locally). Fully wired into the new harness now; the physical pump install is deferred (leads capped at the pump connector)." },
   { name: "Heater fan (blower) + switch", status: "modernized", modern: "Relay for full speed; optional resistor for low; switch carries coil current only." },
   { name: "Interior light + door switches ×2", status: "preserved", modern: "Door-triggered on the constant bus." },
   { name: "Cigar lighter", status: "removed", modern: "Removed — hazard switch fitted in its place." },

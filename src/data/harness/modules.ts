@@ -44,7 +44,7 @@ export const harnessModules: HarnessModule[] = [
       "RTMR constant bus + RTMR ignition bus",
       "Relays: ignition-main, starter, fuel, horn, turn L/R, wiper low/high, fan",
       "Instrument-light PWM dimmer + heater-fan PWM/resistor (loom-side)",
-      "Engine devices fed from the bus: coil, distributor, alternator sense, temp/oil senders, wiper motor, washer pump, blower motor",
+      "Engine devices fed from the bus: coil, distributor, alternator sense, temp/oil senders, wiper motor, electric washer pump (install deferred), blower motor",
     ],
     interfaces: [
       "BH1 + BH2 → dashboard module",
@@ -115,13 +115,14 @@ export const harnessModules: HarnessModule[] = [
       "The whole dash pulls out behind two plugs: instruments, tell-tales, the column/dash switches, the ignition switch and the interior-light feed.",
     componentIds: [
       "ign-switch", "sw-headlight", "sw-dipflash", "sw-turn", "sw-hazard", "sw-horn",
-      "sw-door-l", "sw-door-r", "g-fuel", "g-temp", "g-oil", "g-speedo", "g-tach",
-      "g-afr", "wl-oil", "wl-charge", "wl-main", "wl-park", "wl-turn", "int-light",
-      "gnd-dash",
+      "sw-washer", "sw-door-l", "sw-door-r", "g-fuel", "g-temp", "g-oil", "g-speedo",
+      "g-tach", "g-afr", "wl-oil", "wl-charge", "wl-main", "wl-park", "wl-turn",
+      "int-light", "gnd-dash",
     ],
     contains: [
       "Ignition switch",
       "Headlight switch + dip/flash switch + turn-signal column switch + hazard switch + horn button",
+      "Washer push button (drives the electric washer pump — pump install deferred)",
       "Gauges (fuel, temp, oil, speedo, tach) + tell-tales (oil, charge, main-beam, turn, parking)",
       "Interior light feed",
     ],
@@ -139,7 +140,7 @@ export const harnessModules: HarnessModule[] = [
     ],
     steps: [
       "Build the cluster harness on the bench: gauge feeds, sender signals, tell-tales, illumination output from the dimmer.",
-      "Wire the switches as low-current only — they trigger relay coils / select lines, never carry loads.",
+      "Wire the switches as low-current only — they trigger relay coils / select lines, never carry loads. Exception: the washer push button carries the washer-pump current (~3 A) directly — run its feed/out leads to the pump connector and cap them (pump install is deferred).",
       "Land all dash grounds on the dash block; route its trunk to BH1.",
       "Terminate into the BH1 + BH2 connector halves; fit the isolation diodes on the signal side.",
       "Bench-test against the dash plugs before refitting the dash.",
