@@ -17,7 +17,7 @@ export const fuseBlocks: FuseBlock[] = [
     fuseWays: 5,
     relayWays: 2,
     grid: { fuseCols: 3, relayCols: 2 },
-    note: "18 cavities on a 6×3 grid = 9 fuse-equivalents; a relay eats 2 positions (2×relays + fuses ≤ 9, max 3 relays). We run the 2R/5F config: low + high beam relays (commons fed from the main input) + 4 beam-output fuses, leaving ONE spare fuse slot. 100 A, IP69K.",
+    note: "18 cavities on a 6×3 grid = 9 fuse-equivalents; a relay eats 2 positions (2×relays + fuses ≤ 9, max 3 relays). We run the 2R/5F config: low + high beam relays (commons fed from the main input) + 4 beam-output fuses, leaving ONE spare fuse slot. 100 A, IP69K. WHY THE PDM EXISTS: the two Bussmanns are at/near relay capacity (ign 5/5, const 4/5 — one free slot between them), so the headlights' 2 relays + 4 fuses don't fit without a third RTMR. The PDM offloads the whole headlight section, AND sits forward at the front clip so the heavy beam outputs stay there (only thin triggers cross BH4). WHY 2R/5F NOT 3R/3F: keeping each beam filament on its own fuse means a blown fuse drops one beam, not both (night-safety) — worth more than a 3rd relay. The free relay slot stays a documented spare; the horn relay lives on the constant RTMR, not here.",
   },
   {
     id: "rtmr-ign",
