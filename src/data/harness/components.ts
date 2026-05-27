@@ -562,6 +562,22 @@ const comfort: (DeviceComponent | SwitchComponent)[] = [
     terminals: [t("+", "Constant feed", "30"), t("sw", "Door-switch ground", "31")],
   },
   {
+    id: "usb-charge",
+    name: "USB-C charge port (12 V → USB-C PD converter)",
+    kind: "socket",
+    zone: "dash",
+    terminals: [t("in", "12 V feed (ignition-switched)", "15"), t("g", "Ground", "31")],
+    note: "Modern USB-C fast-charge converter on the dash — the electrical replacement for the deleted cigar lighter. On the shared Stereo/USB accessory circuit, IGNITION-switched (f-ign-3) so it only powers key-on — no key-off battery drain.",
+  },
+  {
+    id: "stereo",
+    name: "Stereo (Bluetooth amplifier + USB jack)",
+    kind: "audio",
+    zone: "dash",
+    terminals: [t("+B", "12 V (ignition-switched)", "15"), t("g", "Ground", "31")],
+    note: "A BT amplifier with a USB jack — no constant/memory lead needed, so it's simply IGNITION-on (on/off with the key). Jumpers off the USB accessory feed at the dash (one feed across the firewall). Speakers are outside harness scope.",
+  },
+  {
     id: "sw-door-l",
     name: "Door switch LEFT",
     kind: "switch",

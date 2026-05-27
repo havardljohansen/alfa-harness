@@ -118,7 +118,7 @@ export const harnessModules: HarnessModule[] = [
       "ign-switch", "sw-headlight", "sw-dipflash", "sw-turn", "sw-hazard", "sw-horn",
       "sw-washer", "sw-door-l", "sw-door-r", "g-fuel", "g-temp", "g-oil", "g-speedo",
       "g-tach", "g-afr", "wl-oil", "wl-charge", "wl-main", "wl-turn",
-      "int-light", "gnd-dash",
+      "int-light", "usb-charge", "stereo", "gnd-dash",
     ],
     contains: [
       "Ignition switch",
@@ -126,6 +126,7 @@ export const harnessModules: HarnessModule[] = [
       "Washer push button (drives the electric washer pump — pump install deferred)",
       "Gauges (fuel, temp, oil, speedo, tach) + tell-tales (oil, charge, main-beam, turn)",
       "Headlight switch is headlights-only now (Off/Head); position/tail lamps are automatic ignition running lights",
+      "USB-C fast-charge port + Bluetooth-amp stereo on one ignition-switched accessory feed",
       "Interior light feed",
     ],
     interfaces: [

@@ -357,6 +357,15 @@ export const bomGaps: BomGap[] = [
     suggestion: "Any 12 V universal washer pump (~$8); a period-correct momentary push button to match the dash. Not Mouser — restoration/accessory supplier.",
   },
   {
+    id: "accessory",
+    item: "USB-C PD fast-charge converter + Bluetooth-amp stereo",
+    qty: "1 each",
+    category: "component",
+    reason:
+      "Dash accessory circuit (ignition-switched, f-ign-3): a 12 V → USB-C PD converter for fast charging, plus a Bluetooth amplifier/head unit (no memory lead — it's key-on). Both user-supplied; the harness gives one ign-switched 12 V feed + ground at the dash, and the stereo jumpers off the USB feed.",
+    suggestion: "Any 12 V USB-C PD converter (~20–60 W); a compact 12 V Bluetooth amplifier with USB jack. Not Mouser — general / automotive accessory supplier.",
+  },
+  {
     id: "led-flasher",
     item: "Electronic LED flasher — ISO-280 footprint",
     qty: "1",

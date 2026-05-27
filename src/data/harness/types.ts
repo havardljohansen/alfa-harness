@@ -75,6 +75,7 @@ export type ComponentKind =
   | "coil" // ignition coil
   | "ground"
   | "socket" // cigar lighter / aux
+  | "audio" // stereo / amplifier head unit
   | "diode" // signal-path isolation / suppression diode
   | "resistor" // fan-speed dropping resistor / PWM module
   | "connector"; // inline bulkhead connector

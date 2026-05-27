@@ -142,6 +142,13 @@ export const circuits: Circuit[] = [
     originalFuse: "1",
   },
   {
+    id: "c-accessory",
+    name: "Stereo / USB accessory",
+    group: "comfort",
+    description: "Dash accessory feed — the USB-C fast-charge port + the Bluetooth-amp stereo. IGNITION-switched (on/off with the key): the stereo needs no memory and the USB can't drain the battery key-off. One feed across the firewall; the stereo jumpers off it at the dash.",
+    status: "upgrade",
+  },
+  {
     id: "c-future-o2",
     name: "O2 sensor + AFR gauge (future)",
     group: "future",

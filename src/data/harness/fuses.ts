@@ -20,8 +20,8 @@ export const fuses: Fuse[] = [
 
   // --- Ignition bus (RTMR, bussed; fed by ignition main relay) --------------
   { id: "f-ign-1", block: "rtmr-ign", position: 1, ratingA: 10, name: "Ignition coil", circuit: "c-ignition", source: "bus", feeds: "Coil + / distributor" },
-  { id: "f-ign-2", block: "rtmr-ign", position: 2, ratingA: 5, name: "Gauges + tach", circuit: "c-instruments", source: "bus", feeds: "Fuel, temp, oil, tach feeds" },
-  { id: "f-ign-3", block: "rtmr-ign", position: 3, ratingA: 5, name: "Warning lamps", circuit: "c-instruments", source: "bus", feeds: "Oil, charge tell-tales" },
+  { id: "f-ign-2", block: "rtmr-ign", position: 2, ratingA: 7.5, name: "Instruments (gauges + warning lamps)", circuit: "c-instruments", source: "bus", feeds: "Fuel, temp, oil, tach feeds + oil/charge tell-tales (warning lamps jumper off the gauges feed at the dash — both tiny)" },
+  { id: "f-ign-3", block: "rtmr-ign", position: 3, ratingA: 10, name: "Stereo / USB accessory", circuit: "c-accessory", source: "bus", feeds: "Ignition-switched dash accessory: USB-C fast-charge port + Bluetooth-amp stereo (freed by folding the warning lamps into the gauges fuse)" },
   { id: "f-ign-4", block: "rtmr-ign", position: 4, ratingA: 5, name: "Turn-signal coil select", circuit: "c-turn", source: "bus", feeds: "Ignition feed to turn switch (coil select, key-on only)" },
   { id: "f-ign-5", block: "rtmr-ign", position: 5, ratingA: 10, name: "Wipers + washer", circuit: "c-wipers", source: "bus", feeds: "Wiper relays (low/high/park); washer button trigger + washer relay common (→ deferred electric pump)" },
   { id: "f-ign-6", block: "rtmr-ign", position: 6, ratingA: 20, name: "Heater blower", circuit: "c-cooling", source: "bus", feeds: "Fan relay output" },
