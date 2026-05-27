@@ -1,4 +1,5 @@
 import { harnessModules } from "@/data/harness/modules";
+import { ModuleDiagram } from "@/components/module-diagram";
 
 // public/ assets are served under the GH Pages base path in production.
 const basePath = process.env.GH_PAGES === "true" ? "/alfa-harness" : "";
@@ -22,17 +23,18 @@ export default function ModulesPage() {
             <p className="text-xs text-muted mt-0.5">{m.summary}</p>
           </div>
 
-          {/* Diagram */}
+          {/* Diagram — interactive, fits the container (pan/zoom) */}
           <div className="p-3 border-b">
-            <div className="text-[11px] uppercase tracking-wide text-muted mb-1.5">Wiring diagram</div>
-            <div className="overflow-auto rounded bg-white p-2" style={{ maxHeight: "30rem" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${basePath}/diagrams/mod-${m.id}.svg`}
-                alt={`${m.name} wiring diagram`}
-                className="max-w-none"
-              />
+            <div className="flex items-baseline justify-between mb-1.5">
+              <div className="text-[11px] uppercase tracking-wide text-muted">Wiring diagram <span className="normal-case">— drag/scroll to pan, scroll to zoom</span></div>
+              <a href={`${basePath}/diagrams/mod-${m.id}.svg`} target="_blank" rel="noreferrer" className="text-[11px] text-accent underline no-print">
+                detailed WireViz drawing ↗
+              </a>
             </div>
+            <ModuleDiagram moduleId={m.id} />
+            <p className="text-[10px] text-muted mt-1">
+              Solid boxes = this module; dashed/dimmed = off-module parts it plugs into. Wires coloured by circuit.
+            </p>
           </div>
 
           {/* Build */}
