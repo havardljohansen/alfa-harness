@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   ReactFlow,
   Background,
   Controls,
   MiniMap,
+  useNodesState,
   type Node,
   type Edge,
 } from "@xyflow/react";
@@ -55,20 +56,27 @@ export default function Explorer() {
   const [showFuture, setShowFuture] = useState(false);
   const [sel, setSel] = useState<string | null>(null);
 
-  const { nodes, edges } = useMemo(() => {
-    const visibleWires = resolvedWires.filter((w) => {
-      if (!showFuture && w.future) return false;
-      const g = circuitGroup.get(w.circuit);
-      return g ? active.has(g) : false;
-    });
+  const visibleWires = useMemo(
+    () =>
+      resolvedWires.filter((w) => {
+        if (!showFuture && w.future) return false;
+        const g = circuitGroup.get(w.circuit);
+        return g ? active.has(g) : false;
+      }),
+    [active, showFuture],
+  );
 
+  // Node definitions for the current filters. Positions are the deterministic
+  // layout; the selection highlight + any DRAGGED positions are applied in the
+  // sync effect below — the drag bug was that ReactFlow had no onNodesChange,
+  // so moves were discarded.
+  const baseNodeDefs = useMemo<Node[]>(() => {
     const touched = new Set<string>();
     for (const w of visibleWires) {
       touched.add(w.from.component);
       touched.add(w.to.component);
     }
-
-    const nodes: Node[] = allNodes
+    return allNodes
       .filter((n) => touched.has(n.id))
       .map((n) => ({
         id: n.id,
@@ -79,28 +87,45 @@ export default function Explorer() {
           width: 180,
           padding: 6,
           borderRadius: 8,
-          border: `1px solid ${sel === n.id ? "#f5c451" : "#2a323f"}`,
+          border: "1px solid #2a323f",
           background: n.kind === "relay" ? "#241c10" : n.kind === "fuse-block" || n.kind === "distribution" ? "#13201a" : "#141922",
           color: "#e7ecf3",
         },
       }));
+  }, [visibleWires]);
 
-    const edges: Edge[] = visibleWires.map((w) => {
-      const g = circuitGroup.get(w.circuit)!;
-      return {
-        id: w.id,
-        source: w.from.component,
-        target: w.to.component,
-        label: w.label,
-        labelStyle: { fontSize: 9, fill: "#cdd0c4" },
-        labelBgStyle: { fill: "#0b0e13" },
-        style: { stroke: GROUP_COLOR[g], strokeWidth: sel === w.id ? 3 : 1.5 },
-        animated: false,
-      };
+  const edges = useMemo<Edge[]>(
+    () =>
+      visibleWires.map((w) => {
+        const g = circuitGroup.get(w.circuit)!;
+        return {
+          id: w.id,
+          source: w.from.component,
+          target: w.to.component,
+          label: w.label,
+          labelStyle: { fontSize: 9, fill: "#cdd0c4" },
+          labelBgStyle: { fill: "#0b0e13" },
+          style: { stroke: GROUP_COLOR[g], strokeWidth: sel === w.id ? 3 : 1.5 },
+          animated: false,
+        };
+      }),
+    [visibleWires, sel],
+  );
+
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  // Sync the node SET from the filters + the selection highlight, but PRESERVE
+  // any dragged positions (carried in `prev`), so dragging sticks across
+  // filter toggles and selections.
+  useEffect(() => {
+    setNodes((prev) => {
+      const pos = new Map(prev.map((n) => [n.id, n.position]));
+      return baseNodeDefs.map((def) => ({
+        ...def,
+        position: pos.get(def.id) ?? def.position,
+        style: { ...def.style, border: `1px solid ${sel === def.id ? "#f5c451" : "#2a323f"}` },
+      }));
     });
-
-    return { nodes, edges };
-  }, [active, showFuture, sel]);
+  }, [baseNodeDefs, sel, setNodes]);
 
   const toggle = (g: CircuitGroup) =>
     setActive((prev) => {
@@ -157,6 +182,7 @@ export default function Explorer() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          onNodesChange={onNodesChange}
           onNodeClick={(_, n) => setSel(n.id)}
           onEdgeClick={(_, e) => setSel(e.id)}
           fitView
