@@ -583,11 +583,11 @@ const comfort: (DeviceComponent | SwitchComponent)[] = [
   },
   {
     id: "flasher",
-    name: "Turn/hazard flasher (electronic, load-independent)",
+    name: "Turn/hazard flasher (electronic, LED, load-independent)",
     kind: "flasher",
-    zone: "dash",
+    zone: "engine-front",
     terminals: [t("49", "Feed in", "49"), t("49a", "Flashing out", "49a"), t("31", "Ground", "31")],
-    note: "Electronic so it flashes correctly with the relay-driven, LED-capable load.",
+    note: "MUST be electronic / load-independent — the indicators are LED, and this flasher feeds the turn-relay commons so it carries the (tiny) LED load; a thermal flasher won't flash on it. Use an ISO-280-footprint electronic flasher so it drops into the spare rtmr-const relay slot (confirm the 49/49a/31 pinout maps to the cavity). The weak column switch is unaffected — it only triggers the relay coils.",
   },
   {
     id: "fuel-pump",

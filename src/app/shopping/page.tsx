@@ -1,8 +1,11 @@
 import { tierTotals, fuseShoppingList, terminationTally } from "@/data/harness";
 import { ownedParts, bomGaps } from "@/data/harness/parts";
-import { connectorBom } from "@/data/harness/connectors";
+import { connectorBom, mouserUrl } from "@/data/harness/connectors";
 
 const owned = (pn: string) => ownedParts.find((p) => p.mfgPn === pn)?.qtyOwned ?? 0;
+// Mouser keyword search — works for both Mouser PNs and MFG PNs.
+const mouser = (q: string) => `https://www.mouser.com/c/?q=${encodeURIComponent(q)}`;
+const coreParts = ownedParts.filter((p) => p.category === "distribution" || p.category === "relay");
 
 export default function ShoppingPage() {
   const term = terminationTally();
@@ -32,11 +35,38 @@ export default function ShoppingPage() {
       <div>
         <h1 className="text-xl font-bold">Shopping list</h1>
         <p className="text-muted text-sm mt-0.5 max-w-3xl">
-          Everything to finish the build, in one place. Terminal/seal figures are estimates from the
-          wire schedule (each connector crossing ≈ 1 male + 1 female terminal + 2 seals). Connectors
-          are listed as matched <strong>male + female</strong> pairs so the gender can&apos;t be ordered wrong.
+          A <strong>complete build-from-scratch list</strong> — every part with a Mouser link, assuming you own
+          nothing. (Mouser is the single supplier that carries the whole BOM incl. the Bussmann RTMR and ships to
+          Norway — see notes at the bottom.) Connectors are matched <strong>male + female</strong> pairs so the
+          gender can&apos;t be ordered wrong; terminal/seal figures are estimates from the wire schedule.
         </p>
       </div>
+
+      {/* Core parts */}
+      <section>
+        <h2 className="text-lg font-semibold mb-2">Power centres & relays</h2>
+        <div className="overflow-auto border rounded-lg">
+          <table className="wtable">
+            <thead>
+              <tr><th>Part</th><th>Qty</th><th>MFG PN</th><th>Mouser</th></tr>
+            </thead>
+            <tbody>
+              {coreParts.map((p) => (
+                <tr key={p.mfgPn}>
+                  <td className="text-xs">{p.desc.split(" / ")[0].split(" — ")[0]}</td>
+                  <td className="font-mono">{p.qtyOwned}</td>
+                  <td className="font-mono text-xs">{p.mfgPn}</td>
+                  <td className="text-xs">
+                    <a href={mouser(p.mouserPn ?? p.mfgPn)} target="_blank" rel="noreferrer" className="text-accent underline font-mono">
+                      {p.mouserPn ?? p.mfgPn}
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {/* Connectors */}
       <section>
@@ -178,7 +208,7 @@ export default function ShoppingPage() {
 
       {/* Gap items */}
       <section>
-        <h2 className="text-lg font-semibold mb-2">Also needed (not in the orders)</h2>
+        <h2 className="text-lg font-semibold mb-2">Wire, fuses, grounds & the rest (commodity — buy by category)</h2>
         <ul className="space-y-1.5">
           {bomGaps.map((g) => (
             <li key={g.id} className="flex gap-3 text-sm">
@@ -186,10 +216,33 @@ export default function ShoppingPage() {
               <span>
                 <span className="font-medium">{g.item}</span>
                 <span className="text-muted"> — {g.reason}</span>
+                {g.suggestion && (
+                  <>
+                    {" "}
+                    <a href={mouser(g.suggestion.split(/[;(]/)[0])} target="_blank" rel="noreferrer" className="text-accent underline">
+                      search Mouser
+                    </a>
+                  </>
+                )}
               </span>
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Supplier note */}
+      <section className="rounded-lg border bg-panel p-3 text-sm">
+        <h2 className="font-semibold mb-1">Where to buy</h2>
+        <p className="text-muted">
+          <strong className="text-fg">Mouser</strong> is the single supplier that covers the whole BOM and ships to
+          Norway (<span className="font-mono">no.mouser.com</span>) — and it&apos;s the only major electronics
+          distributor that stocks the <strong className="text-fg">Bussmann/Eaton RTMR</strong> (the constraint part).
+          DigiKey still doesn&apos;t carry the RTMR; RS-Europe and Farnell don&apos;t list the RTMR/PDM line either.
+          Norway&apos;s 25 % import VAT applies whatever the origin (no EU advantage), so consolidating into one
+          Mouser order keeps customs handling to a single event. Optional split: source <strong className="text-fg">bulk
+          TXL/GXL wire + loom</strong> locally (heavy, cheap, avoids transatlantic freight + VAT on copper) — that&apos;s
+          the one category a specialist (e.g. Waytek) or a Norwegian auto-electrical supplier does better.
+        </p>
       </section>
     </div>
   );

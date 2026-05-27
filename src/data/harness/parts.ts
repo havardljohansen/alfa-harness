@@ -318,4 +318,45 @@ export const bomGaps: BomGap[] = [
     reason:
       "Plan uses 6 SPST + 5 SPDT = exactly what you own. No spare SPST. Buy 1–2 spares if you want redundancy.",
   },
+  {
+    id: "led-flasher",
+    item: "Electronic LED flasher — ISO-280 footprint",
+    qty: "1",
+    category: "component",
+    reason:
+      "Indicators are LED. The flasher feeds the turn-relay commons, so it carries the (tiny) LED load — a thermal flasher won't flash. Use an ISO-280-footprint electronic / load-independent flasher so it drops into the spare rtmr-const relay slot (confirm the 49/49a/31 pinout maps to the cavity).",
+    suggestion: "ISO-280 electronic flasher (e.g. the GT/ISO-280-terminal automotive flashers from Swe-Check / Tridon EP-series equivalents); or a standard 3-pin LED electronic flasher mounted next to the block.",
+  },
+  {
+    id: "term-16-14",
+    item: "Metri-Pack 280 terminals, 16-14 AWG (female + male) — for the 1.5 mm² wires",
+    qty: "~20 + spares",
+    category: "terminal",
+    reason:
+      "Owned terminals are 22-20 / 18-16 / 14-12 AWG and skip 16-14, which is the ideal range for the 1.5 mm² medium wires. Buy the 16-14 range so every wire gets its correct terminal.",
+    suggestion: "Female 12129409-L (sealed, verified); pair with the matching 16-14 AWG sealed male (confirm PN at order).",
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Terminal-by-gauge — the IDEAL MP280 terminal range for each recommended wire
+// gauge, mirroring the wire-tier approach (ideal size, consolidated per gauge).
+// Heavy feeds (6 / 25 mm²) don't go in a connector — they're rings on studs.
+// ---------------------------------------------------------------------------
+export interface TerminalSpec {
+  mm2: number;
+  awg: string;
+  femalePn?: string;
+  malePn?: string;
+  owned: boolean;
+  isRing?: boolean;
+  note?: string;
+}
+
+export const terminalByGauge: TerminalSpec[] = [
+  { mm2: 0.75, awg: "18-16", femalePn: "12110847-L", malePn: "15304731-L", owned: true },
+  { mm2: 1.5, awg: "16-14", femalePn: "12129409-L", malePn: "16-14 male (confirm)", owned: false, note: "Buy — owned set skips 16-14. Female 12129409-L verified." },
+  { mm2: 2.5, awg: "14-12", femalePn: "12110845-L", malePn: "15304724-L", owned: true },
+  { mm2: 6, awg: "—", owned: false, isRing: true, note: "Ring terminal on a stud — not a connector terminal." },
+  { mm2: 25, awg: "—", owned: false, isRing: true, note: "Ring terminal on a stud (battery/starter/ground hub)." },
 ];
