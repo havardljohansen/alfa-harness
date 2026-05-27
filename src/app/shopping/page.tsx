@@ -1,6 +1,7 @@
 import { tierTotals, fuseShoppingList, terminationTally, completeBom } from "@/data/harness";
 import { ownedParts, bomGaps } from "@/data/harness/parts";
 import { connectorBom, mouserUrl } from "@/data/harness/connectors";
+import { externalSuggestions } from "@/data/harness/external-suppliers";
 import { BomCsv } from "@/components/bom-csv";
 
 const owned = (pn: string) => ownedParts.find((p) => p.mfgPn === pn)?.qtyOwned ?? 0;
@@ -265,6 +266,35 @@ export default function ShoppingPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Not at Mouser — suggested sources */}
+      <section>
+        <h2 className="text-lg font-semibold mb-2">Not at Mouser — suggested sources + specs</h2>
+        <p className="text-muted text-xs mb-3">
+          Finished aftermarket parts Mouser doesn&apos;t stock. External links (may drift) — find EU/Norway-local
+          equivalents where it&apos;s cheaper. Match the <strong>specs</strong> so you don&apos;t get the wrong variant.
+        </p>
+        <div className="space-y-3">
+          {externalSuggestions.map((e) => (
+            <div key={e.id} className="rounded-lg border bg-panel p-3">
+              <div className="font-semibold text-sm">{e.item}</div>
+              <div className="text-xs text-muted italic mt-0.5">{e.why}</div>
+              <div className="text-xs mt-1.5">
+                <span className="uppercase tracking-wide text-[10px] text-accent-2">Specs</span>{" "}
+                <span className="text-fg">{e.specs}</span>
+              </div>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
+                {e.options.map((o) => (
+                  <a key={o.url} href={o.url} target="_blank" rel="noreferrer" className="text-xs text-accent underline">
+                    {o.name}
+                    {o.note && <span className="text-muted no-underline"> · {o.note}</span>}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Supplier note */}
