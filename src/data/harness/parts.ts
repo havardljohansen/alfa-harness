@@ -293,6 +293,15 @@ export const bomGaps: BomGap[] = [
     reason: "Only needed if you implement the switch's low position as a reduced-speed setting.",
   },
   {
+    id: "gauge-connectors",
+    item: "Gauge connectors for the two main dials (speedo + tach) — replace the vintage 5-pin plugs",
+    qty: "2 pairs",
+    category: "connector-housing",
+    reason:
+      "The speedo and tach carry vintage 5-pin connectors; replacing them keeps the whole car on the Metri-Pack 280 terminal system. GT 280 has no 5-way (the ladder skips 5, 7, 9, 11), so use a GT 280 6-way with one cavity blanked (male 15326640 + matching female) — in-family, 1 spare. Alternative: a Metri-Pack 280 5-way (exact size, same terminals, different housing family).",
+    suggestion: "GT 280 6-way (15326640 M + matching F), one cavity blanked; reuse owned MP280 terminals/seals.",
+  },
+  {
     id: "instr-dimmer",
     item: "Instrument-light PWM dimmer module",
     qty: "1",

@@ -37,8 +37,9 @@ export const logicalBulkheads: LogicalBulkhead[] = [
     name: "Power & instruments",
     zoneA: "engine-rear",
     zoneB: "dash",
+    ways: 10,
     purpose:
-      "Ignition feeds, sender signals (temp/oil/tach), charge lamp, dash power, wiper/fan coil feeds. The main firewall crossing.",
+      "Ignition feeds, sender signals (temp/oil/tach), charge lamp, dash power, wiper/fan coil feeds. The main firewall crossing — 17 wires across two 10-way GT 280 plugs (10 + 7).",
   },
   {
     id: "bh2",

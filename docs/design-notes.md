@@ -32,7 +32,21 @@ The owned bulkhead plugs are **GT 280 12-way** (Aptiv/Delphi `15326915` male / `
 
 **Rule: 12 cavities max per connector — a deliberate ergonomics cap, NOT a product limit** (GT 280 goes to 16). Past ~12 the housing gets hard to seat/unplug by hand and stresses the latch, defeating a quick dash-disconnect. So a bulkhead needing >12 wires is **split into two 12-ways**, never grown into one giant connector. (BH1 at 17 pins = two 12-ways; everything else is one plug ≤12.) The model auto-splits at 12.
 
-**Right-sizing (lean):** pick the smallest size with one spare cavity — BH2 → 12-way, BH3/BH4 (7 pins) → 8-way, SW3 (7) → 8-way. That lets the **three owned 12-ways cover the dash** (BH1 ×2 + BH2 ×1) and the small bulkheads use cheap 8-ways. A 10-way is the next step up if a rear/front bulkhead later grows past 8.
+**Connector choice per bulkhead:**
+
+| Bulkhead | Pins | Connector |
+|---|---|---|
+| BH1 dash power | 17 | **two 10-way** (10 + 7) — `15326661`/`15326660` |
+| BH2 dash lighting | 12 | one 12-way (owned `15326915`/`15326910`) |
+| BH3 rear | 7 | 8-way |
+| BH4 front | 7 | 8-way |
+| SW3 switch cluster | 7 | 8-way |
+
+BH1 uses **two 10-ways** rather than two 12-ways — right-sized (a little spare each) and avoids the awkward >12 housing. A 10-way is also the fallback for any future bulkhead that grows past 8.
+
+**Gap sizes — there is NO GT 280 5, 7, 9 or 11-way.** The ladder is 2/3/6/8/10/12/14/16. So a 9-pin need → 10-way; a 5-pin need → 6-way with a cavity blanked, or a Metri-Pack 280 5-way (same terminals, different housing).
+
+**Device-side: the two main gauges.** The speedometer and tachometer carry vintage **5-pin** connectors; replacing them keeps the car on one terminal system. Use a **GT 280 6-way (1 cavity blanked)** — male `15326640` + matching female — to stay in-family, or a Metri-Pack 280 5-way for an exact fit. Either reuses the owned MP280 terminals/seals.
 
 **Wire-gauge fit:** Metri-Pack 280 terminals take ~**22–10 AWG (≈0.35–6 mm²)** and are rated ~25–30 A — comfortably covering every wire that goes *through* a connector here (signal/low/medium, 0.75–2.5 mm²). The heavy runs (6 mm² feeds, 16–25 mm² battery/starter/ground) **never go through a connector** — they're ring terminals on studs — so the 280's gauge ceiling is never the limit.
 
