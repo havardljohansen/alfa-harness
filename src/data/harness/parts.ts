@@ -288,7 +288,7 @@ export const bomGaps: BomGap[] = [
   {
     id: "dymo-labels",
     item: "Dymo Rhino heat-shrink label cartridges — sized for the silicone wire",
-    qty: "by gauge (mapping below)",
+    qty: "2–3× 9 mm (18053) + 2–3× 12 mm (18055); +1× 19 mm (18057) & 1× 24 mm (1805443) if labelling the heavy feeds",
     category: "consumable",
     reason:
       "One wire colour — the printed heat-shrink labels are the identity. Pick the cartridge whose RECOVERED Ø range covers the wire OD so it slides on then shrinks snug. Silicone insulation is fatter than PVC, so size UP one step. Recovered ranges: 6mm 18051 = 1.18–2.33, 9mm 18053 = 1.73–3.73, 12mm 18055 = 2.97–5.13, 19mm 18057 = 4.64–8.70, 24mm 1805443 = 6.00–11.0 mm. Silicone-adjusted mapping: 0.75 mm² → 9mm (18053); 1.5 + 2.5 mm² → 12mm (18055); 6 mm² → 19mm (18057); 25 mm² → 24mm (1805443). MEASURE your actual wire OD and confirm before buying.",
