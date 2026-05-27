@@ -24,6 +24,18 @@ The non-bussed Bussmann RTMR (**15305-4-0-4**) is owned but **not used** in this
 Everything — PDM, RTMRs, inter-harness plugs — uses **Aptiv/Delphi Metri-Pack 280**
 terminals, so one crimp system covers the whole car.
 
+## Bulkhead connectors — sizes & the 12-way rule
+
+The owned bulkhead plugs are **GT 280 12-way** (Aptiv/Delphi `15326915` male / `15326910` female), part of the **Metri-Pack 280** sealed family.
+
+**Available cavity counts (Metri-Pack 280 sealed, inline):** 1, 2, 3, 4, 5, 6, 7 standard, plus specialty **8** and the owned **12**. A 30-way "480" junction block exists but it's a big multi-row housing — exactly the kind that's awkward to mate/unmate by hand.
+
+**Rule: 12 cavities max per connector.** Anything bigger gets hard to seat and unplug (and stresses the latch), which defeats the point of a quick dash-disconnect. So a bulkhead that needs >12 wires is **split into two 12-ways**, never grown into one giant connector. (BH1 at 17 pins = two 12-ways; everything else is one plug ≤12.) The model auto-splits at 12.
+
+**Wire-gauge fit:** Metri-Pack 280 terminals take ~**22–10 AWG (≈0.35–6 mm²)** and are rated ~25–30 A — comfortably covering every wire that goes *through* a connector here (signal/low/medium, 0.75–2.5 mm²). The heavy runs (6 mm² feeds, 16–25 mm² battery/starter/ground) **never go through a connector** — they're ring terminals on studs — so the 280's gauge ceiling is never the limit.
+
+**Should we switch connector type?** Investigated **Deutsch DT** (the usual DIY alternative): easier hand-assembly (cheap open-barrel crimper, forgiving solid pins, wedge lock) but a *narrower* gauge range (~12–20 AWG), lower current (~13 A), and it also tops out around 12-way. **Verdict: stay on GT 280 / Metri-Pack 280.** The connectors, terminals, seals and crimp tool are already owned, the gauge range fits everything crossing a plug with margin, it's sealed (IP-rated), and keeping one terminal system across the whole car is itself the biggest ease-of-install win. Deutsch DT would only make sense if starting tooling from scratch. The low-current **SW3 switch cluster** (8-way) could use a smaller/cheaper sealed connector, but an 8-way Metri-Pack keeps the single-crimp-system advantage.
+
 ## Relays (6 SPST + 5 SPDT = exactly the 11 owned)
 
 - **SPST:** low beam, high beam, horn, heater fan, fuel pump, **ignition main** (offloads

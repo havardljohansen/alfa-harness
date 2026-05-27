@@ -27,6 +27,8 @@ interface LogicalBulkhead {
   purpose: string;
   /** "gt280" big 12-way bulkhead (default) or "cluster" smaller low-current connector. */
   family?: "gt280" | "cluster";
+  /** Cavities in this connector. Defaults to the 12-way GT 280; clusters size to fit. */
+  ways?: number;
 }
 
 export const logicalBulkheads: LogicalBulkhead[] = [
@@ -67,8 +69,9 @@ export const logicalBulkheads: LogicalBulkhead[] = [
     zoneA: "engine-rear",
     zoneB: "dash",
     family: "cluster",
+    ways: 8,
     purpose:
-      "The three vintage 3-way switches (wipers / instrument-lights / heater-fan) plug in here. They sit just above where the main loom enters the firewall, so the cluster taps the loom at that point rather than at the end of the dash harness — unplug this one connector to drop all three switches. All pins are low-current (switch coil/select signals only), so this needn't be a 12-way GT 280 like the big bulkheads — a smaller 9–12-way connector is fine.",
+      "The three vintage 3-way switches (wipers / instrument-lights / heater-fan) plug in here. They sit just above where the main loom enters the firewall, so the cluster taps the loom at that point rather than at the end of the dash harness — unplug this one connector to drop all three switches. 7 low-current pins used (1 piggybacked feed + 6 outputs); an 8-way connector fits with one spare — which also covers a shared ground pin if the switches are ever swapped for illuminated ones. Needn't be a GT 280.",
   },
 ];
 
@@ -81,13 +84,14 @@ function chunk<T>(arr: T[], size: number): T[][] {
 // Build the physical connectors by splitting each logical bulkhead into 12-way plugs.
 export const connectors: ConnectorGroup[] = logicalBulkheads.flatMap((lb) => {
   const lbWires = wires.filter((w) => w.via?.includes(lb.id));
-  const groups = chunk(lbWires, WAYS);
   const family = lb.family ?? "gt280";
   const cluster = family === "cluster";
+  const ways = lb.ways ?? WAYS;
+  const groups = chunk(lbWires, ways);
   return groups.map((groupWires, gi) => ({
     id: groups.length > 1 ? `${lb.id}-${gi + 1}` : lb.id,
     name: groups.length > 1 ? `${lb.name} (plug ${gi + 1}/${groups.length})` : lb.name,
-    ways: WAYS,
+    ways,
     partRefMale: cluster ? "(small 9–12-way connector — TBD)" : "15326915",
     partRefFemale: cluster ? "(small 9–12-way connector — TBD)" : "15326910",
     zoneA: lb.zoneA,
