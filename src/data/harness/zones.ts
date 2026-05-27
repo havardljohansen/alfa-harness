@@ -48,14 +48,26 @@ export const zones: Zone[] = [
 // ~4.08 m Giulia GT.
 // ---------------------------------------------------------------------------
 export const zoneLinks: ZoneLink[] = [
-  { from: "battery", to: "engine-front", routeMm: 900 },
-  { from: "battery", to: "engine-rear", routeMm: 700 },
-  { from: "engine-front", to: "engine-rear", routeMm: 800 },
-  { from: "engine-rear", to: "dash", routeMm: 700 }, // through the bulkhead
-  { from: "dash", to: "cabin", routeMm: 600 },
-  { from: "cabin", to: "rear", routeMm: 2600 }, // along the sill to the boot
-  { from: "dash", to: "rear", routeMm: 3000 }, // direct dash->rear run
-  { from: "engine-front", to: "dash", routeMm: 1300 }, // front lamps loom to dash
+  { from: "battery", to: "engine-front", routeMm: 900, measure: "Battery post → front cross-panel (PDM + front-lamp area), along the inner wing." },
+  { from: "battery", to: "engine-rear", routeMm: 700, measure: "Battery post → firewall/bulkhead hub (coil, starter, the two RTMRs)." },
+  { from: "engine-front", to: "engine-rear", routeMm: 800, measure: "Front cross-panel → firewall hub across the bay (PDM/front lamps ↔ RTMR hub)." },
+  { from: "engine-rear", to: "dash", routeMm: 700, measure: "Through the firewall bulkhead grommet into the back of the dash (the BH1/BH2 crossing)." },
+  { from: "dash", to: "cabin", routeMm: 600, measure: "Behind the dash down into the footwell / cabin." },
+  { from: "cabin", to: "rear", routeMm: 2600, measure: "Along the sill from the footwell to the boot." },
+  { from: "dash", to: "rear", routeMm: 3000, measure: "Direct dash → boot run — the rear loom's main spine (BH3 to the tail)." },
+  { from: "engine-front", to: "dash", routeMm: 1300, measure: "Front lamp / PDM area → dash — the lighting & signal loom (BH2/BH4 path)." },
+];
+
+// Heavy single cables worth measuring on their own — each is a discrete run
+// (not a loom bundle) and dominates the thick-gauge totals.
+export const heavyRunsToMeasure = [
+  { label: "Battery − → engine-bay ground hub", note: "Main earth bond (heavy)." },
+  { label: "Battery + → starter post", note: "Starter cable — size to the motor." },
+  { label: "Alternator B+ → battery / junction", note: "Charge cable (mega-fused)." },
+  { label: "Battery + → PDM input", note: "Front headlight-power feed (MIDI-fused)." },
+  { label: "Front-clip ground block → hub", note: "Front module ground trunk." },
+  { label: "Dash ground block → hub", note: "Dash module ground trunk." },
+  { label: "Rear/boot ground block → hub", note: "Rear module ground trunk (full-length)." },
 ];
 
 /** Allowance added inside a single zone when from/to are in the same zone. */

@@ -1,5 +1,5 @@
 import { bandBuckets, tierTotals, gaugeTotals, resolvedWires } from "@/data/harness";
-import { wireTiers, zoneLinks } from "@/data/harness/zones";
+import { wireTiers, zoneLinks, heavyRunsToMeasure } from "@/data/harness/zones";
 
 export default function LengthsPage() {
   const total = resolvedWires.reduce((a, w) => a + w.lengthMm, 0);
@@ -107,15 +107,42 @@ export default function LengthsPage() {
         </div>
       </section>
 
-      <section className="text-xs text-muted">
-        <h3 className="text-sm font-semibold text-fg mb-1">Zone route distances (editable)</h3>
-        <div className="flex flex-wrap gap-x-4 gap-y-0.5 font-mono">
-          {zoneLinks.map((l, i) => (
-            <span key={i}>
-              {l.from}→{l.to}: {(l.routeMm / 1000).toFixed(1)} m
-            </span>
-          ))}
+      <section>
+        <h2 className="text-lg font-semibold mb-1">Measure these in the car</h2>
+        <p className="text-xs text-muted mb-2 max-w-3xl">
+          Every wire length above is built from these inter-zone route segments. Tape-measure each one
+          <strong> along the intended loom path</strong> (not straight-line) and update <code>routeMm</code> in
+          <code> zones.ts</code> — the gauge totals then become exact. Estimates shown are for a ~4.08 m Giulia GT.
+        </p>
+        <div className="overflow-auto border rounded-lg">
+          <table className="wtable">
+            <thead>
+              <tr><th>Segment</th><th>What to measure</th><th>Estimate</th></tr>
+            </thead>
+            <tbody>
+              {zoneLinks.map((l, i) => (
+                <tr key={i}>
+                  <td className="font-mono text-xs whitespace-nowrap">{l.from} → {l.to}</td>
+                  <td className="text-xs text-muted">{l.measure}</td>
+                  <td className="font-mono whitespace-nowrap">{(l.routeMm / 1000).toFixed(1)} m</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+
+        <h3 className="text-sm font-semibold mt-3 mb-1">Heavy single cables — measure each directly</h3>
+        <p className="text-xs text-muted mb-2 max-w-3xl">
+          These thick runs dominate the heavy-gauge total and each is its own cable (not a loom bundle), so
+          measure them point-to-point.
+        </p>
+        <ul className="text-xs space-y-0.5">
+          {heavyRunsToMeasure.map((h, i) => (
+            <li key={i}>
+              <span className="font-mono">{h.label}</span> <span className="text-muted">— {h.note}</span>
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   );

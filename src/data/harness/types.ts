@@ -36,6 +36,8 @@ export interface ZoneLink {
   from: ZoneId;
   to: ZoneId;
   routeMm: number;
+  /** What to physically tape-measure in the car for this leg (the checklist). */
+  measure?: string;
 }
 
 // ---------------------------------------------------------------------------
