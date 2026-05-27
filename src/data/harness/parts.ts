@@ -236,12 +236,12 @@ export const ownedParts: PartItem[] = [
 export const bomGaps: BomGap[] = [
   {
     id: "wire",
-    item: "Automotive wire (TXL/GXL, single colour as planned)",
+    item: "Silicone-insulated tinned-copper wire (single colour + Dymo labels)",
     qty: "≈ see length report — by gauge",
     category: "wire",
     reason:
-      "Neither order includes wire. You chose one colour + Dymo labels, so order by gauge: 0.5, 0.75, 1.0, 2.5, 6.0 and 16 mm². Totals on the Lengths page.",
-    suggestion: "TXL preferred (thinner wall, higher temp) for the engine bay.",
+      "Silicone-insulated tinned-copper chosen for heat resistance + long-term durability. One colour throughout — identity is the Dymo heat-shrink labels. Order by gauge tier: 0.75 / 1.5 / 2.5 / 6 / 25 mm² (totals on the Lengths page). Note: silicone insulation is FATTER than PVC/XLPE of the same gauge, which sizes up the label + heat-shrink (see the Dymo line).",
+    suggestion: "Silicone tinned-copper, AWG matched to each gauge tier.",
   },
   {
     id: "mini-fuses",
@@ -280,10 +280,29 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "loom",
-    item: "Convoluted tubing / adhesive heat-shrink / Dymo heat-shrink cartridges / grommets / cable ties / loom tape",
+    item: "Convoluted tubing / grommets / cable ties / cloth loom tape",
     qty: "as needed",
     category: "consumable",
-    reason: "Loom protection, bulkhead grommets, the printed wire labels themselves, plus cable ties + cloth loom tape to dress and secure the bundles.",
+    reason: "Loom protection, bulkhead grommets, and cable ties + cloth loom tape to dress and secure the bundles. (Wire labels + the spade adhesive shrink are their own lines.)",
+  },
+  {
+    id: "dymo-labels",
+    item: "Dymo Rhino heat-shrink label cartridges — sized for the silicone wire",
+    qty: "by gauge (mapping below)",
+    category: "consumable",
+    reason:
+      "One wire colour — the printed heat-shrink labels are the identity. Pick the cartridge whose RECOVERED Ø range covers the wire OD so it slides on then shrinks snug. Silicone insulation is fatter than PVC, so size UP one step. Recovered ranges: 6mm 18051 = 1.18–2.33, 9mm 18053 = 1.73–3.73, 12mm 18055 = 2.97–5.13, 19mm 18057 = 4.64–8.70, 24mm 1805443 = 6.00–11.0 mm. Silicone-adjusted mapping: 0.75 mm² → 9mm (18053); 1.5 + 2.5 mm² → 12mm (18055); 6 mm² → 19mm (18057); 25 mm² → 24mm (1805443). MEASURE your actual wire OD and confirm before buying.",
+    suggestion:
+      "DYMO Rhino 18053 (9 mm) + 18055 (12 mm) cover the signal/power wires; 18057 (19 mm) + 1805443 (24 mm) for the heavy feeds. https://dymo.eu/labels-tapes/rhino-tapes/heat-shrink-tubing.html",
+  },
+  {
+    id: "heatshrink-spade",
+    item: "Adhesive-lined heat-shrink (dual-wall, 3:1) for the spade terminations — sized",
+    qty: "~3 m of ⌀9 mm + ~1 m of ⌀6 mm (≈133 ends + spares)",
+    category: "consumable",
+    reason:
+      "Adhesive 3:1 shrink over each device-end faston crimp for insulation + strain relief. Size to the terminal series: ⌀9 mm (⅜″) over the 250-series (6.3 mm) fastons — the bulk (lamps/switches/horns/relay device side, 1.0–2.5 mm²); ⌀6 mm (¼″) over the 187-series (4.8 mm) fastons (gauges/small switches, 0.75 mm²). The 3:1 ratio lets it shrink from the wide crimp barrel down onto the thinner wire.",
+    suggestion: "Dual-wall adhesive-lined 3:1, ⌀9 mm + ⌀6 mm. (Heavier ring/B+ ends use boots — see battery terminals.)",
   },
   {
     id: "battery-terminals",
