@@ -28,14 +28,18 @@ const isConnector = (id: string) => connName.has(id);
 // Ground is a common rail, not a hub: routing every load into one gnd node makes
 // a star that swamps the picture. Keep it OUT of the graph and show it as a rail.
 const isGround = (id: string) => node.get(id)?.kind === "ground";
-// Lane assignment: connectors are the left boundary, end-of-line devices the
-// right lane; power blocks (and switches) fall in the middle by themselves.
+// Lane assignment via PARTITIONING (not FIRST/LAST layer constraints): the
+// connectors are the left lane (0), end-of-line devices the right lane (2),
+// power blocks + switches the middle (1). Partitioning enforces the left→right
+// lane order WITHOUT the FIRST/LAST restriction that a constrained node's
+// edges must go to a *_SEPARATE node — which the device→device jumpers (park
+// L→R, tail L→R, side repeaters) were violating and crashing ELK.
 const DEVICE_KINDS = new Set(["lamp", "warning-light", "horn", "motor", "pump", "gauge", "sender", "sensor"]);
-const layerConstraint = (id: string): string | undefined => {
-  if (isConnector(id)) return "FIRST";
+const partitionOf = (id: string): string => {
+  if (isConnector(id)) return "0";
   const k = node.get(id)?.kind;
-  if (k && DEVICE_KINDS.has(k)) return "LAST";
-  return undefined;
+  if (k && DEVICE_KINDS.has(k)) return "2";
+  return "1";
 };
 
 const GROUP_COLOR: Record<CircuitGroup, string> = {
@@ -127,12 +131,12 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
         "elk.algorithm": "layered", "elk.direction": "RIGHT",
         "elk.layered.spacing.nodeNodeBetweenLayers": "90", "elk.spacing.nodeNode": "24",
         "elk.edgeRouting": "ORTHOGONAL",
-        // Honour the FIRST/LAST lane pins (semiInteractive), but let ELK reorder
-        // EDGES freely to minimise crossings (NODES, not NODES_AND_EDGES), spend
-        // more effort on it (thoroughness), and SPACE parallel wires apart so they
-        // stop stacking on top of each other (the edgeEdge/edgeNode spacings).
+        // Lanes via partitioning (connectors 0 / blocks 1 / devices 2) — robust
+        // to device→device jumpers, unlike FIRST/LAST. Let ELK reorder EDGES to
+        // minimise crossings, spend more effort on it, and SPACE parallel wires
+        // apart so they stop stacking (the edgeEdge/edgeNode spacings).
+        "elk.partitioning.activate": "true",
         "elk.layered.considerModelOrder.strategy": "NODES",
-        "elk.layered.crossingMinimization.semiInteractive": "true",
         "elk.layered.thoroughness": "40",
         "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
         "elk.spacing.edgeEdge": "14",
@@ -140,11 +144,12 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
         "elk.layered.spacing.edgeEdgeBetweenLayers": "14",
         "elk.layered.spacing.edgeNodeBetweenLayers": "18",
       },
-      children: base.items.map((it) => {
-        const lc = layerConstraint(it.id);
-        const layoutOptions: Record<string, string> = lc ? { "elk.layered.layering.layerConstraint": lc } : {};
-        return { id: it.id, width: 132, height: 30, layoutOptions };
-      }),
+      children: base.items.map((it) => ({
+        id: it.id,
+        width: 132,
+        height: 30,
+        layoutOptions: { "elk.partitioning.partition": partitionOf(it.id) },
+      })),
       edges: base.rfEdges.map((e) => ({ id: e.id, sources: [e.source], targets: [e.target] })),
     };
     let live = true;
