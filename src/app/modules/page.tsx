@@ -1,5 +1,5 @@
 import { harnessModules } from "@/data/harness/modules";
-import { ModuleDiagram } from "@/components/module-diagram";
+import { ElkModuleDiagram } from "@/components/elk-module-diagram";
 
 // public/ assets are served under the GH Pages base path in production.
 const basePath = process.env.GH_PAGES === "true" ? "/alfa-harness" : "";
@@ -50,9 +50,10 @@ export default function ModulesPage() {
                 detailed WireViz drawing ↗
               </a>
             </div>
-            <ModuleDiagram moduleId={m.id} />
+            <ElkModuleDiagram moduleId={m.id} />
             <p className="text-[10px] text-muted mt-1">
-              Solid boxes = this module; dashed/dimmed = off-module parts it plugs into. Wires coloured by circuit.
+              ELK auto-layout. Boxes are numbered + named; the key below shows each part&apos;s symbol + terminals.
+              Solid = this module; dashed/dimmed = off-module parts it plugs into. Wires coloured by circuit.
             </p>
           </div>
 
