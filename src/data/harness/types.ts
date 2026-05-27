@@ -183,6 +183,8 @@ export interface ConnectorGroup {
   zoneB: ZoneId;
   purpose: string;
   pins: ConnectorPin[];
+  /** "gt280" = the big 12-way bulkhead pairs; "cluster" = a smaller low-current connector. */
+  family?: "gt280" | "cluster";
 }
 
 // ---------------------------------------------------------------------------

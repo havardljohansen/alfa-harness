@@ -35,7 +35,7 @@ export interface SimResult {
 
 const ep = (comp: string, term: string) => `${comp}.${term}`;
 
-const GROUND_NODES = [ep("battery", "-"), ep("gnd-eng", "g"), ep("gnd-dash", "g"), ep("gnd-rear", "g")];
+const GROUND_NODES = [ep("battery", "-"), ep("gnd-eng", "g"), ep("gnd-dash", "g"), ep("gnd-rear", "g"), ep("gnd-front", "g")];
 const HOT_NODES = [ep("battery", "+")];
 
 const IGN_POSITION_NAME: Record<IgnitionPos, string> = {

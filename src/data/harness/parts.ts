@@ -271,10 +271,12 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "ground",
-    item: "Ground bus / ring terminals / braid straps",
-    qty: "3 ground points + engine-to-body strap",
+    item: "Ground blocks/busbars (×4) + thick trunk cable + ring terminals + engine-to-body strap",
+    qty: "4 ground blocks (hub + front + dash + rear), 3 module trunks, 1 engine strap",
     category: "consumable",
-    reason: "Dedicated star grounds (engine bay, dash, rear) replace reliance on body return paths.",
+    reason:
+      "Each detachable module has its own ground block collecting that section's grounds, with ONE thick (≈6 mm²) trunk back to the engine-bay/battery hub. No body-as-return reliance. Hub→battery − is the heavy main bond.",
+    suggestion: "Small brass/tinned busbars or M6 ground studs for the blocks; 6 mm² for the trunks, 16 mm² hub-to-battery.",
   },
   {
     id: "loom",

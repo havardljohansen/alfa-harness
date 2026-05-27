@@ -10,6 +10,7 @@ import { wires } from "./wires";
 //   BH1 — power & instruments (engine ↔ dash)
 //   BH2 — lighting & signal triggers (engine-front ↔ dash)
 //   BH3 — rear loom (engine-front ↔ rear)
+//   BH4 — front clip: PDM + front lamps, blinkers & horn (detaches from main loom)
 //
 // The reality (surfaced on the BOM page): the crossings need MORE than three
 // 12-way plugs, so a couple of extra GT 280 pairs are required — or step up to
@@ -24,6 +25,8 @@ interface LogicalBulkhead {
   zoneA: ZoneId;
   zoneB: ZoneId;
   purpose: string;
+  /** "gt280" big 12-way bulkhead (default) or "cluster" smaller low-current connector. */
+  family?: "gt280" | "cluster";
 }
 
 export const logicalBulkheads: LogicalBulkhead[] = [
@@ -50,6 +53,23 @@ export const logicalBulkheads: LogicalBulkhead[] = [
     zoneB: "rear",
     purpose: "To the boot: tail, brake, rear turn, plate, reverse, fuel pump, tank sender.",
   },
+  {
+    id: "bh4",
+    name: "Front clip — lighting, blinkers & horn",
+    zoneA: "engine-rear",
+    zoneB: "engine-front",
+    purpose:
+      "The whole front-of-car module unplugs here: headlight PDM + beams, front position lamps, front turn signals + side repeaters, and the horns. Beam-relay triggers and the main-beam tell-tale pass through from the dash; the turn/horn relay outputs come from the main loom. The PDM's battery feed (ring terminal) and the front-clip ground trunk are separate heavy cables, so this one signal plug frees the front clip.",
+  },
+  {
+    id: "sw3",
+    name: "3-way switch cluster (firewall)",
+    zoneA: "engine-rear",
+    zoneB: "dash",
+    family: "cluster",
+    purpose:
+      "The three vintage 3-way switches (wipers / instrument-lights / heater-fan) plug in here. They sit just above where the main loom enters the firewall, so the cluster taps the loom at that point rather than at the end of the dash harness — unplug this one connector to drop all three switches. All pins are low-current (switch coil/select signals only), so this needn't be a 12-way GT 280 like the big bulkheads — a smaller 9–12-way connector is fine.",
+  },
 ];
 
 function chunk<T>(arr: T[], size: number): T[][] {
@@ -62,15 +82,18 @@ function chunk<T>(arr: T[], size: number): T[][] {
 export const connectors: ConnectorGroup[] = logicalBulkheads.flatMap((lb) => {
   const lbWires = wires.filter((w) => w.via?.includes(lb.id));
   const groups = chunk(lbWires, WAYS);
+  const family = lb.family ?? "gt280";
+  const cluster = family === "cluster";
   return groups.map((groupWires, gi) => ({
     id: groups.length > 1 ? `${lb.id}-${gi + 1}` : lb.id,
     name: groups.length > 1 ? `${lb.name} (plug ${gi + 1}/${groups.length})` : lb.name,
     ways: WAYS,
-    partRefMale: "15326915",
-    partRefFemale: "15326910",
+    partRefMale: cluster ? "(small 9–12-way connector — TBD)" : "15326915",
+    partRefFemale: cluster ? "(small 9–12-way connector — TBD)" : "15326910",
     zoneA: lb.zoneA,
     zoneB: lb.zoneB,
     purpose: lb.purpose,
+    family,
     pins: groupWires.map((w, i) => ({
       pin: i + 1,
       wireLabel: w.label,
@@ -80,6 +103,6 @@ export const connectors: ConnectorGroup[] = logicalBulkheads.flatMap((lb) => {
   }));
 });
 
-/** How many 12-way GT 280 pairs the design needs (vs the 3 owned). */
-export const connectorPairsNeeded = connectors.length;
+/** How many 12-way GT 280 bulkhead pairs the design needs (vs the 3 owned). Clusters excluded. */
+export const connectorPairsNeeded = connectors.filter((c) => c.family !== "cluster").length;
 export const connectorPairsOwned = 3;

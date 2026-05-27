@@ -52,11 +52,12 @@ export const buildOrder: BuildPhase[] = [
     id: "grounds",
     title: "3 · Grounds first",
     why: "The ground network is the thing most often skimped — do it before any load wiring so every device has a clean return.",
-    parts: ["Ground busbars ×3", "Earth braid straps (engine ↔ body)", "16 mm² ground cable", "Ring terminals"],
+    parts: ["Ground blocks/busbars ×4 (hub + front + dash + rear)", "Earth braid strap (engine ↔ body)", "16 mm² hub cable + 6 mm² module trunks", "Ring terminals"],
     steps: [
-      { text: "Install the three star-ground buses: engine bay, dash, rear." },
-      { text: "Bond the engine block to the body, and battery − to the engine-bay ground." },
-      { text: "Run the dash and rear ground buses back to the engine-bay ground." },
+      { text: "Set the engine-bay HUB block. Bond battery − and the engine block to it (16 mm²)." },
+      { text: "Install each module's ground block: front clip, dash, rear/boot." },
+      { text: "Run ONE thick (6 mm²) trunk from each module block back to the hub — front, dash (through BH1), rear (direct, not via the dash)." },
+      { text: "Land every device ground in a section on that section's block — no device grounds straight to the body." },
     ],
   },
   {

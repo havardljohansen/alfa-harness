@@ -24,7 +24,7 @@ export const fuses: Fuse[] = [
   { id: "f-ign-6", block: "rtmr-ign", position: 6, ratingA: 20, name: "Heater blower", circuit: "c-cooling", source: "bus", feeds: "Fan relay output" },
   { id: "f-ign-7", block: "rtmr-ign", position: 7, ratingA: 7.5, name: "Reverse light", circuit: "c-reverse", source: "bus", feeds: "Reverse lamp via gearbox switch" },
   { id: "f-ign-8", block: "rtmr-ign", position: 8, ratingA: 10, name: "Fuel pump", circuit: "c-fuel", source: "bus", feeds: "Electric fuel pump via relay" },
-  { id: "f-ign-9", block: "rtmr-ign", position: 9, ratingA: 7.5, name: "Instrument lights", circuit: "c-instruments", source: "bus", feeds: "Panel illumination (pos-I)" },
+  { id: "f-ign-9", block: "rtmr-ign", position: 9, ratingA: 7.5, name: "3-way switch cluster + panel dimmer", circuit: "c-instruments", source: "bus", feeds: "Single low-current supply piggybacked across all three 3-way switches; also powers the panel dimmer via the instrument-light switch" },
   { id: "f-ign-10", block: "rtmr-ign", position: 10, ratingA: 5, name: "O2 / AFR (future)", circuit: "c-future-o2", source: "bus", feeds: "Wideband controller + AFR gauge", future: true },
 
   // --- Constant bus (RTMR, bussed; battery direct) --------------------------
