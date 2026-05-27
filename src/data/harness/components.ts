@@ -315,13 +315,13 @@ const switches: SwitchComponent[] = [
     name: "Instrument-light switch (3-position)",
     kind: "switch",
     zone: "dash",
-    terminals: [t("in", "Position-I lights feed", "58"), t("dim", "Dim", "58d"), t("bright", "Bright", "58")],
+    terminals: [t("in", "Position-I feed", "58"), t("dim", "→ dimmer DIM preset", ""), t("bright", "→ dimmer BRIGHT preset", "")],
     positions: [
       { name: "Off", closes: [] },
       { name: "Dim", closes: [["in", "dim"]] },
       { name: "Bright", closes: [["in", "bright"]] },
     ],
-    note: "Fed from ignition position I so the panel lights come up at the first key detent. Dim position can go via a resistor if desired.",
+    note: "Fed from ignition position I so the panel lights come up at the first key detent. Drives the instrument-light PWM dimmer: Dim/Bright pick two brightness presets and the dimmer carries the lamp feed as one circuit to all gauges.",
   },
   {
     id: "sw-heaterfan",
@@ -414,6 +414,19 @@ const motors: DeviceComponent[] = [
       t("out", "To blower motor", ""),
     ],
     note: "Carries the blower current at reduced speed; the switch only supplies the low-current enable. Omit if you don't want a low speed.",
+  },
+  {
+    id: "instr-pwm",
+    name: "Instrument-light PWM dimmer module",
+    kind: "resistor",
+    zone: "dash",
+    terminals: [
+      t("lo", "In — DIM preset (from switch)", ""),
+      t("hi", "In — BRIGHT preset (from switch)", ""),
+      t("out", "To panel illumination (single circuit)", "58"),
+      t("g", "Ground reference", "31"),
+    ],
+    note: "All panel illumination on one dimmable feed. The 3-way switch powers one of two preset inputs (Dim/Bright); the module PWMs the lamp feed to that level, and its single output daisy-chains every gauge's illumination lamp. (Prefer a rotary-knob dimmer? Wire the switch as plain Off/On into one input and set brightness on the knob.)",
   },
 ];
 

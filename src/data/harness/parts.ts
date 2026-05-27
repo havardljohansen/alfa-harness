@@ -291,6 +291,15 @@ export const bomGaps: BomGap[] = [
     reason: "Only needed if you implement the switch's low position as a reduced-speed setting.",
   },
   {
+    id: "instr-dimmer",
+    item: "Instrument-light PWM dimmer module",
+    qty: "1",
+    category: "component",
+    reason:
+      "Panel illumination now runs as one circuit through a PWM dimmer; the 3-way instrument-light switch picks two brightness presets. A simple low-side LED/bulb PWM dimmer (with a rotary pot, or two preset inputs) carries the small lamp load.",
+    suggestion: "Any 12 V automotive LED PWM dimmer rated ≥ 3 A is plenty for panel lamps.",
+  },
+  {
     id: "relay-base-extra",
     item: "Headlight relays already covered — confirm relay count vs plan",
     qty: "0–1",

@@ -42,6 +42,32 @@ export const scenarios: Scenario[] = [
     },
   },
   {
+    id: "instr-lights-off",
+    story: "Key in Run but instrument-light switch Off → panel illumination is dark (dimmer output not fed).",
+    state: { ignition: "run", switches: { "sw-instr": "Off" } },
+    expect: {
+      dead: [["instr-pwm", "out"], ["g-fuel", "ill"]],
+    },
+  },
+  {
+    id: "instr-lights-bright",
+    story: "Key in Run, instrument-light switch Bright → the PWM dimmer feeds one circuit to all gauge illumination.",
+    state: { ignition: "run", switches: { "sw-instr": "Bright" } },
+    expect: {
+      live: [["instr-pwm", "hi"], ["instr-pwm", "out"], ["g-fuel", "ill"]],
+      dead: [["instr-pwm", "lo"]],
+    },
+  },
+  {
+    id: "instr-lights-dim",
+    story: "Key in Run, instrument-light switch Dim → the dimmer feeds the same single illumination circuit (at the dim preset).",
+    state: { ignition: "run", switches: { "sw-instr": "Dim" } },
+    expect: {
+      live: [["instr-pwm", "lo"], ["instr-pwm", "out"], ["g-fuel", "ill"]],
+      dead: [["instr-pwm", "hi"]],
+    },
+  },
+  {
     id: "position-keyoff",
     story: "Key out, headlight switch to Position → side/tail/plate lamps light (they must work key-off).",
     state: { ignition: "off", switches: { "sw-headlight": "Position" } },

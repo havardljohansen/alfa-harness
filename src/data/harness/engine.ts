@@ -96,6 +96,13 @@ function staticEdges(): Edge[] {
   // --- Flasher pass-through (we model "powered", not the oscillation) -------
   edges.push({ a: ep("flasher", "49"), b: ep("flasher", "49a"), directed: false });
 
+  // --- Instrument-light PWM dimmer: either preset input feeds the lamp out ---
+  // Directed (input -> output): the module's output is electronically isolated
+  // from its control inputs, so a live output must not backfeed the other
+  // preset. Boolean model — brightness level isn't represented, just lit/dark.
+  edges.push({ a: ep("instr-pwm", "lo"), b: ep("instr-pwm", "out"), directed: true });
+  edges.push({ a: ep("instr-pwm", "hi"), b: ep("instr-pwm", "out"), directed: true });
+
   // --- Relay coil fixed side -----------------------------------------------
   for (const r of relays) {
     if (GROUND_TRIGGERED.has(r.id)) {
