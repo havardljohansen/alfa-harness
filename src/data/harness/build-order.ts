@@ -116,10 +116,11 @@ export const buildOrder: BuildPhase[] = [
       "Electronic (load-independent) flasher — mounted external, next to the constant RTMR",
       "H4 headlight bulbs (if upgrading)",
       "Heater-fan dropping resistor (optional, for low speed)",
+      "USB-C PD converter + Bluetooth-amp stereo (accessory circuit)",
     ],
     steps: [
-      { text: "Order: charging → ignition (+ main relay) → starting (+ starter relay) → headlights → position/tail → turn/hazard → brake/reverse → instruments → wipers → fan → fuel pump → horn → interior.", ref: "/build" },
-      { text: "After each circuit, set the key + switches and confirm the right things light.", ref: "/explorer" },
+      { text: "Order: charging → ignition (+ main relay) → starting (+ starter relay) → headlights (switch = beams only) → position/tail (ignition running lights, no switch) → turn/hazard → brake/reverse → instruments → wipers → fan → fuel pump → horn → accessory (USB/stereo) → interior.", ref: "/build" },
+      { text: "After each circuit, set the key + switches and confirm the right things light — and that the WRONG things stay dark (the negative scenarios on /explorer guard the sneak paths).", ref: "/explorer" },
     ],
   },
   {

@@ -167,7 +167,7 @@ export const harnessModules: HarnessModule[] = [
       "Fuel-tank sender",
     ],
     interfaces: [
-      "BH3 — rear loom: switched position/tail, brake, rear turn L/R, reverse, fuel-pump feed, tank-sender signal",
+      "BH3 — rear loom: ignition running-light tail (on with the key), brake (constant, key-off), rear turn L/R, reverse, fuel-pump feed, tank-sender signal",
       "Rear ground trunk → battery hub — direct, NOT daisy-chained through the dash",
     ],
     ground: "Rear/boot ground block (gnd-rear) — all rear lamps + pump; one thick trunk straight to the hub.",
