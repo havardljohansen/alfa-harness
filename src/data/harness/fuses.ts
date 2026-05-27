@@ -36,8 +36,4 @@ export const fuses: Fuse[] = [
   { id: "f-con-6", block: "rtmr-const", position: 6, ratingA: 5, name: "Interior light", circuit: "c-interior", source: "bus", feeds: "Courtesy light + door switches" },
   { id: "f-con-7", block: "rtmr-const", position: 7, ratingA: 0, name: "Spare (was cigar lighter)", circuit: "c-future-spare", source: "bus", feeds: "Reserved — lighter removed, hazard switch took its place", future: true },
   { id: "f-con-8", block: "rtmr-const", position: 8, ratingA: 10, name: "Flasher constant feed", circuit: "c-turn", source: "bus", feeds: "Constant feed to flasher → turn relay commons (lets hazards flash key-off)" },
-
-  // --- Non-bussed (rear / independent) — mostly reserved --------------------
-  { id: "f-rear-1", block: "rtmr-rear", position: 1, ratingA: 0, name: "Spare", circuit: "c-future-spare", source: "battery", feeds: "Reserved", future: true },
-  { id: "f-rear-2", block: "rtmr-rear", position: 2, ratingA: 0, name: "Spare", circuit: "c-future-spare", source: "battery", feeds: "Reserved", future: true },
 ];

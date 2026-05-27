@@ -18,7 +18,8 @@ Engineering decisions behind the model. Everything here is reflected in
 |---|---|---|
 | Littelfuse HWB18 **PDM** (9-ckt, 100 A, IP69K) | 1 | Headlight power centre — holds the low/high beam relays + beam fuses |
 | Bussmann RTMR **15306-2-2-4** (bussed) | 2 | One **ignition** bus (fed by the ignition main relay), one **constant** battery bus |
-| Bussmann RTMR **15305-4-0-4** (non-bussed) | 1 | Rear / independent-feed centre, or spare |
+
+The non-bussed Bussmann RTMR (**15305-4-0-4**) is owned but **not used** in this harness — kept on the shelf as a spare / for a future independent-feed circuit.
 
 Everything — PDM, RTMRs, inter-harness plugs — uses **Aptiv/Delphi Metri-Pack 280**
 terminals, so one crimp system covers the whole car.

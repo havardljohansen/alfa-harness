@@ -37,7 +37,7 @@ export const buildOrder: BuildPhase[] = [
     why: "Fix the fixed points first so you can measure looms to them.",
     parts: [
       "Littelfuse PDM ×1",
-      "Bussmann RTMR ×2 (the non-bussed one is a spare)",
+      "Bussmann RTMR ×2 (both bussed — constant + ignition bus)",
       "GT 280 12-way connector pairs ×5",
       "Mounting brackets / fasteners",
       "Battery; master cut-off switch (optional)",

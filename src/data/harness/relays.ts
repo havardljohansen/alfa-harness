@@ -43,18 +43,6 @@ export const fuseBlocks: FuseBlock[] = [
     grid: { fuseCols: 5, relayCols: 5 },
     note: "Input stud fed direct from the battery. Hot at all times (hazard, horn, brake, tail/position, interior).",
   },
-  {
-    id: "rtmr-rear",
-    name: "Rear / independent centre (RTMR, NON-bussed)",
-    model: "Bussmann RTMR 15305-4-0-4 (non-bussed)",
-    partRef: "15305-4-0-4",
-    bussed: false,
-    zone: "engine-front",
-    fuseWays: 12,
-    relayWays: 0,
-    grid: { fuseCols: 6, relayCols: 0 },
-    note: "Non-bussed: each output independently fed. Currently a true spare (nothing mounted) — keep for rear-bound circuits or future expansion.",
-  },
 ];
 
 // ===========================================================================
@@ -200,6 +188,5 @@ export const relays: RelayAssignment[] = [
     coilTriggerLabel: "STRT.TRG",
     commonFrom: "battery",
     out87: "Starter solenoid (DIN 50)",
-    note: "Frees the non-bussed RTMR to stay a true spare (mount nothing in it).",
   },
 ];

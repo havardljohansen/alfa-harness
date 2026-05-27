@@ -29,7 +29,7 @@ export const ownedParts: PartItem[] = [
     unitPrice: 29.81,
     currency: "USD",
     order: "77657766",
-    role: "Non-bussed centre — each output independently fed (relay outputs / mixed sources). Allocated as the rear / independent-feed power point or spare.",
+    role: "SURPLUS — not used in this harness. The design now runs on the PDM + two bussed RTMRs; the non-bussed panel isn't needed. Keep on the shelf as a spare / for a future independent-feed circuit.",
   },
   {
     mfgPn: "15306-2-2-4",
