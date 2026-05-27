@@ -517,8 +517,8 @@ const instruments: DeviceComponent[] = [
     name: "Tell-tale — turn (green)",
     kind: "warning-light",
     zone: "dash",
-    terminals: [t("L", "Left flash", "C2"), t("R", "Right flash", "C3"), t("g", "Ground", "31")],
-    note: "Fed from both turn outputs via diodes so one lamp shows either side.",
+    terminals: [t("in", "Flash feed (L or R, OR-ed via diodes)", "C2"), t("g", "Ground", "31")],
+    note: "ONE lamp fed from BOTH turn outputs through isolation diodes (d-tell-L/R) into a shared node, then grounded — the diodes stop one side back-feeding the other's lamps via this common node.",
   },
   {
     id: "snd-temp",

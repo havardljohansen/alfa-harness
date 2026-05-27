@@ -178,7 +178,7 @@ export const scenarios: Scenario[] = [
       "Indicate Left → the green tell-tale lights via its diode, but the RIGHT turn output stays dead (the tell-tale OR-ing diodes stop one side back-feeding the other).",
     state: { ignition: "run", switches: { "sw-turn": "Left" } },
     expect: {
-      live: [["wl-turn", "L"]],
+      live: [["wl-turn", "in"]],
       dead: [["rly-turnR", "87"]],
     },
   },
@@ -313,5 +313,95 @@ export const scenarios: Scenario[] = [
     story: "Indicate Left → the LEFT side marker/repeater flashes with it; the right stays dark.",
     state: { ignition: "run", switches: { "sw-turn": "Left" } },
     expect: { live: [["side-l", "in"]], dead: [["side-r", "in"]] },
+  },
+
+  // -------------------------------------------------------------------------
+  // NEGATIVE / ISOLATION TESTS — assert the WRONG things stay dark. These catch
+  // sneak paths and back-feeds; several fail if an isolation diode is missing.
+  // -------------------------------------------------------------------------
+  {
+    id: "turn-left-isolation",
+    story: "Indicate Left → left lamps + the shared green tell-tale light; the RIGHT lamps must stay dark (catches a missing turn-tell-tale OR diode d-tell-R back-feeding the right side through the common tell-tale node).",
+    state: { ignition: "run", switches: { "sw-turn": "Left" } },
+    expect: {
+      live: [["turn-fl", "L"], ["turn-rl", "L"], ["wl-turn", "in"]],
+      dead: [["turn-fr", "R"], ["turn-rr", "R"]],
+      relaysOn: ["rly-turnL"],
+      relaysOff: ["rly-turnR"],
+    },
+  },
+  {
+    id: "turn-right-isolation",
+    story: "Indicate Right → right lamps + tell-tale light; the LEFT lamps must stay dark (catches a missing d-tell-L).",
+    state: { ignition: "run", switches: { "sw-turn": "Right" } },
+    expect: {
+      live: [["turn-fr", "R"], ["turn-rr", "R"], ["wl-turn", "in"]],
+      dead: [["turn-fl", "L"], ["turn-rl", "L"]],
+      relaysOn: ["rly-turnR"],
+      relaysOff: ["rly-turnL"],
+    },
+  },
+  {
+    id: "hazard-keyoff-both",
+    story: "Key OUT, hazards ON → BOTH sides flash (works key-off on the constant bus); the hazard diodes feed both turn-relay coils without lighting the headlights or anything else.",
+    state: { ignition: "off", switches: { "sw-hazard": "On" } },
+    expect: {
+      live: [["turn-fl", "L"], ["turn-fr", "R"], ["wl-turn", "in"]],
+      dead: [["hl-L", "56b"], ["park-fl", "58"]],
+      relaysOn: ["rly-turnL", "rly-turnR"],
+    },
+  },
+  {
+    id: "washer-not-wipers",
+    story: "Key Run, washer button pressed → the washer-pump relay closes; the WIPERS must NOT run (washer is its own relay, not the wiper trigger).",
+    state: { ignition: "run", switches: { "sw-washer": "Pressed" } },
+    expect: {
+      relaysOn: ["rly-washer"],
+      relaysOff: ["rly-wlow", "rly-whigh"],
+      dead: [["wiper", "53"], ["wiper", "53b"]],
+    },
+  },
+  {
+    id: "horn-isolation-keyoff",
+    story: "Key OUT, horn pressed → horns sound (constant bus, key-off); nothing else triggers (horn button only grounds its own relay coil).",
+    state: { ignition: "off", switches: { "sw-horn": "Pressed" } },
+    expect: {
+      live: [["horn-hi", "in"]],
+      relaysOn: ["rly-horn"],
+      relaysOff: ["rly-turnL", "rly-turnR", "rly-fuel", "rly-low"],
+    },
+  },
+  {
+    id: "accessory-ign-only",
+    story: "Accessory circuit (USB + stereo) is IGNITION-switched: dead with the key out, live in Run — so the USB can't drain the battery parked and the stereo is off with the key.",
+    state: { ignition: "off", switches: {} },
+    expect: { dead: [["usb-charge", "in"], ["stereo", "+B"]] },
+  },
+  {
+    id: "accessory-on-in-run",
+    story: "Key Run → the accessory feed (USB + stereo) is live.",
+    state: { ignition: "run", switches: {} },
+    expect: { live: [["usb-charge", "in"], ["stereo", "+B"]] },
+  },
+  {
+    id: "flash-not-low",
+    story: "Flash-to-pass fires the HIGH beam only — it must NOT light the low beam (catches the flash feed sneaking into the dip circuit).",
+    state: { ignition: "run", switches: { "sw-headlight": "Off", "sw-dipflash": "Flash" } },
+    expect: {
+      relaysOn: ["rly-high"],
+      relaysOff: ["rly-low"],
+      live: [["hl-L", "56a"]],
+      dead: [["hl-L", "56b"]],
+    },
+  },
+  {
+    id: "brake-not-turns",
+    story: "Key OUT, brake pressed → stop lamps light (constant, key-off); the TURN relays/lamps stay dark (brake filament is independent of the turn filament).",
+    state: { ignition: "off", switches: { "sw-brake": "Pressed" } },
+    expect: {
+      live: [["tail-rl", "54"], ["tail-rr", "54"]],
+      dead: [["turn-rl", "L"], ["turn-rr", "R"]],
+      relaysOff: ["rly-turnL", "rly-turnR"],
+    },
   },
 ];
