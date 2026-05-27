@@ -1,0 +1,280 @@
+# Auto-generated — Front-clip module. Do not edit by hand.
+# One wire colour (silicone, tinned) — identity is the Dymo label per wire.
+
+connectors:
+  battery:
+    type: "Battery (12 V, neg. ground)  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["+"]
+    bgcolor: "#2a2118"
+  pdm:
+    type: "Headlight power centre (PDM)"
+    pinlabels: ["BUS", "f-pdm-1", "f-pdm-2", "f-pdm-3", "f-pdm-4"]
+  gnd-front:
+    type: "Ground block — front clip"
+    pinlabels: ["g"]
+  gnd-eng:
+    type: "Ground HUB — engine bay / battery  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["g"]
+    bgcolor: "#2a2118"
+  sw-dipflash:
+    type: "Dip / flash (column)  ↗ Dashboard module"
+    pinlabels: ["56b", "56a"]
+    bgcolor: "#2a2118"
+  rly-low:
+    type: "Low-beam relay"
+    pinlabels: ["86"]
+  rly-high:
+    type: "High-beam relay"
+    pinlabels: ["86", "87"]
+  hl-L:
+    type: "Headlight LEFT (H4)"
+    pinlabels: ["56b", "56a", "g"]
+  hl-R:
+    type: "Headlight RIGHT (H4)"
+    pinlabels: ["56b", "56a", "g"]
+  wl-main:
+    type: "Tell-tale — main beam (blue)  ↗ Dashboard module"
+    pinlabels: ["in"]
+    bgcolor: "#2a2118"
+  sw-headlight:
+    type: "Headlight / position switch  ↗ Dashboard module"
+    pinlabels: ["58"]
+    bgcolor: "#2a2118"
+  park-fl:
+    type: "Front position/park LEFT"
+    pinlabels: ["58"]
+  park-fr:
+    type: "Front position/park RIGHT"
+    pinlabels: ["58"]
+  rly-turnL:
+    type: "Turn-signal LEFT relay  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["87"]
+    bgcolor: "#2a2118"
+  turn-fl:
+    type: "Front turn LEFT"
+    pinlabels: ["L"]
+  rly-turnR:
+    type: "Turn-signal RIGHT relay  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["87"]
+    bgcolor: "#2a2118"
+  turn-fr:
+    type: "Front turn RIGHT"
+    pinlabels: ["R"]
+  side-l:
+    type: "Side marker/repeater LEFT (front fender)"
+    pinlabels: ["in", "g"]
+  side-r:
+    type: "Side marker/repeater RIGHT (front fender)"
+    pinlabels: ["in", "g"]
+  rly-horn:
+    type: "Horn relay  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["87"]
+    bgcolor: "#2a2118"
+  horn-hi:
+    type: "Horn (high tone)"
+    pinlabels: ["in", "g"]
+  horn-lo:
+    type: "Horn (low tone)"
+    pinlabels: ["in"]
+
+cables:
+  w-pdm-main:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["PDM.+B"]
+    gauge: 6 mm2
+  w-gnd-front:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["GND.FRONT"]
+    gauge: 6 mm2
+  w-hl-lo-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.LO.TRG"]
+    gauge: 0.75 mm2
+  w-hl-hi-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.HI.TRG"]
+    gauge: 0.75 mm2
+  w-hl-lo-L:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.LO.OUT.L"]
+    gauge: 2.5 mm2
+  w-hl-lo-R:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.LO.OUT.R"]
+    gauge: 2.5 mm2
+  w-hl-hi-L:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.HI.OUT.L"]
+    gauge: 2.5 mm2
+  w-hl-hi-R:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.HI.OUT.R"]
+    gauge: 2.5 mm2
+  w-hl-tell:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.HI.TELL"]
+    gauge: 0.75 mm2
+  w-hl-L-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.GND.L"]
+    gauge: 2.5 mm2
+  w-hl-R-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HL.GND.R"]
+    gauge: 2.5 mm2
+  w-pos-fl:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["POS.OUT.F"]
+    gauge: 1.5 mm2
+  w-pos-fr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["POS.FRONT.JMP"]
+    gauge: 1.5 mm2
+  w-turnL-fr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.L.OUT.F"]
+    gauge: 1.5 mm2
+  w-turnR-fr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.R.OUT.F"]
+    gauge: 1.5 mm2
+  w-side-L:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["SIDE.L"]
+    gauge: 0.75 mm2
+  w-side-R:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["SIDE.R"]
+    gauge: 0.75 mm2
+  w-side-L-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["SIDE.GND.L"]
+    gauge: 0.75 mm2
+  w-side-R-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["SIDE.GND.R"]
+    gauge: 0.75 mm2
+  w-horn-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HORN.OUT"]
+    gauge: 2.5 mm2
+  w-horn-out2:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HORN.OUT2"]
+    gauge: 2.5 mm2
+  w-horn-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HORN.GND"]
+    gauge: 2.5 mm2
+
+connections:
+  -
+    - battery: [1]
+    - w-pdm-main: [1]
+    - pdm: [1]
+  -
+    - gnd-front: [1]
+    - w-gnd-front: [1]
+    - gnd-eng: [1]
+  -
+    - sw-dipflash: [1]
+    - w-hl-lo-trg: [1]
+    - rly-low: [1]
+  -
+    - sw-dipflash: [2]
+    - w-hl-hi-trg: [1]
+    - rly-high: [1]
+  -
+    - pdm: [2]
+    - w-hl-lo-L: [1]
+    - hl-L: [1]
+  -
+    - pdm: [3]
+    - w-hl-lo-R: [1]
+    - hl-R: [1]
+  -
+    - pdm: [4]
+    - w-hl-hi-L: [1]
+    - hl-L: [2]
+  -
+    - pdm: [5]
+    - w-hl-hi-R: [1]
+    - hl-R: [2]
+  -
+    - rly-high: [2]
+    - w-hl-tell: [1]
+    - wl-main: [1]
+  -
+    - hl-L: [3]
+    - w-hl-L-gnd: [1]
+    - gnd-front: [1]
+  -
+    - hl-R: [3]
+    - w-hl-R-gnd: [1]
+    - gnd-front: [1]
+  -
+    - sw-headlight: [1]
+    - w-pos-fl: [1]
+    - park-fl: [1]
+  -
+    - park-fl: [1]
+    - w-pos-fr: [1]
+    - park-fr: [1]
+  -
+    - rly-turnL: [1]
+    - w-turnL-fr: [1]
+    - turn-fl: [1]
+  -
+    - rly-turnR: [1]
+    - w-turnR-fr: [1]
+    - turn-fr: [1]
+  -
+    - turn-fl: [1]
+    - w-side-L: [1]
+    - side-l: [1]
+  -
+    - turn-fr: [1]
+    - w-side-R: [1]
+    - side-r: [1]
+  -
+    - side-l: [2]
+    - w-side-L-gnd: [1]
+    - gnd-front: [1]
+  -
+    - side-r: [2]
+    - w-side-R-gnd: [1]
+    - gnd-front: [1]
+  -
+    - rly-horn: [1]
+    - w-horn-out: [1]
+    - horn-hi: [1]
+  -
+    - horn-hi: [1]
+    - w-horn-out2: [1]
+    - horn-lo: [1]
+  -
+    - horn-hi: [2]
+    - w-horn-gnd: [1]
+    - gnd-front: [1]

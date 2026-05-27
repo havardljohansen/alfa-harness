@@ -1,0 +1,122 @@
+# Auto-generated — 3-way switch cluster (firewall). Do not edit by hand.
+# One wire colour (silicone, tinned) — identity is the Dymo label per wire.
+
+connectors:
+  sw-instr:
+    type: "Instrument-light switch (3-position)"
+    pinlabels: ["dim", "bright", "in"]
+  instr-pwm:
+    type: "Instrument-light PWM dimmer module  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["lo", "hi"]
+    bgcolor: "#2a2118"
+  rtmr-ign:
+    type: "Cabin IGNITION bus (RTMR, bussed)  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["f-ign-9"]
+    bgcolor: "#2a2118"
+  sw-wiper:
+    type: "Wiper switch (3-position) — DEDICATED, low-current"
+    pinlabels: ["in", "low", "high"]
+  sw-heaterfan:
+    type: "Heater-fan switch (3-position) — DEDICATED, low-current"
+    pinlabels: ["in", "high", "low"]
+  rly-wlow:
+    type: "Wiper LOW + self-park relay  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["86"]
+    bgcolor: "#2a2118"
+  rly-whigh:
+    type: "Wiper HIGH relay  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["86"]
+    bgcolor: "#2a2118"
+  rly-fan:
+    type: "Heater-fan relay (HIGH)  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["86"]
+    bgcolor: "#2a2118"
+  fan-resistor:
+    type: "Heater-fan PWM / resistor module (low speed, optional)  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["en"]
+    bgcolor: "#2a2118"
+
+cables:
+  w-ill-dim:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["ILL.DIM"]
+    gauge: 0.75 mm2
+  w-ill-brt:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["ILL.BRT"]
+    gauge: 0.75 mm2
+  w-sw3-feed:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["SW3.+I"]
+    gauge: 0.75 mm2
+  w-sw3-jmp-wi:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["SW3.+I.J1"]
+    gauge: 0.75 mm2
+  w-sw3-jmp-if:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["SW3.+I.J2"]
+    gauge: 0.75 mm2
+  w-wlow-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.LO.TRG"]
+    gauge: 0.75 mm2
+  w-whigh-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.HI.TRG"]
+    gauge: 0.75 mm2
+  w-fan-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.TRG"]
+    gauge: 0.75 mm2
+  w-fan-lo:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.LOW.EN"]
+    gauge: 0.75 mm2
+
+connections:
+  -
+    - sw-instr: [1]
+    - w-ill-dim: [1]
+    - instr-pwm: [1]
+  -
+    - sw-instr: [2]
+    - w-ill-brt: [1]
+    - instr-pwm: [2]
+  -
+    - rtmr-ign: [1]
+    - w-sw3-feed: [1]
+    - sw-wiper: [1]
+  -
+    - sw-wiper: [1]
+    - w-sw3-jmp-wi: [1]
+    - sw-instr: [3]
+  -
+    - sw-instr: [3]
+    - w-sw3-jmp-if: [1]
+    - sw-heaterfan: [1]
+  -
+    - sw-wiper: [2]
+    - w-wlow-trg: [1]
+    - rly-wlow: [1]
+  -
+    - sw-wiper: [3]
+    - w-whigh-trg: [1]
+    - rly-whigh: [1]
+  -
+    - sw-heaterfan: [2]
+    - w-fan-trg: [1]
+    - rly-fan: [1]
+  -
+    - sw-heaterfan: [3]
+    - w-fan-lo: [1]
+    - fan-resistor: [1]

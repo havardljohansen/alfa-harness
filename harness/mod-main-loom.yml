@@ -1,0 +1,904 @@
+# Auto-generated — Main loom (engine-bay hub). Do not edit by hand.
+# One wire colour (silicone, tinned) — identity is the Dymo label per wire.
+
+connectors:
+  battery:
+    type: "Battery (12 V, neg. ground)"
+    pinlabels: ["+", "-"]
+  rtmr-const:
+    type: "CONSTANT (battery) bus (RTMR, bussed)"
+    pinlabels: ["BUS", "f-con-4", "f-con-8", "f-con-1", "f-con-3", "f-con-2", "f-con-6"]
+  pdm:
+    type: "Headlight power centre (PDM)  ↗ Front-clip module"
+    pinlabels: ["BUS"]
+    bgcolor: "#2a2118"
+  gnd-eng:
+    type: "Ground HUB — engine bay / battery"
+    pinlabels: ["g"]
+  rly-ignmain:
+    type: "Ignition main relay"
+    pinlabels: ["87", "86", "30"]
+  rtmr-ign:
+    type: "Cabin IGNITION bus (RTMR, bussed)"
+    pinlabels: ["BUS", "f-ign-1", "f-ign-4", "f-ign-7", "f-ign-2", "f-ign-3", "f-ign-9", "f-ign-5", "f-ign-6", "f-ign-8", "f-ign-10"]
+  gnd-front:
+    type: "Ground block — front clip  ↗ Front-clip module"
+    pinlabels: ["g"]
+    bgcolor: "#2a2118"
+  gnd-dash:
+    type: "Ground block — dash  ↗ Dashboard module"
+    pinlabels: ["g"]
+    bgcolor: "#2a2118"
+  gnd-rear:
+    type: "Ground block — rear / boot  ↗ Rear / boot module"
+    pinlabels: ["g"]
+    bgcolor: "#2a2118"
+  alternator:
+    type: "Alternator (internally regulated)"
+    pinlabels: ["B+", "D+", "g"]
+  wl-charge:
+    type: "Warning — charge (alternator)  ↗ Dashboard module"
+    pinlabels: ["d"]
+    bgcolor: "#2a2118"
+  starter:
+    type: "Starter motor + solenoid"
+    pinlabels: ["B+", "50"]
+  ign-switch:
+    type: "Ignition switch  ↗ Dashboard module"
+    pinlabels: ["50", "30", "15"]
+    bgcolor: "#2a2118"
+  rly-starter:
+    type: "Starter relay"
+    pinlabels: ["86", "30", "87"]
+  coil:
+    type: "Ignition coil"
+    pinlabels: ["15", "1"]
+  dist:
+    type: "Distributor"
+    pinlabels: ["1"]
+  sw-headlight:
+    type: "Headlight / position switch  ↗ Dashboard module"
+    pinlabels: ["30c"]
+    bgcolor: "#2a2118"
+  flasher:
+    type: "Turn/hazard flasher (electronic, LED, load-independent)"
+    pinlabels: ["49", "49a"]
+  sw-turn:
+    type: "Turn-signal switch (column) — WEAK CONTACT  ↗ Dashboard module"
+    pinlabels: ["in", "L", "R"]
+    bgcolor: "#2a2118"
+  rly-turnL:
+    type: "Turn-signal LEFT relay"
+    pinlabels: ["86", "30", "87"]
+  rly-turnR:
+    type: "Turn-signal RIGHT relay"
+    pinlabels: ["86", "30", "87"]
+  turn-fl:
+    type: "Front turn LEFT  ↗ Front-clip module"
+    pinlabels: ["L"]
+    bgcolor: "#2a2118"
+  turn-rl:
+    type: "Rear turn LEFT  ↗ Rear / boot module"
+    pinlabels: ["L"]
+    bgcolor: "#2a2118"
+  turn-fr:
+    type: "Front turn RIGHT  ↗ Front-clip module"
+    pinlabels: ["R"]
+    bgcolor: "#2a2118"
+  turn-rr:
+    type: "Rear turn RIGHT  ↗ Rear / boot module"
+    pinlabels: ["R"]
+    bgcolor: "#2a2118"
+  wl-turn:
+    type: "Tell-tale — turn (green)  ↗ Dashboard module"
+    pinlabels: ["L", "R"]
+    bgcolor: "#2a2118"
+  sw-hazard:
+    type: "Hazard switch (added — in the old cigar-lighter location)  ↗ Dashboard module"
+    pinlabels: ["30", "L", "R"]
+    bgcolor: "#2a2118"
+  sw-brake:
+    type: "Brake-light switch"
+    pinlabels: ["in", "out"]
+  tail-rl:
+    type: "Tail/position + brake LEFT  ↗ Rear / boot module"
+    pinlabels: ["54"]
+    bgcolor: "#2a2118"
+  sw-reverse:
+    type: "Reverse switch (gearbox)"
+    pinlabels: ["in", "out"]
+  reverse:
+    type: "Reverse light  ↗ Rear / boot module"
+    pinlabels: ["in"]
+    bgcolor: "#2a2118"
+  g-fuel:
+    type: "Fuel gauge (Veglia)  ↗ Dashboard module"
+    pinlabels: ["+", "ill"]
+    bgcolor: "#2a2118"
+  snd-temp:
+    type: "Coolant-temp sender"
+    pinlabels: ["s", "g"]
+  g-temp:
+    type: "Coolant-temp gauge  ↗ Dashboard module"
+    pinlabels: ["s"]
+    bgcolor: "#2a2118"
+  snd-oil:
+    type: "Oil-pressure gauge sender"
+    pinlabels: ["s"]
+  g-oil:
+    type: "Oil-pressure gauge  ↗ Dashboard module"
+    pinlabels: ["s"]
+    bgcolor: "#2a2118"
+  sw-oillight:
+    type: "Oil-pressure warning switch"
+    pinlabels: ["s"]
+  wl-oil:
+    type: "Warning — oil pressure  ↗ Dashboard module"
+    pinlabels: ["s", "+"]
+    bgcolor: "#2a2118"
+  g-tach:
+    type: "Tachometer  ↗ Dashboard module"
+    pinlabels: ["sig"]
+    bgcolor: "#2a2118"
+  sw-instr:
+    type: "Instrument-light switch (3-position)  ↗ 3-way switch cluster (firewall)"
+    pinlabels: ["dim", "bright"]
+    bgcolor: "#2a2118"
+  instr-pwm:
+    type: "Instrument-light PWM dimmer module"
+    pinlabels: ["lo", "hi", "out", "g"]
+  sw-wiper:
+    type: "Wiper switch (3-position) — DEDICATED, low-current  ↗ 3-way switch cluster (firewall)"
+    pinlabels: ["in", "low", "high"]
+    bgcolor: "#2a2118"
+  rly-wlow:
+    type: "Wiper LOW + self-park relay"
+    pinlabels: ["86", "30", "87", "87a"]
+  rly-whigh:
+    type: "Wiper HIGH relay"
+    pinlabels: ["86", "30", "87"]
+  wiper:
+    type: "Wiper motor (Bosch-type, 2-speed self-park)"
+    pinlabels: ["53", "53a", "53b", "31"]
+  washer-pump:
+    type: "Washer pump"
+    pinlabels: ["53c"]
+  sw-heaterfan:
+    type: "Heater-fan switch (3-position) — DEDICATED, low-current  ↗ 3-way switch cluster (firewall)"
+    pinlabels: ["high", "low"]
+    bgcolor: "#2a2118"
+  rly-fan:
+    type: "Heater-fan relay (HIGH)"
+    pinlabels: ["86", "87", "30"]
+  fan-resistor:
+    type: "Heater-fan PWM / resistor module (low speed, optional)"
+    pinlabels: ["en", "pwr", "out"]
+  heater-fan:
+    type: "Heater blower fan (single speed)"
+    pinlabels: ["in", "g"]
+  rly-fuel:
+    type: "Fuel-pump relay"
+    pinlabels: ["86", "30", "87"]
+  fuel-pump:
+    type: "Electric fuel pump  ↗ Rear / boot module"
+    pinlabels: ["in"]
+    bgcolor: "#2a2118"
+  rly-horn:
+    type: "Horn relay"
+    pinlabels: ["30", "87", "86"]
+  horn-hi:
+    type: "Horn (high tone)  ↗ Front-clip module"
+    pinlabels: ["in"]
+    bgcolor: "#2a2118"
+  sw-horn:
+    type: "Horn button  ↗ Dashboard module"
+    pinlabels: ["in"]
+    bgcolor: "#2a2118"
+  int-light:
+    type: "Interior / courtesy light  ↗ Dashboard module"
+    pinlabels: ["+"]
+    bgcolor: "#2a2118"
+  g-afr:
+    type: "AFR gauge (future)  ↗ Dashboard module"
+    pinlabels: ["+", "sig"]
+    bgcolor: "#2a2118"
+  o2-sensor:
+    type: "Wideband O2 sensor (future)"
+    pinlabels: ["sig", "g"]
+
+cables:
+  w-bat-main:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["BAT.+B"]
+    gauge: 25 mm2
+  w-pdm-main:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["PDM.+B"]
+    gauge: 6 mm2
+  w-bat-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["BAT.GND"]
+    gauge: 25 mm2
+  w-ignmain-bus:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["IGN.BUS.+I"]
+    gauge: 6 mm2
+  w-gnd-front:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["GND.FRONT"]
+    gauge: 6 mm2
+  w-gnd-dash:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["GND.DASH"]
+    gauge: 6 mm2
+  w-gnd-rear:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["GND.REAR"]
+    gauge: 6 mm2
+  w-alt-b:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["CHG.B+"]
+    gauge: 25 mm2
+  w-alt-d:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["CHG.L"]
+    gauge: 0.75 mm2
+  w-alt-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["CHG.GND"]
+    gauge: 6 mm2
+  w-start-b:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["STRT.B+"]
+    gauge: 25 mm2
+  w-start-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["STRT.TRG"]
+    gauge: 0.75 mm2
+  w-starter-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["STRT.+B"]
+    gauge: 2.5 mm2
+  w-starter-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["STRT.OUT"]
+    gauge: 2.5 mm2
+  w-ign-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["IGN.30.+B"]
+    gauge: 1.5 mm2
+  w-ignmain-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["IGN.MAIN.TRG"]
+    gauge: 0.75 mm2
+  w-ignmain-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["IGN.MAIN.+B"]
+    gauge: 6 mm2
+  w-coil-15:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["COIL.+I"]
+    gauge: 1.5 mm2
+  w-coil-dist:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["COIL.1"]
+    gauge: 0.75 mm2
+  w-pos-sw:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["POS.SW"]
+    gauge: 1.5 mm2
+  w-flasher-in:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FLSH.+B"]
+    gauge: 0.75 mm2
+  w-turn-sw-feed:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.SW.+I"]
+    gauge: 0.75 mm2
+  w-turnL-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.L.TRG"]
+    gauge: 0.75 mm2
+  w-turnR-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.R.TRG"]
+    gauge: 0.75 mm2
+  w-turnL-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.L.COM"]
+    gauge: 1.5 mm2
+  w-turnR-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.COM.JMP"]
+    gauge: 1.5 mm2
+  w-turnL-fr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.L.OUT.F"]
+    gauge: 1.5 mm2
+  w-turnL-rr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.L.OUT.R"]
+    gauge: 1.5 mm2
+  w-turnR-fr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.R.OUT.F"]
+    gauge: 1.5 mm2
+  w-turnR-rr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.R.OUT.R"]
+    gauge: 1.5 mm2
+  w-tell-L:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.TELL.L"]
+    gauge: 0.75 mm2
+  w-tell-R:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.TELL.R"]
+    gauge: 0.75 mm2
+  w-haz-in:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HAZ.+B"]
+    gauge: 0.75 mm2
+  w-haz-L-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HAZ.L.TRG"]
+    gauge: 0.75 mm2
+  w-haz-R-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HAZ.R.TRG"]
+    gauge: 0.75 mm2
+  w-brake-in:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["BRK.+B"]
+    gauge: 1.5 mm2
+  w-brake-L:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["BRK.OUT.L"]
+    gauge: 1.5 mm2
+  w-rev-in:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["REV.+I"]
+    gauge: 0.75 mm2
+  w-rev-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["REV.OUT"]
+    gauge: 0.75 mm2
+  w-g-fuel-i:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["GAUGE.+I"]
+    gauge: 0.75 mm2
+  w-temp-sig:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TEMP.SIG"]
+    gauge: 0.75 mm2
+  w-oilp-sig:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["OILP.SIG"]
+    gauge: 0.75 mm2
+  w-oil-wl:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["OIL.WL"]
+    gauge: 0.75 mm2
+  w-tach-sig:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TACH.SIG"]
+    gauge: 0.75 mm2
+  w-wl-i:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WL.+I"]
+    gauge: 0.75 mm2
+  w-ill-dim:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["ILL.DIM"]
+    gauge: 0.75 mm2
+  w-ill-brt:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["ILL.BRT"]
+    gauge: 0.75 mm2
+  w-ill-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["ILL.OUT"]
+    gauge: 0.75 mm2
+  w-ill-pwm-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["ILL.PWM.GND"]
+    gauge: 0.75 mm2
+  w-temp-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TEMP.GND"]
+    gauge: 0.75 mm2
+  w-sw3-feed:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["SW3.+I"]
+    gauge: 0.75 mm2
+  w-wlow-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.LO.TRG"]
+    gauge: 0.75 mm2
+  w-whigh-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.HI.TRG"]
+    gauge: 0.75 mm2
+  w-wlow-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.LO.+"]
+    gauge: 1.5 mm2
+  w-whigh-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.HI.+"]
+    gauge: 2.5 mm2
+  w-wlow-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.53"]
+    gauge: 1.5 mm2
+  w-wpark-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.53a"]
+    gauge: 1.5 mm2
+  w-whigh-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.53b"]
+    gauge: 2.5 mm2
+  w-wipe-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WIPE.31"]
+    gauge: 1.5 mm2
+  w-wash:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["WASH.+I"]
+    gauge: 1.5 mm2
+  w-fan-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.TRG"]
+    gauge: 0.75 mm2
+  w-fan-lo:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.LOW.EN"]
+    gauge: 0.75 mm2
+  w-fan-pwr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.PWM.+"]
+    gauge: 2.5 mm2
+  w-fan-pwm-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.LOW.OUT"]
+    gauge: 2.5 mm2
+  w-fan-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.OUT"]
+    gauge: 2.5 mm2
+  w-fan-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.+"]
+    gauge: 2.5 mm2
+  w-fan-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FAN.GND"]
+    gauge: 2.5 mm2
+  w-fuel-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FUEL.TRG"]
+    gauge: 0.75 mm2
+  w-fuel-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FUEL.+"]
+    gauge: 2.5 mm2
+  w-fuel-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FUEL.OUT"]
+    gauge: 2.5 mm2
+  w-horn-30:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HORN.+B"]
+    gauge: 2.5 mm2
+  w-horn-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HORN.OUT"]
+    gauge: 2.5 mm2
+  w-horn-trg:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["HORN.TRG"]
+    gauge: 0.75 mm2
+  w-int-feed:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["INT.+B"]
+    gauge: 0.75 mm2
+  w-o2-feed:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["O2.+I"]
+    gauge: 0.75 mm2
+  w-o2-sig:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["O2.SIG"]
+    gauge: 0.75 mm2
+  w-o2-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["O2.GND"]
+    gauge: 0.75 mm2
+
+connections:
+  -
+    - battery: [1]
+    - w-bat-main: [1]
+    - rtmr-const: [1]
+  -
+    - battery: [1]
+    - w-pdm-main: [1]
+    - pdm: [1]
+  -
+    - battery: [2]
+    - w-bat-gnd: [1]
+    - gnd-eng: [1]
+  -
+    - rly-ignmain: [1]
+    - w-ignmain-bus: [1]
+    - rtmr-ign: [1]
+  -
+    - gnd-front: [1]
+    - w-gnd-front: [1]
+    - gnd-eng: [1]
+  -
+    - gnd-dash: [1]
+    - w-gnd-dash: [1]
+    - gnd-eng: [1]
+  -
+    - gnd-rear: [1]
+    - w-gnd-rear: [1]
+    - gnd-eng: [1]
+  -
+    - alternator: [1]
+    - w-alt-b: [1]
+    - battery: [1]
+  -
+    - alternator: [2]
+    - w-alt-d: [1]
+    - wl-charge: [1]
+  -
+    - alternator: [3]
+    - w-alt-gnd: [1]
+    - gnd-eng: [1]
+  -
+    - battery: [1]
+    - w-start-b: [1]
+    - starter: [1]
+  -
+    - ign-switch: [1]
+    - w-start-trg: [1]
+    - rly-starter: [1]
+  -
+    - battery: [1]
+    - w-starter-30: [1]
+    - rly-starter: [2]
+  -
+    - rly-starter: [3]
+    - w-starter-out: [1]
+    - starter: [2]
+  -
+    - rtmr-const: [1]
+    - w-ign-30: [1]
+    - ign-switch: [2]
+  -
+    - ign-switch: [3]
+    - w-ignmain-trg: [1]
+    - rly-ignmain: [2]
+  -
+    - rtmr-const: [1]
+    - w-ignmain-30: [1]
+    - rly-ignmain: [3]
+  -
+    - rtmr-ign: [2]
+    - w-coil-15: [1]
+    - coil: [1]
+  -
+    - coil: [2]
+    - w-coil-dist: [1]
+    - dist: [1]
+  -
+    - rtmr-const: [2]
+    - w-pos-sw: [1]
+    - sw-headlight: [1]
+  -
+    - rtmr-const: [3]
+    - w-flasher-in: [1]
+    - flasher: [1]
+  -
+    - rtmr-ign: [3]
+    - w-turn-sw-feed: [1]
+    - sw-turn: [1]
+  -
+    - sw-turn: [2]
+    - w-turnL-trg: [1]
+    - rly-turnL: [1]
+  -
+    - sw-turn: [3]
+    - w-turnR-trg: [1]
+    - rly-turnR: [1]
+  -
+    - flasher: [2]
+    - w-turnL-30: [1]
+    - rly-turnL: [2]
+  -
+    - rly-turnL: [2]
+    - w-turnR-30: [1]
+    - rly-turnR: [2]
+  -
+    - rly-turnL: [3]
+    - w-turnL-fr: [1]
+    - turn-fl: [1]
+  -
+    - rly-turnL: [3]
+    - w-turnL-rr: [1]
+    - turn-rl: [1]
+  -
+    - rly-turnR: [3]
+    - w-turnR-fr: [1]
+    - turn-fr: [1]
+  -
+    - rly-turnR: [3]
+    - w-turnR-rr: [1]
+    - turn-rr: [1]
+  -
+    - rly-turnL: [3]
+    - w-tell-L: [1]
+    - wl-turn: [1]
+  -
+    - rly-turnR: [3]
+    - w-tell-R: [1]
+    - wl-turn: [2]
+  -
+    - rtmr-const: [4]
+    - w-haz-in: [1]
+    - sw-hazard: [1]
+  -
+    - sw-hazard: [2]
+    - w-haz-L-trg: [1]
+    - rly-turnL: [1]
+  -
+    - sw-hazard: [3]
+    - w-haz-R-trg: [1]
+    - rly-turnR: [1]
+  -
+    - rtmr-const: [5]
+    - w-brake-in: [1]
+    - sw-brake: [1]
+  -
+    - sw-brake: [2]
+    - w-brake-L: [1]
+    - tail-rl: [1]
+  -
+    - rtmr-ign: [4]
+    - w-rev-in: [1]
+    - sw-reverse: [1]
+  -
+    - sw-reverse: [2]
+    - w-rev-out: [1]
+    - reverse: [1]
+  -
+    - rtmr-ign: [5]
+    - w-g-fuel-i: [1]
+    - g-fuel: [1]
+  -
+    - snd-temp: [1]
+    - w-temp-sig: [1]
+    - g-temp: [1]
+  -
+    - snd-oil: [1]
+    - w-oilp-sig: [1]
+    - g-oil: [1]
+  -
+    - sw-oillight: [1]
+    - w-oil-wl: [1]
+    - wl-oil: [1]
+  -
+    - coil: [2]
+    - w-tach-sig: [1]
+    - g-tach: [1]
+  -
+    - rtmr-ign: [6]
+    - w-wl-i: [1]
+    - wl-oil: [2]
+  -
+    - sw-instr: [1]
+    - w-ill-dim: [1]
+    - instr-pwm: [1]
+  -
+    - sw-instr: [2]
+    - w-ill-brt: [1]
+    - instr-pwm: [2]
+  -
+    - instr-pwm: [3]
+    - w-ill-out: [1]
+    - g-fuel: [2]
+  -
+    - instr-pwm: [4]
+    - w-ill-pwm-gnd: [1]
+    - gnd-eng: [1]
+  -
+    - snd-temp: [2]
+    - w-temp-gnd: [1]
+    - gnd-eng: [1]
+  -
+    - rtmr-ign: [7]
+    - w-sw3-feed: [1]
+    - sw-wiper: [1]
+  -
+    - sw-wiper: [2]
+    - w-wlow-trg: [1]
+    - rly-wlow: [1]
+  -
+    - sw-wiper: [3]
+    - w-whigh-trg: [1]
+    - rly-whigh: [1]
+  -
+    - rtmr-ign: [8]
+    - w-wlow-30: [1]
+    - rly-wlow: [2]
+  -
+    - rtmr-ign: [8]
+    - w-whigh-30: [1]
+    - rly-whigh: [2]
+  -
+    - rly-wlow: [3]
+    - w-wlow-out: [1]
+    - wiper: [1]
+  -
+    - rly-wlow: [4]
+    - w-wpark-out: [1]
+    - wiper: [2]
+  -
+    - rly-whigh: [3]
+    - w-whigh-out: [1]
+    - wiper: [3]
+  -
+    - wiper: [4]
+    - w-wipe-gnd: [1]
+    - gnd-eng: [1]
+  -
+    - rtmr-ign: [8]
+    - w-wash: [1]
+    - washer-pump: [1]
+  -
+    - sw-heaterfan: [1]
+    - w-fan-trg: [1]
+    - rly-fan: [1]
+  -
+    - sw-heaterfan: [2]
+    - w-fan-lo: [1]
+    - fan-resistor: [1]
+  -
+    - rtmr-ign: [9]
+    - w-fan-pwr: [1]
+    - fan-resistor: [2]
+  -
+    - fan-resistor: [3]
+    - w-fan-pwm-out: [1]
+    - heater-fan: [1]
+  -
+    - rly-fan: [2]
+    - w-fan-out: [1]
+    - heater-fan: [1]
+  -
+    - rtmr-ign: [9]
+    - w-fan-30: [1]
+    - rly-fan: [3]
+  -
+    - heater-fan: [2]
+    - w-fan-gnd: [1]
+    - gnd-eng: [1]
+  -
+    - rtmr-ign: [10]
+    - w-fuel-trg: [1]
+    - rly-fuel: [1]
+  -
+    - rtmr-ign: [10]
+    - w-fuel-30: [1]
+    - rly-fuel: [2]
+  -
+    - rly-fuel: [3]
+    - w-fuel-out: [1]
+    - fuel-pump: [1]
+  -
+    - rtmr-const: [6]
+    - w-horn-30: [1]
+    - rly-horn: [1]
+  -
+    - rly-horn: [2]
+    - w-horn-out: [1]
+    - horn-hi: [1]
+  -
+    - rly-horn: [3]
+    - w-horn-trg: [1]
+    - sw-horn: [1]
+  -
+    - rtmr-const: [7]
+    - w-int-feed: [1]
+    - int-light: [1]
+  -
+    - rtmr-ign: [11]
+    - w-o2-feed: [1]
+    - g-afr: [1]
+  -
+    - o2-sensor: [1]
+    - w-o2-sig: [1]
+    - g-afr: [2]
+  -
+    - o2-sensor: [2]
+    - w-o2-gnd: [1]
+    - gnd-eng: [1]

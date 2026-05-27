@@ -1,0 +1,223 @@
+# Auto-generated — Rear / boot module. Do not edit by hand.
+# One wire colour (silicone, tinned) — identity is the Dymo label per wire.
+
+connectors:
+  gnd-rear:
+    type: "Ground block — rear / boot"
+    pinlabels: ["g"]
+  gnd-eng:
+    type: "Ground HUB — engine bay / battery  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["g"]
+    bgcolor: "#2a2118"
+  sw-headlight:
+    type: "Headlight / position switch  ↗ Dashboard module"
+    pinlabels: ["58"]
+    bgcolor: "#2a2118"
+  tail-rl:
+    type: "Tail/position + brake LEFT"
+    pinlabels: ["58", "g", "54"]
+  tail-rr:
+    type: "Tail/position + brake RIGHT"
+    pinlabels: ["58", "g", "54"]
+  plate:
+    type: "Number-plate light LEFT"
+    pinlabels: ["58", "g"]
+  plate-r:
+    type: "Number-plate light RIGHT"
+    pinlabels: ["58", "g"]
+  rly-turnL:
+    type: "Turn-signal LEFT relay  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["87"]
+    bgcolor: "#2a2118"
+  turn-rl:
+    type: "Rear turn LEFT"
+    pinlabels: ["L"]
+  rly-turnR:
+    type: "Turn-signal RIGHT relay  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["87"]
+    bgcolor: "#2a2118"
+  turn-rr:
+    type: "Rear turn RIGHT"
+    pinlabels: ["R"]
+  sw-brake:
+    type: "Brake-light switch  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["out"]
+    bgcolor: "#2a2118"
+  sw-reverse:
+    type: "Reverse switch (gearbox)  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["out"]
+    bgcolor: "#2a2118"
+  reverse:
+    type: "Reverse light"
+    pinlabels: ["in"]
+  snd-fuel:
+    type: "Fuel-tank sender"
+    pinlabels: ["s"]
+  g-fuel:
+    type: "Fuel gauge (Veglia)  ↗ Dashboard module"
+    pinlabels: ["s"]
+    bgcolor: "#2a2118"
+  rly-fuel:
+    type: "Fuel-pump relay  ↗ Main loom (engine-bay hub)"
+    pinlabels: ["87"]
+    bgcolor: "#2a2118"
+  fuel-pump:
+    type: "Electric fuel pump"
+    pinlabels: ["in", "g"]
+
+cables:
+  w-gnd-rear:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["GND.REAR"]
+    gauge: 6 mm2
+  w-pos-rear-L:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["POS.REAR.L"]
+    gauge: 1.5 mm2
+  w-pos-rear-R:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["POS.REAR.R"]
+    gauge: 1.5 mm2
+  w-plate:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["PLATE.L"]
+    gauge: 0.75 mm2
+  w-plate-r:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["PLATE.R"]
+    gauge: 0.75 mm2
+  w-tail-L-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TAIL.GND.L"]
+    gauge: 1.5 mm2
+  w-tail-R-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TAIL.GND.R"]
+    gauge: 1.5 mm2
+  w-plate-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["PLATE.GND.L"]
+    gauge: 0.75 mm2
+  w-plate-r-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["PLATE.GND.R"]
+    gauge: 0.75 mm2
+  w-turnL-rr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.L.OUT.R"]
+    gauge: 1.5 mm2
+  w-turnR-rr:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["TURN.R.OUT.R"]
+    gauge: 1.5 mm2
+  w-brake-L:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["BRK.OUT.L"]
+    gauge: 1.5 mm2
+  w-brake-R:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["BRK.JMP"]
+    gauge: 1.5 mm2
+  w-rev-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["REV.OUT"]
+    gauge: 0.75 mm2
+  w-fuel-sig:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FUEL.SIG"]
+    gauge: 0.75 mm2
+  w-fuel-out:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FUEL.OUT"]
+    gauge: 2.5 mm2
+  w-fuel-gnd:
+    wirecount: 1
+    colors: [BK]
+    wirelabels: ["FUEL.GND"]
+    gauge: 2.5 mm2
+
+connections:
+  -
+    - gnd-rear: [1]
+    - w-gnd-rear: [1]
+    - gnd-eng: [1]
+  -
+    - sw-headlight: [1]
+    - w-pos-rear-L: [1]
+    - tail-rl: [1]
+  -
+    - tail-rl: [1]
+    - w-pos-rear-R: [1]
+    - tail-rr: [1]
+  -
+    - tail-rl: [1]
+    - w-plate: [1]
+    - plate: [1]
+  -
+    - tail-rr: [1]
+    - w-plate-r: [1]
+    - plate-r: [1]
+  -
+    - tail-rl: [2]
+    - w-tail-L-gnd: [1]
+    - gnd-rear: [1]
+  -
+    - tail-rr: [2]
+    - w-tail-R-gnd: [1]
+    - gnd-rear: [1]
+  -
+    - plate: [2]
+    - w-plate-gnd: [1]
+    - gnd-rear: [1]
+  -
+    - plate-r: [2]
+    - w-plate-r-gnd: [1]
+    - gnd-rear: [1]
+  -
+    - rly-turnL: [1]
+    - w-turnL-rr: [1]
+    - turn-rl: [1]
+  -
+    - rly-turnR: [1]
+    - w-turnR-rr: [1]
+    - turn-rr: [1]
+  -
+    - sw-brake: [1]
+    - w-brake-L: [1]
+    - tail-rl: [3]
+  -
+    - tail-rl: [3]
+    - w-brake-R: [1]
+    - tail-rr: [3]
+  -
+    - sw-reverse: [1]
+    - w-rev-out: [1]
+    - reverse: [1]
+  -
+    - snd-fuel: [1]
+    - w-fuel-sig: [1]
+    - g-fuel: [1]
+  -
+    - rly-fuel: [1]
+    - w-fuel-out: [1]
+    - fuel-pump: [1]
+  -
+    - fuel-pump: [2]
+    - w-fuel-gnd: [1]
+    - gnd-rear: [1]
