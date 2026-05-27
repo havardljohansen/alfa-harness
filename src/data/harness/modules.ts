@@ -32,7 +32,7 @@ export const harnessModules: HarnessModule[] = [
     id: "main-loom",
     name: "Main loom (engine-bay hub)",
     summary:
-      "The trunk everything else plugs into: the two bussed RTMRs (constant + ignition bus) and every relay, plus the two PWM modules and the engine-mounted devices fed directly from the bus.",
+      "The trunk everything else plugs into: the two bussed RTMRs (constant + ignition bus) and every relay, plus the two PWM modules and the engine-mounted devices fed directly from the bus. The RTMR hub mounts on the LEFT side of the engine bay (looking forward through the windscreen) — so the firewall plugs land on the left.",
     componentIds: [
       "rtmr-ign", "rtmr-const", "battery", "alternator", "coil", "dist", "flasher",
       "starter", "wiper", "heater-fan", "washer-pump", "fan-resistor", "instr-pwm",

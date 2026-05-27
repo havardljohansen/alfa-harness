@@ -14,7 +14,7 @@ export const zones: Zone[] = [
     id: "engine-front",
     name: "Engine bay — front",
     description:
-      "Front cross-panel: head/park/turn lamps, horns, and the fuse/relay centres (Littelfuse PDM + Bussmann RTMRs) which live up front per the build.",
+      "Front cross-panel: head/park/turn lamps, horns, and the fuse/relay centres. The two Bussmann RTMR centres (the main-loom hub) mount on the LEFT side of the bay, looking forward through the windscreen (left-hand-drive car); the Littelfuse PDM lives up front with the lamps. So the firewall crossing (BH1/BH2) and the dash plugs land on the left.",
   },
   {
     id: "engine-rear",
