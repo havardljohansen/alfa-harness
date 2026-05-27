@@ -3,6 +3,7 @@ import { resolvedWires, allNodes } from "@/data/harness";
 import { diodes } from "@/data/harness/diodes";
 import { complianceNotes } from "@/data/harness/compliance";
 import { buildOrder } from "@/data/harness/build-order";
+import { harnessModules } from "@/data/harness/modules";
 
 const nodeName = new Map(allNodes.map((n) => [n.id, n.name]));
 const compById = new Map(complianceNotes.map((c) => [c.id, c]));
@@ -40,6 +41,49 @@ export default function BuildSheets() {
                   ))}
                 </div>
               </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-lg font-semibold">Build by detachable module</h2>
+          <p className="text-muted text-sm mt-0.5 max-w-3xl">
+            The harness builds as separable sub-assemblies that plug together at the bulkheads — each can be
+            built on the bench and dropped in or pulled out as a unit.{" "}
+            <span className="text-warn">
+              When the harness model changes, revise the affected module&apos;s sheet here — pinpoint it from the
+              changed component (every part belongs to exactly one module; a cross-bulkhead wire touches two).
+            </span>
+          </p>
+        </div>
+        <div className="grid lg:grid-cols-2 gap-3">
+          {harnessModules.map((m) => (
+            <div key={m.id} className="rounded-lg border bg-panel p-3 break-inside-avoid">
+              <div className="font-semibold">{m.name}</div>
+              <div className="text-xs text-muted italic mt-0.5">{m.summary}</div>
+
+              <div className="mt-2 text-[11px] uppercase tracking-wide text-muted">Interfaces</div>
+              <ul className="text-xs list-disc list-inside text-muted">
+                {m.interfaces.map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+              <div className="text-xs mt-1"><span className="text-muted">Ground:</span> {m.ground}</div>
+
+              <div className="mt-2 text-[11px] uppercase tracking-wide text-muted">Build steps</div>
+              <ol className="mt-0.5 space-y-1 text-sm list-decimal list-inside">
+                {m.steps.map((s, i) => <li key={i}>{s}</li>)}
+              </ol>
+
+              <div className="mt-2 pt-2 border-t">
+                <div className="text-[11px] uppercase tracking-wide text-muted mb-1">Parts</div>
+                <div className="flex flex-wrap gap-1">
+                  {m.parts.map((p, i) => (
+                    <span key={i} className="text-[11px] px-1.5 py-0.5 rounded bg-panel-2">{p}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-1.5 text-[10px] text-muted">{m.componentIds.length} components in this module</div>
             </div>
           ))}
         </div>

@@ -1,9 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { simulate } from "./engine";
 import { scenarios } from "./scenarios";
-import { validateModel, resolvedWires } from "./index";
+import { validateModel, resolvedWires, allNodes } from "./index";
 import { relays } from "./relays";
 import { ownedParts } from "./parts";
+import { harnessModules, moduleOf } from "./modules";
 
 // ---------------------------------------------------------------------------
 // Model integrity — the harness data must be internally consistent.
@@ -31,6 +32,33 @@ describe("model integrity", () => {
 
   it("deduces a positive length for every wire", () => {
     for (const w of resolvedWires) expect(w.lengthMm, w.id).toBeGreaterThan(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Module coverage — every component belongs to exactly one detachable module.
+// This is the forcing function behind the build-sheet revision rule: add a new
+// component without assigning it to a module and this fails, reminding you to
+// write/revise that module's build sheet (see modules.ts).
+// ---------------------------------------------------------------------------
+describe("detachable-module coverage", () => {
+  it("assigns every model node to exactly one module", () => {
+    const unassigned = allNodes.filter((n) => !moduleOf(n.id)).map((n) => n.id);
+    expect(unassigned, `unassigned to any module: ${unassigned.join(", ")}`).toEqual([]);
+
+    // No node assigned to two modules.
+    const seen = new Map<string, string[]>();
+    for (const m of harnessModules) for (const id of m.componentIds) {
+      seen.set(id, [...(seen.get(id) ?? []), m.id]);
+    }
+    const dupes = [...seen.entries()].filter(([, mods]) => mods.length > 1);
+    expect(dupes, `assigned to multiple modules: ${dupes.map(([id, mods]) => `${id}→${mods.join("+")}`).join(", ")}`).toEqual([]);
+  });
+
+  it("lists only real component ids in each module", () => {
+    const real = new Set(allNodes.map((n) => n.id));
+    const bogus = harnessModules.flatMap((m) => m.componentIds.filter((id) => !real.has(id)).map((id) => `${m.id}:${id}`));
+    expect(bogus, `module references unknown component: ${bogus.join(", ")}`).toEqual([]);
   });
 });
 
