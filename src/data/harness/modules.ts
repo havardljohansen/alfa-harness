@@ -57,7 +57,8 @@ export const harnessModules: HarnessModule[] = [
     ground: "Engine-bay HUB block (gnd-eng) — battery − and engine strap land here; the other modules' trunks return to it.",
     parts: [
       "Bussmann RTMR ×2 (bussed)",
-      "ISO-280 relays ×11 (6 SPST + 5 SPDT)",
+      "ISO-280 relays ×11 in use (6 SPST + 5 SPDT) + 1 future SPST (washer, reserves the constant-RTMR's last cavity)",
+      "External electronic LED flasher (next to the constant RTMR)",
       "MINI/ATM fuses (assorted) + spares",
       "Instrument PWM dimmer + heater PWM/resistor module",
       "MIDI/MEGA holders for the bus feeds",
@@ -137,6 +138,7 @@ export const harnessModules: HarnessModule[] = [
       "Dash ground block + trunk",
       "187/250 spade terminals for gauges/switches",
       "Signal diodes ×4 (turn tell-tale OR-ing / hazard isolation)",
+      "Period-correct washer push button (low-current trigger; pump install deferred)",
     ],
     steps: [
       "Build the cluster harness on the bench: gauge feeds, sender signals, tell-tales, illumination output from the dimmer.",

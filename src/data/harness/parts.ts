@@ -340,11 +340,21 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "relay-base-extra",
-    item: "Headlight relays already covered — confirm relay count vs plan",
-    qty: "0–1",
+    item: "SPST relay — 1 more (for the deferred washer pump) + optional spares",
+    qty: "1 (+ spares)",
     category: "relay",
     reason:
-      "Plan uses 6 SPST + 5 SPDT = exactly what you own. No spare SPST. Buy 1–2 spares if you want redundancy.",
+      "The 6 SPST + 5 SPDT you own are all allocated to the in-use circuits. The washer pump (deferred) is relay-driven so its period-correct button stays a low-current trigger — that needs one more SPST (ISO-280, Song Chuan 301-1A-C-R1-U03-12VDC), which reserves the constant-RTMR's last cavity. Buy it with the pump. Add 1–2 further spares if you want headlight redundancy.",
+    suggestion: "Song Chuan 301-1A-C-R1-U03-12VDC (same as owned) ×1 for the washer + spares.",
+  },
+  {
+    id: "washer",
+    item: "Electric washer pump + period-correct dash push button (DEFERRED install)",
+    qty: "1 pump + 1 button",
+    category: "component",
+    reason:
+      "The factory foot pump is retired; the rebuild fits a modern electric washer pump, relay-driven (see the +1 SPST above) so the visible dash button stays period-correct and carries no load. Provisioned + capped in the harness now; fit the pump + button later (plug-in). The pump is ~2–4 A on the wiper/washer fuse.",
+    suggestion: "Any 12 V universal washer pump (~$8); a period-correct momentary push button to match the dash. Not Mouser — restoration/accessory supplier.",
   },
   {
     id: "led-flasher",
@@ -352,8 +362,8 @@ export const bomGaps: BomGap[] = [
     qty: "1",
     category: "component",
     reason:
-      "Indicators are LED. The flasher feeds the turn-relay commons, so it carries the (tiny) LED load — a thermal flasher won't flash. Use an ISO-280-footprint electronic / load-independent flasher so it drops into the spare rtmr-const relay slot (confirm the 49/49a/31 pinout maps to the cavity).",
-    suggestion: "Aftermarket (not Mouser) — an ISO-280-terminal electronic flasher (Swe-Check) to drop in the RTMR slot, or a standard 3-pin electronic LED flasher (Memotronics EF32RLNP, Custom LED ELFR-1, Painless 80230) mounted next to the block.",
+      "Indicators are LED. The flasher feeds the turn-relay commons, so it carries the (tiny) LED load — a thermal flasher won't flash. Mount it EXTERNALLY next to the RTMR: the constant-RTMR's last ISO-280 cavity is now reserved for the future washer relay, so the drop-in-slot option isn't free. A standard 3-pin electronic LED flasher next to the block is the norm anyway.",
+    suggestion: "Aftermarket (not Mouser) — a standard 3-pin electronic LED flasher (Memotronics EF32RLNP, Custom LED ELFR-1, Painless 80230) mounted next to the block.",
   },
   // --- Specialty tools (one-time; not consumed in the harness) ---------------
   {

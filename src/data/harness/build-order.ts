@@ -98,11 +98,12 @@ export const buildOrder: BuildPhase[] = [
     title: "6 · Fit relays & fuses",
     why: "Populate the centres once the wiring behind them is in.",
     parts: [
-      "Song Chuan ISO-280 relays ×11 (6 SPST + 5 SPDT)",
+      "Song Chuan ISO-280 relays ×11 (6 SPST + 5 SPDT); +1 SPST later for the deferred washer",
       "MINI / ATM blade fuses — assorted ratings + spares",
     ],
     steps: [
-      { text: "Plug the 11 relays into their positions (2 in the PDM, 5 + 4 in the RTMRs).", ref: "/fuses" },
+      { text: "Plug the 11 relays into their positions (2 in the PDM, 5 in the ignition RTMR, 4 in the constant RTMR — leave its last cavity reserved for the future washer relay).", ref: "/fuses" },
+      { text: "Mount the electronic LED flasher externally next to the constant RTMR (its in-block cavity is reserved for the washer relay).", ref: "/fuses" },
       { text: "Fit the MINI blade fuses to the ratings on the Fuses page; keep spares in the kit.", ref: "/fuses" },
     ],
   },
@@ -112,7 +113,7 @@ export const buildOrder: BuildPhase[] = [
     why: "Bring it up one circuit at a time and verify each against its user-story before moving on.",
     parts: [
       "AMP 250 (6.3 mm) + 187 (4.8 mm) spade terminals",
-      "Electronic (load-independent) flasher",
+      "Electronic (load-independent) flasher — mounted external, next to the constant RTMR",
       "H4 headlight bulbs (if upgrading)",
       "Heater-fan dropping resistor (optional, for low speed)",
     ],

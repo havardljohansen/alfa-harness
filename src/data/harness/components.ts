@@ -600,7 +600,7 @@ const comfort: (DeviceComponent | SwitchComponent)[] = [
     kind: "flasher",
     zone: "engine-front",
     terminals: [t("49", "Feed in", "49"), t("49a", "Flashing out", "49a"), t("31", "Ground", "31")],
-    note: "MUST be electronic / load-independent — the indicators are LED, and this flasher feeds the turn-relay commons so it carries the (tiny) LED load; a thermal flasher won't flash on it. Use an ISO-280-footprint electronic flasher so it drops into the spare rtmr-const relay slot (confirm the 49/49a/31 pinout maps to the cavity). The weak column switch is unaffected — it only triggers the relay coils.",
+    note: "MUST be electronic / load-independent — the indicators are LED, and this flasher feeds the turn-relay commons so it carries the (tiny) LED load; a thermal flasher won't flash on it. Mount it EXTERNALLY next to the RTMR (a standard 3-pin electronic LED flasher): the constant-RTMR's last ISO-280 cavity is reserved for the future washer relay, so the in-slot option is no longer free. The weak column switch is unaffected — it only triggers the relay coils.",
   },
   {
     id: "fuel-pump",

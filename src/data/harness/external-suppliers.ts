@@ -47,10 +47,9 @@ export const externalSuggestions: ExternalItem[] = [
     id: "led-flasher",
     item: "Electronic LED flasher (load-independent)",
     why: "Indicators are LED and the flasher feeds the relay commons, so a thermal flasher won't work.",
-    specs: "12 V; ELECTRONIC / load-independent (flashes 0 W–full); ISO-280 footprint to fit the spare RTMR slot — confirm the 49 (in) / 49a (out) / 31 (gnd) pins map to the cavity; else a 3-pin unit mounted beside the block.",
+    specs: "12 V; ELECTRONIC / load-independent (flashes 0 W–full); a standard 3-pin unit — 49 (in) / 49a (out) / 31 (gnd) — mounted beside the constant RTMR. (The in-block ISO-280 cavity is reserved for the future washer relay, so mount external.)",
     options: [
-      { name: "Swe-Check ISO-280 flasher", url: "https://www.swe-check.com.au/collection/flashers-with-iso-280-terminals", note: "fits the spare RTMR relay slot — tidiest" },
-      { name: "Memotronics EF32RLNP", url: "https://www.amazon.com/EF32RLNP-Electronic-Compatible-APPROVED-INDEPENDENT/dp/B01GIU9M0Y", note: "2-pin + ground" },
+      { name: "Memotronics EF32RLNP", url: "https://www.amazon.com/EF32RLNP-Electronic-Compatible-APPROVED-INDEPENDENT/dp/B01GIU9M0Y", note: "2-pin + ground — mount beside the block" },
       { name: "Custom LED ELFR-1", url: "https://www.customled.com/products/elfr-1-electronic-led-flasher-relay" },
     ],
   },

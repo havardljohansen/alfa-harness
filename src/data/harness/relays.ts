@@ -132,7 +132,7 @@ export const relays: RelayAssignment[] = [
     id: "rly-washer",
     name: "Washer-pump relay (FUTURE / provisioned)",
     type: "SPST",
-    fn: "Keeps the period-correct dash washer button a low-current TRIGGER — the relay carries the modern electric pump. Takes the spare constant-RTMR slot; buy + fit the relay with the (deferred) pump.",
+    fn: "Keeps the period-correct dash washer button a low-current TRIGGER — the relay carries the modern electric pump. Reserves the constant-RTMR's last ISO-280 cavity; buy + fit the relay with the (deferred) pump.",
     mountedIn: "rtmr-const",
     partRef: SPST,
     future: true,
@@ -140,7 +140,7 @@ export const relays: RelayAssignment[] = [
     coilTriggerLabel: "WASH.TRG",
     commonFrom: "bus",
     out87: "Electric washer pump (WASH.OUT)",
-    note: "Provisioned: occupies the last constant-RTMR relay slot but isn't bought yet (the 11 owned cover everything in use now). Vintage-look dash controls stay triggers; the modern pump hides behind this relay.",
+    note: "Provisioned: reserves the last constant-RTMR cavity but isn't bought yet (the 11 owned relays cover everything in use now — this is a +1 SPST to buy with the pump). Taking this cavity bumps the LED flasher to EXTERNAL mounting (standard 3-pin next to the block). Vintage-look dash controls stay triggers; the modern pump hides behind this relay.",
   },
 
   // --- SPDT (5) -------------------------------------------------------------
