@@ -218,6 +218,16 @@ export const harnessModules: HarnessModule[] = [
 //     it touches two module sheets (e.g. a BH4 wire = main-loom + front-clip).
 // ---------------------------------------------------------------------------
 
+/** The bulkhead/cluster connector(s) each module plugs through — its boundary
+ *  in a per-module diagram (wires to other modules terminate here). */
+export const moduleConnectors: Record<string, string[]> = {
+  "main-loom": ["bh1", "bh2", "bh3", "bh4", "sw3"],
+  "front-clip": ["bh4"],
+  dashboard: ["bh1", "bh2"],
+  "rear-boot": ["bh3"],
+  "switch-cluster": ["sw3"],
+};
+
 const componentToModule: Map<string, string> = (() => {
   const m = new Map<string, string>();
   for (const mod of harnessModules) for (const c of mod.componentIds) m.set(c, mod.id);

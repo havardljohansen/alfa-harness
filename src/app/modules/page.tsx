@@ -10,9 +10,11 @@ export default function ModulesPage() {
       <div className="no-print">
         <h1 className="text-xl font-bold">Detachable modules — diagram & build</h1>
         <p className="text-muted text-sm mt-0.5 max-w-3xl">
-          Each module as a WireViz harness diagram (boxes = parts with their pins, lines = wires with the
-          Dymo label + gauge; tinted boxes are off-module parts it plugs into) — followed by how to build it.
-          Print (Cmd/Ctrl-P) to take into the garage.
+          Each module as a compact node diagram: wires are drawn only where they actually run, power blocks
+          collapse to a single box, and a wire leaving the module ends at the connector it plugs through (its
+          boundary). Numbered figure-reference boxes below the diagram show each part&apos;s real layout — the
+          PDM/RTMR relay&amp;fuse grid, each connector&apos;s pin map, and the lamps/horns/blinkers as symbols —
+          followed by how to build the module. Print (Cmd/Ctrl-P) to take into the garage.
         </p>
       </div>
 

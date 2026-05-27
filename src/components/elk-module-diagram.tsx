@@ -6,13 +6,25 @@ import "@xyflow/react/dist/style.css";
 import ELK from "elkjs/lib/elk.bundled.js";
 import { resolvedWires, allNodes } from "@/data/harness";
 import { circuits } from "@/data/harness/circuits";
-import { harnessModules } from "@/data/harness/modules";
+import { harnessModules, moduleConnectors } from "@/data/harness/modules";
+import { relays, fuseBlocks } from "@/data/harness/relays";
+import { fuses } from "@/data/harness/fuses";
+import { connectors, logicalBulkheads } from "@/data/harness/connectors";
+import { BlockGrid, ConnectorGrid } from "@/components/layout-grids";
 import type { CircuitGroup } from "@/data/harness/types";
 
 const elk = new ELK();
 const circuitGroup = new Map(circuits.map((c) => [c.id, c.group]));
 const node = new Map(allNodes.map((n) => [n.id, n]));
 const moduleName = new Map(harnessModules.flatMap((m) => m.componentIds.map((c) => [c, m.name] as const)));
+// A relay is shown as part of its block (the PDM/RTMR is one physical box).
+const relayBlock = new Map(relays.map((r) => [r.id, r.mountedIn]));
+const displayId = (comp: string) => relayBlock.get(comp) ?? comp;
+const isBlock = (id: string) => { const k = node.get(id)?.kind; return k === "fuse-block" || k === "distribution"; };
+// Connectors are the module boundary (a crossing wire terminates at its plug).
+const connName = new Map(logicalBulkheads.map((c) => [c.id, c.name]));
+const physForLogical = (id: string) => connectors.filter((c) => c.id === id || c.id.startsWith(id + "-"));
+const isConnector = (id: string) => connName.has(id);
 
 const GROUP_COLOR: Record<CircuitGroup, string> = {
   power: "#9aa7b8", charging: "#e8b04b", starting: "#c98a4b", ignition: "#e2554a",
@@ -61,15 +73,31 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
     const mod = harnessModules.find((m) => m.id === moduleId);
     if (!mod) return { items: [] as { id: string; num: number }[], rfEdges: [] as Edge[] };
     const inModule = new Set(mod.componentIds);
+    const ownedConn = new Set(moduleConnectors[moduleId] ?? []);
+    // Resolve a wire end to its diagram node: in-module parts collapse relays
+    // into their block; a part OUTSIDE the module resolves to the connector this
+    // module plugs through (its boundary), else to the external part itself.
+    const resolve = (comp: string, via?: string[]) => {
+      if (inModule.has(comp)) return displayId(comp);
+      const c = (via ?? []).find((v) => ownedConn.has(v));
+      return c ?? comp;
+    };
     const wires = resolvedWires.filter((w) => inModule.has(w.from.component) || inModule.has(w.to.component));
     const ids: string[] = [];
-    for (const w of wires) for (const c of [w.from.component, w.to.component]) if (!ids.includes(c)) ids.push(c);
+    const rfEdges: Edge[] = [];
+    for (const w of wires) {
+      const s = resolve(w.from.component, w.via);
+      const t = resolve(w.to.component, w.via);
+      if (s === t) continue; // inside a single block — see its layout below
+      if (!ids.includes(s)) ids.push(s);
+      if (!ids.includes(t)) ids.push(t);
+      rfEdges.push({
+        id: w.id, source: s, target: t, label: w.label,
+        labelStyle: { fontSize: 8, fill: "#cdd0c4" }, labelBgStyle: { fill: "#0b0e13" },
+        style: { stroke: GROUP_COLOR[circuitGroup.get(w.circuit)!] ?? "#888", strokeWidth: 1.4 },
+      });
+    }
     const items = ids.map((id, i) => ({ id, num: i + 1 }));
-    const rfEdges: Edge[] = wires.map((w) => ({
-      id: w.id, source: w.from.component, target: w.to.component, label: w.label,
-      labelStyle: { fontSize: 8, fill: "#cdd0c4" }, labelBgStyle: { fill: "#0b0e13" },
-      style: { stroke: GROUP_COLOR[circuitGroup.get(w.circuit)!] ?? "#888", strokeWidth: 1.4 },
-    }));
     return { items, rfEdges };
   }, [moduleId]);
 
@@ -92,15 +120,18 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
       if (!live) return;
       const pos = new Map((res.children ?? []).map((c) => [c.id, { x: c.x ?? 0, y: c.y ?? 0 }]));
       setNodes(base.items.map((it) => {
-        const n = node.get(it.id)!;
-        const external = !inModule.has(it.id);
+        const conn = isConnector(it.id);
+        const n = node.get(it.id);
+        const external = !conn && !inModule.has(it.id);
+        const label = conn ? `${it.num} · ${connName.get(it.id)}` : `${it.num} · ${shortName(n?.name ?? it.id)}`;
         return {
           id: it.id, position: pos.get(it.id) ?? { x: 0, y: 0 },
-          data: { label: `${it.num} · ${shortName(n.name)}` },
+          data: { label },
           style: {
             fontSize: 9, width: 132, padding: 4, borderRadius: 7,
-            border: external ? "1px dashed #3a4250" : "1px solid #2a323f",
-            background: external ? "#10141b" : "#161d28", color: external ? "#7d8694" : "#e7ecf3",
+            border: conn ? "2px solid #5a6678" : external ? "1px dashed #3a4250" : "1px solid #2a323f",
+            background: conn ? "#1c2530" : external ? "#10141b" : "#161d28",
+            color: conn ? "#dfe4ea" : external ? "#7d8694" : "#e7ecf3",
           },
         };
       }));
@@ -108,7 +139,10 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
     return () => { live = false; };
   }, [base, moduleId]);
 
-  const legend = base.items.map((it) => ({ ...it, n: node.get(it.id)! }));
+  const inModuleSet = new Set(harnessModules.find((m) => m.id === moduleId)?.componentIds ?? []);
+  const connItems = base.items.filter((it) => isConnector(it.id));
+  const blockItems = base.items.filter((it) => isBlock(it.id));
+  const compItems = base.items.filter((it) => !isConnector(it.id) && !isBlock(it.id));
 
   return (
     <div>
@@ -118,17 +152,71 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
           <Controls showInteractive={false} />
         </ReactFlow>
       </div>
+
+      {/* Connector figures: the pin layout of each plug this module crosses */}
+      {connItems.map((l) => (
+        <div key={l.id} className="border rounded p-2 mt-2 bg-panel">
+          <div className="text-xs font-semibold">
+            <span className="font-mono">{l.num}</span> · {connName.get(l.id)}
+            <span className="text-muted font-normal"> — connector pin layout</span>
+          </div>
+          {physForLogical(l.id).map((c) => (
+            <div key={c.id} className="mt-1.5">
+              <div className="text-[10px] text-muted">{c.name} · {c.pins.length}/{c.ways} pins</div>
+              <ConnectorGrid connector={c} />
+            </div>
+          ))}
+        </div>
+      ))}
+
+      {/* Power-block figures: the relay/fuse grid + where every pin goes */}
+      {blockItems.map((l) => {
+        const blk = fuseBlocks.find((b) => b.id === l.id)!;
+        const bf = fuses.filter((f) => f.block === l.id);
+        const br = relays.filter((r) => r.mountedIn === l.id);
+        return (
+          <div key={l.id} className="border rounded p-2 mt-2 bg-panel">
+            <div className="text-xs font-semibold">
+              <span className="font-mono">{l.num}</span> · {blk.name}
+              {!inModuleSet.has(l.id) && <span className="text-muted"> · ↗ {moduleName.get(l.id)}</span>}
+              <span className="text-muted font-normal"> — relay/fuse layout</span>
+            </div>
+            <div className="mt-1.5"><BlockGrid block={blk} blockFuses={bf} blockRelays={br} /></div>
+            <div className="grid md:grid-cols-2 gap-x-4 gap-y-0.5 mt-2 text-[10px]">
+              <div>
+                <div className="uppercase tracking-wide text-muted">Relay pins → where</div>
+                {br.map((r) => (
+                  <div key={r.id}>
+                    <span className="text-fg">{r.name.replace(/ relay.*/i, "")}</span>: coil← {r.coilTriggerLabel} · 30← {r.commonFrom} · 87→ {r.out87}
+                    {r.out87a ? ` · 87a→ ${r.out87a}` : ""}
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div className="uppercase tracking-wide text-muted">Fuses → feeds</div>
+                {bf.filter((f) => f.ratingA > 0).map((f) => (
+                  <div key={f.id}>F{f.position} · {f.ratingA} A · {f.name} → {f.feeds}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Component figures: symbol + terminals */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1.5 mt-2">
-        {legend.map((l) => {
-          const external = !harnessModules.find((m) => m.id === moduleId)?.componentIds.includes(l.id);
+        {compItems.map((l) => {
+          const n = node.get(l.id);
+          if (!n) return null;
+          const external = !inModuleSet.has(l.id);
           return (
             <div key={l.id} className="flex items-center gap-2 text-xs border rounded px-2 py-1 bg-panel">
               <span className="font-mono font-semibold w-5 shrink-0 text-center">{l.num}</span>
-              <KindGlyph kind={l.n.kind} />
+              <KindGlyph kind={n.kind} />
               <span className="min-w-0">
-                <span className={external ? "text-muted" : ""}>{l.n.name}</span>
+                <span className={external ? "text-muted" : ""}>{n.name}</span>
                 {external && <span className="text-[10px] text-muted"> · ↗ {moduleName.get(l.id)}</span>}
-                <span className="block text-[10px] text-muted truncate">{l.n.terminals.map((t) => t.id).join(" · ")}</span>
+                <span className="block text-[10px] text-muted truncate">{n.terminals.map((t) => t.id).join(" · ")}</span>
               </span>
             </div>
           );
