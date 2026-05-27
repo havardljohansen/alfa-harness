@@ -447,12 +447,12 @@ export function completeBom(): BomLine[] {
     const spec = terminalByGauge.find((s) => s.mm2 === t.mm2);
     if (!spec || spec.isRing) continue;
     const pn = t.gender === "male" ? spec.malePn : spec.femalePn;
-    L.push({ qty: spares(t.count), mouserPn: mp(pn), mfgPn: pn ?? "", desc: `MP280 terminal ${spec.awg} AWG (${t.mm2} mm²) — ${t.gender.toUpperCase()}${spec.owned ? "" : " — BUY"}`, category: "terminal" });
+    L.push({ qty: spares(t.count), mouserPn: mp(pn), mfgPn: pn ?? "", desc: `280-series terminal ${spec.awg} AWG (${t.mm2} mm²) — ${t.gender.toUpperCase()}${spec.owned ? "" : " — BUY"} (GT 280 for plug ends, Metri-Pack 280 for block/device — see gaps for the GT 280 female + seals)`, category: "terminal" });
   }
 
   // 4 — Seals / spades / rings (totals + spares)
   const term = terminationTally();
-  L.push({ qty: spares(term.seals), mouserPn: "", mfgPn: "15324982 / -81 / -85", desc: "MP280 single-wire seals (match seal size to wire gauge)", category: "terminal" });
+  L.push({ qty: spares(term.seals), mouserPn: "", mfgPn: "15324982 / -81 / -85", desc: "Metri-Pack 280 single-wire seals — block/device side (the GT 280 plugs use GT 280 seals 15366065/66/67 — see gaps)", category: "terminal" });
   L.push({ qty: spares(term.spade), mouserPn: "829-170187-2", mfgPn: "170187-2 / 1217084-1", desc: "Faston spade receptacles — device ends (250 + 187 series)", category: "terminal" });
   L.push({ qty: String(term.ring), mouserPn: "", mfgPn: "assorted", desc: "Ring terminals — battery / ground / B+ studs (6 / 16 / 25 mm²)", category: "terminal" });
 

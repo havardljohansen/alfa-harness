@@ -112,7 +112,7 @@ export const ownedParts: PartItem[] = [
     unitPrice: 0.382,
     currency: "USD",
     order: "77657766",
-    role: "Female crimp terminals for connectors / fuse-block rear.",
+    role: "Metri-Pack 280 female crimp — RTMR/PDM rear cavities + device ends. NOT for the GT 280 bulkhead plugs (those need GT 280 female sockets — see gaps).",
   },
   {
     mfgPn: "12110845-L",
@@ -139,35 +139,35 @@ export const ownedParts: PartItem[] = [
   {
     mfgPn: "15304724-L",
     mouserPn: "829-15304724",
-    desc: "Aptiv/Delphi Metri-Pack 280 MALE terminal, tin.",
+    desc: "Aptiv/Delphi GT 280 MALE terminal, tin (for the GT 280 bulkhead plug MALE halves).",
     category: "terminal",
     qtyOwned: 25,
     unitPrice: 0.348,
     currency: "USD",
     order: "77657766",
-    role: "Male crimp terminals.",
+    role: "GT 280 male crimp — for the GT 280 bulkhead plug MALE halves (≈41 male needed; you own ~75).",
   },
   {
     mfgPn: "15304731-L",
     mouserPn: "829-15304731",
-    desc: "Aptiv/Delphi Metri-Pack 280 MALE terminal, tin.",
+    desc: "Aptiv/Delphi GT 280 MALE terminal, tin (for the GT 280 bulkhead plug MALE halves).",
     category: "terminal",
     qtyOwned: 25,
     unitPrice: 0.386,
     currency: "USD",
     order: "77657766",
-    role: "Male crimp terminals.",
+    role: "GT 280 male crimp — for the GT 280 bulkhead plug MALE halves (≈41 male needed; you own ~75).",
   },
   {
     mfgPn: "15304730-L",
     mouserPn: "829-15304730",
-    desc: "Aptiv/Delphi Metri-Pack 280 MALE terminal, tin.",
+    desc: "Aptiv/Delphi GT 280 MALE terminal, tin (for the GT 280 bulkhead plug MALE halves).",
     category: "terminal",
     qtyOwned: 25,
     unitPrice: 0.389,
     currency: "USD",
     order: "77657766",
-    role: "Male crimp terminals.",
+    role: "GT 280 male crimp — for the GT 280 bulkhead plug MALE halves (≈41 male needed; you own ~75).",
   },
 
   // --- Single-wire seals ------------------------------------------------------
@@ -180,7 +180,7 @@ export const ownedParts: PartItem[] = [
     unitPrice: 0.058,
     currency: "USD",
     order: "77657766",
-    role: "Per-wire seal at each sealed connector cavity.",
+    role: "Metri-Pack 280 single-wire seal — for the MP280 side (block rears / device ends). The GT 280 bulkhead plugs need GT 280 seals (15366065/66/67) — see gaps.",
   },
   {
     mfgPn: "15324981",
@@ -427,12 +427,39 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "term-16-14",
-    item: "Metri-Pack 280 terminals, 16-14 AWG (female + male) — for the 1.5 mm² wires",
+    item: "Metri-Pack 280 terminals, 16-14 AWG (block/device side) — for the 1.5 mm² wires",
     qty: "~20 + spares",
     category: "terminal",
     reason:
-      "Owned terminals are 22-20 / 18-16 / 14-12 AWG and skip 16-14, which is the ideal range for the 1.5 mm² medium wires. Buy the 16-14 range so every wire gets its correct terminal.",
+      "MP280-side only (RTMR/PDM rears + device ends): the owned MP280 terminals skip 16-14, the ideal range for 1.5 mm² medium wires. (1.5 mm² wires that land on a GT 280 plug use the GT 280 18-16 terminal instead — see below.)",
     suggestion: "Female 12129409-L (sealed, verified); pair with the matching 16-14 AWG sealed male (confirm PN at order).",
+  },
+  // --- GT 280 plug terminals/seals — the audit gap (you own the MALE side only) -
+  {
+    id: "gt280-female-terms",
+    item: "GT 280 FEMALE terminals — for the bulkhead-plug female halves (you own ZERO)",
+    qty: "~50 (41 wires cross per side + spares)",
+    category: "terminal",
+    reason:
+      "AUDIT FINDING: the 5 bulkhead plugs are GT 280, and a GT 280 female connector needs GT 280 female SOCKETS. The only female terminals you own (12110xxx) are Metri-Pack 280 — they fit the RTMR/PDM rears + device ends, NOT the GT 280 plugs. Your GT 280 MALE terminals (15304730/31/724, ~75) cover the male halves; the female side has nothing. 41 wires cross the GT 280 bulkheads per side.",
+    suggestion: "GT 280 sealed female: 15304718-L (22-20 AWG), 15304719-L (18-16), 15304720-L (14-12) — buy to match your bulkhead wire gauges (mostly 22-20 + 18-16) + spares.",
+  },
+  {
+    id: "gt280-seals",
+    item: "GT 280 cable seals — for the bulkhead plugs (you own ZERO GT 280 seals)",
+    qty: "~100 (82 = both halves of 41 wires + spares)",
+    category: "seal",
+    reason:
+      "AUDIT FINDING: the seals you own (15324982/981/985) are Metri-Pack 280 single-wire seals (MP280 block/device side). The GT 280 sealed plugs need GT 280 cable seals — one per wire, per half.",
+    suggestion: "GT 280 seals: 15366065 (orange, 22-20), 15366066 (yellow, 18-16), 15366067 (tan, 14-12) — match to wire gauge.",
+  },
+  {
+    id: "gt280-tpa",
+    item: "GT 280 secondary lock / TPA — for the 2 extra connector pairs",
+    qty: "4 more (5 pairs = 10 halves; you own 6)",
+    category: "lock",
+    reason: "You own 6 TPA (15436200) — enough for 3 connector pairs (6 halves). The design needs 5 pairs (10 halves), so buy 4 more.",
+    suggestion: "Aptiv 15436200 ×4.",
   },
 ];
 

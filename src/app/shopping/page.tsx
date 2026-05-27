@@ -312,15 +312,18 @@ export default function ShoppingPage() {
                   <td className="font-mono font-semibold" style={{ color: r.buy ? "var(--warn)" : "var(--ok)" }}>{r.buy ? `+${r.buy}` : "✓"}</td>
                 </tr>
               ))}
-              <tr><td className="text-xs">Single-wire seals</td><td className="text-muted text-xs">15324982/-81/-85</td><td className="font-mono">~{sp(term.seals)}</td><td className="font-mono">250</td><td className="font-mono font-semibold" style={{ color: "var(--ok)" }}>✓</td></tr>
+              <tr><td className="text-xs">Single-wire seals — Metri-Pack 280 (block/device side)</td><td className="text-muted text-xs">15324982/-81/-85</td><td className="font-mono">~{sp(term.seals)}</td><td className="font-mono">250</td><td className="font-mono font-semibold" style={{ color: "var(--ok)" }}>✓</td></tr>
               <tr><td className="text-xs">Spade (faston) — device ends</td><td className="text-muted text-xs">170187-2 / 1217084-1</td><td className="font-mono">~{sp(term.spade)}</td><td className="font-mono">65</td><td className="font-mono font-semibold" style={{ color: "var(--warn)" }}>+{Math.max(0, sp(term.spade) - 65)}</td></tr>
               <tr><td className="text-xs">Ring terminals — studs (6/16/25 mm²)</td><td className="text-muted text-xs">assorted</td><td className="font-mono">~{term.ring}</td><td className="font-mono">0</td><td className="font-mono font-semibold" style={{ color: "var(--warn)" }}>+{term.ring}</td></tr>
             </tbody>
           </table>
         </div>
         <p className="text-xs text-muted mt-1.5">
-          Signal now uses your <strong>22-20 AWG terminals</strong> (previously spare) — so the 18-16 buy drops to zero.
-          Need = estimate + 20% spares; block/relay/PDM rear ends counted female (confirm vs datasheet).
+          ⚠ <strong>Two terminal systems</strong> (audit): the MALE terminals you own are <strong>GT 280</strong> (for the
+          bulkhead-plug male halves); the FEMALE terminals + seals you own are <strong>Metri-Pack 280</strong> (for the
+          RTMR/PDM rears + device ends). The GT 280 plugs additionally need <strong>GT 280 female terminals</strong>
+          (15304718/19/20) <strong>+ GT 280 seals</strong> (15366065/66/67) — you own <strong>zero</strong> of those; see the
+          gaps below. Need = estimate + 20% spares.
         </p>
       </section>
 
