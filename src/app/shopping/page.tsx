@@ -1,4 +1,4 @@
-import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, buildWirePlan, recommendedSpares } from "@/data/harness";
+import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, buildWirePlan, recommendedSpares, wireGroundSplit } from "@/data/harness";
 import { ownedParts, bomGaps, terminalByGauge } from "@/data/harness/parts";
 import { connectorBom, mouserUrl } from "@/data/harness/connectors";
 import { externalSuggestions } from "@/data/harness/external-suppliers";
@@ -10,6 +10,9 @@ const sp = (n: number) => Math.ceil(n * 1.2); // +20% spares
 
 export default function ShoppingPage() {
   const term = terminationTally();
+  const wireSplit = wireGroundSplit();
+  const wsGround = wireSplit.reduce((s, r) => s + r.groundM, 0);
+  const wsNon = wireSplit.reduce((s, r) => s + r.nonGroundM, 0);
   const byg = terminalsByGaugeGender();
   const need = (gauge: number, gender: "male" | "female") =>
     sp(byg.find((t) => t.mm2 === gauge && t.gender === gender)?.count ?? 0);
@@ -249,9 +252,45 @@ export default function ShoppingPage() {
         </div>
         <p className="text-xs text-muted mt-1.5">
           This build runs <strong>signal on 22 AWG</strong> (owned, all loom-wrapped); the clean-build recommendation
-          stays the optimal 0.5 mm² / 20 AWG. The signal shortfall is bought as <strong>20 AWG</strong> (0.5 mm², the
-          optimal — same 22-20 terminals). Spare 18 AWG (low) can also back up signal. Net wire to buy:
-          ~29 m of 20 AWG (signal), 44 m of 16 AWG (1.5), 17 m of 12 AWG (2.5), 9 m of 4 AWG (25); 18 + 10 AWG covered.
+          stays the optimal 0.5 mm² / 20 AWG, and the signal shortfall is bought as 20 AWG (same 22-20 terminals).
+          Spare 18 AWG (low) can also back up signal. Buy quantities per class are in the table above; the ground /
+          non-ground split is below. Lengths include 15% waste; future/capped wires (O2, PWM low-speed) are excluded.
+        </p>
+      </section>
+
+      {/* Wire — ground vs non-ground */}
+      <section>
+        <h2 className="text-lg font-semibold mb-2">Wire — ground vs non-ground</h2>
+        <div className="overflow-auto border rounded-lg">
+          <table className="wtable">
+            <thead>
+              <tr><th>Class</th><th>Gauge</th><th>Ground (m)</th><th>Non-ground (m)</th><th>Total (m)</th><th>Own (m)</th><th>Buy (m)</th></tr>
+            </thead>
+            <tbody>
+              {wireSplit.map((r) => (
+                <tr key={r.gaugeClass}>
+                  <td>{r.gaugeClass}</td>
+                  <td className="font-mono text-xs whitespace-nowrap">{r.gauge}</td>
+                  <td className="font-mono">{r.groundM}</td>
+                  <td className="font-mono">{r.nonGroundM}</td>
+                  <td className="font-mono">{r.totalM}</td>
+                  <td className="font-mono">{r.ownedM}</td>
+                  <td className="font-mono font-semibold" style={{ color: r.buyM ? "var(--warn)" : "var(--ok)" }}>{r.buyM ? r.buyM : "✓"}</td>
+                </tr>
+              ))}
+              <tr className="font-semibold">
+                <td colSpan={2}>Totals</td>
+                <td className="font-mono">{wsGround}</td>
+                <td className="font-mono">{wsNon}</td>
+                <td className="font-mono" colSpan={3}>{wsGround + wsNon} m total</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted mt-1.5">
+          Ground = any wire landing on a module ground block or the battery −. The ground side is dominated by the
+          heavy feed/medium runs (the module trunks + lamp/device earths); the bulk of the harness is non-ground
+          signal. Totals match the owned-vs-buy table above.
         </p>
       </section>
 
