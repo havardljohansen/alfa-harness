@@ -57,6 +57,20 @@ export default function ModulesPage() {
               ELK auto-layout. Boxes are numbered + named; the key below shows each part&apos;s symbol + terminals.
               Solid = this module; dashed/dimmed = off-module parts it plugs into. Wires coloured by circuit.
             </p>
+
+            <details className="mt-2 no-print">
+              <summary className="text-[11px] text-accent cursor-pointer">
+                Compare: Graphviz <span className="font-mono">dot</span> layout (orthogonal routing — fewer overlapping wires) ↓
+              </summary>
+              <div className="rounded border bg-panel p-2 mt-1.5 overflow-auto">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`${basePath}/diagrams/dot-${m.id}.svg`} alt={`${m.name} — Graphviz dot layout`} className="max-w-full" />
+              </div>
+              <p className="text-[10px] text-muted mt-1">
+                Same model, same connector-boundary / collapsed-block rules — but laid out by Graphviz <span className="font-mono">dot</span>
+                {" "}(right-angle wire routing + crossing minimisation, the classic schematic look). Static image; wire labels are floated (xlabels).
+              </p>
+            </details>
           </div>
 
           {/* Build */}

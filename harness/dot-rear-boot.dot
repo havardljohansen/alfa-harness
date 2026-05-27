@@ -1,0 +1,28 @@
+digraph "rear-boot" {
+  rankdir=LR; bgcolor="transparent"; splines=ortho; forcelabels=true; nodesep=0.45; ranksep=1.1;
+  node [shape=box, style="rounded,filled", color="#2a323f", fontcolor="#e7ecf3", fontsize=10, fontname="Helvetica"];
+  edge [dir=none, fontsize=8, fontname="Helvetica", fontcolor="#cdd0c4"];
+  "bh3" [label="BH3", fillcolor="#1c2530", color="#5a6678", penwidth=2];
+  "tail-rl" [label="Tail/position + brake LEFT", fillcolor="#161d28"];
+  "tail-rr" [label="Tail/position + brake RIGHT", fillcolor="#161d28"];
+  "plate" [label="Number-plate light LEFT", fillcolor="#161d28"];
+  "plate-r" [label="Number-plate light RIGHT", fillcolor="#161d28"];
+  "turn-rl" [label="Rear turn LEFT", fillcolor="#161d28"];
+  "turn-rr" [label="Rear turn RIGHT", fillcolor="#161d28"];
+  "reverse" [label="Reverse light", fillcolor="#161d28"];
+  "snd-fuel" [label="Fuel-tank sender", fillcolor="#161d28"];
+  "fuel-pump" [label="Electric fuel pump", fillcolor="#161d28"];
+  { rank=min; "bh3"; }
+  { rank=max; "tail-rl"; "tail-rr"; "plate"; "plate-r"; "turn-rl"; "turn-rr"; "reverse"; "snd-fuel"; "fuel-pump"; }
+  "bh3" -> "tail-rl" [xlabel="POS.REAR.L", color="#8bd17c", fontcolor="#8bd17c"];
+  "tail-rl" -> "tail-rr" [xlabel="POS.REAR.R", color="#8bd17c", fontcolor="#8bd17c"];
+  "tail-rl" -> "plate" [xlabel="PLATE.L", color="#8bd17c", fontcolor="#8bd17c"];
+  "tail-rr" -> "plate-r" [xlabel="PLATE.R", color="#8bd17c", fontcolor="#8bd17c"];
+  "bh3" -> "turn-rl" [xlabel="TURN.L.OUT.R", color="#56b4e9", fontcolor="#56b4e9"];
+  "bh3" -> "turn-rr" [xlabel="TURN.R.OUT.R", color="#56b4e9", fontcolor="#56b4e9"];
+  "bh3" -> "tail-rl" [xlabel="BRK.OUT.L", color="#56b4e9", fontcolor="#56b4e9"];
+  "tail-rl" -> "tail-rr" [xlabel="BRK.JMP", color="#56b4e9", fontcolor="#56b4e9"];
+  "bh3" -> "reverse" [xlabel="REV.OUT", color="#56b4e9", fontcolor="#56b4e9"];
+  "snd-fuel" -> "bh3" [xlabel="FUEL.SIG", color="#b07cd1", fontcolor="#b07cd1"];
+  "bh3" -> "fuel-pump" [xlabel="FUEL.OUT", color="#e87c7c", fontcolor="#e87c7c"];
+}

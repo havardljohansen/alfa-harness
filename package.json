@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "wireviz": "tsx scripts/gen-wireviz.ts && .venv/bin/wireviz harness/bulkheads.yml",
-    "wireviz:modules": "for m in main-loom front-clip dashboard rear-boot switch-cluster; do tsx scripts/gen-wireviz-module.ts $m && .venv/bin/wireviz harness/mod-$m.yml -f s && cp harness/mod-$m.svg public/diagrams/; done"
+    "wireviz:modules": "for m in main-loom front-clip dashboard rear-boot switch-cluster; do tsx scripts/gen-wireviz-module.ts $m && .venv/bin/wireviz harness/mod-$m.yml -f s && cp harness/mod-$m.svg public/diagrams/; done",
+    "diagrams:dot": "for m in main-loom front-clip dashboard rear-boot switch-cluster; do tsx scripts/gen-dot-module.ts $m && dot -Tsvg harness/dot-$m.dot -o public/diagrams/dot-$m.svg; done"
   },
   "dependencies": {
     "@xyflow/react": "^12.10.2",
