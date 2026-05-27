@@ -28,9 +28,11 @@ terminals, so one crimp system covers the whole car.
 
 The owned bulkhead plugs are **GT 280 12-way** (Aptiv/Delphi `15326915` male / `15326910` female), part of the **Metri-Pack 280** sealed family.
 
-**Available cavity counts (Metri-Pack 280 sealed, inline):** 1, 2, 3, 4, 5, 6, 7 standard, plus specialty **8** and the owned **12**. A 30-way "480" junction block exists but it's a big multi-row housing — exactly the kind that's awkward to mate/unmate by hand.
+**GT 280 sealed cavity counts:** **2, 3, 6, 8, 10, 12, 14, 16** ways. Useful part numbers — 8-way `15326655` (M), **10-way `15326661` (M) / `15326660` (F)**, owned 12-way `15326915` (M) / `15326910` (F). (The wider Metri-Pack 280 family adds 1/4/5/7-way and a 30-way "480" junction block.)
 
-**Rule: 12 cavities max per connector.** Anything bigger gets hard to seat and unplug (and stresses the latch), which defeats the point of a quick dash-disconnect. So a bulkhead that needs >12 wires is **split into two 12-ways**, never grown into one giant connector. (BH1 at 17 pins = two 12-ways; everything else is one plug ≤12.) The model auto-splits at 12.
+**Rule: 12 cavities max per connector — a deliberate ergonomics cap, NOT a product limit** (GT 280 goes to 16). Past ~12 the housing gets hard to seat/unplug by hand and stresses the latch, defeating a quick dash-disconnect. So a bulkhead needing >12 wires is **split into two 12-ways**, never grown into one giant connector. (BH1 at 17 pins = two 12-ways; everything else is one plug ≤12.) The model auto-splits at 12.
+
+**Right-sizing (lean):** pick the smallest size with one spare cavity — BH2 → 12-way, BH3/BH4 (7 pins) → 8-way, SW3 (7) → 8-way. That lets the **three owned 12-ways cover the dash** (BH1 ×2 + BH2 ×1) and the small bulkheads use cheap 8-ways. A 10-way is the next step up if a rear/front bulkhead later grows past 8.
 
 **Wire-gauge fit:** Metri-Pack 280 terminals take ~**22–10 AWG (≈0.35–6 mm²)** and are rated ~25–30 A — comfortably covering every wire that goes *through* a connector here (signal/low/medium, 0.75–2.5 mm²). The heavy runs (6 mm² feeds, 16–25 mm² battery/starter/ground) **never go through a connector** — they're ring terminals on studs — so the 280's gauge ceiling is never the limit.
 
