@@ -1,4 +1,4 @@
-import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, buildWirePlan, recommendedSpares, wireGroundSplit } from "@/data/harness";
+import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, buildWirePlan, recommendedSpares, wireGroundSplit, gt280TerminalPlan } from "@/data/harness";
 import { ownedParts, bomGaps, terminalByGauge } from "@/data/harness/parts";
 import { connectorBom, mouserUrl } from "@/data/harness/connectors";
 import { externalSuggestions } from "@/data/harness/external-suppliers";
@@ -174,9 +174,42 @@ export default function ShoppingPage() {
           </table>
         </div>
         <p className="text-xs text-muted mt-1.5">
-          Links go to Mouser (search by Aptiv PN; Mouser PN = <span className="font-mono">829-&lt;PN&gt;</span>). The
-          12-way row is covered by the three owned pairs (two left spare). Each pair = one male housing + one
-          female housing; both use your owned MP280 terminals.
+          Links go to Mouser (search by Aptiv PN; Mouser PN = <span className="font-mono">829-&lt;PN&gt;</span>).
+          Each pair = one male + one female housing — and they take <strong>GT 280 terminals + GT 280 seals</strong>
+          (not Metri-Pack 280). Exact terminal/seal counts below.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="text-lg font-semibold mb-2">GT 280 plug terminals &amp; seals — exact, by gauge</h2>
+        <p className="text-xs text-muted mb-2 max-w-3xl">
+          The {gt280TerminalPlan().reduce((n, r) => n + r.perSide, 0)} wires crossing the GT 280 bulkheads (per side),
+          by terminal size. You own the <strong>male</strong> terminals; the <strong>female</strong> terminals and
+          <strong> all the seals</strong> are the audit gap. Counts include +20% crimp spares.
+        </p>
+        <div className="overflow-auto border rounded-lg">
+          <table className="wtable">
+            <thead>
+              <tr><th>Size (AWG)</th><th>Wires/side</th><th>Male — own</th><th>Male — BUY</th><th>Female — BUY (PN)</th><th>Seals — BUY (PN)</th></tr>
+            </thead>
+            <tbody>
+              {gt280TerminalPlan().map((r) => (
+                <tr key={r.size}>
+                  <td className="font-mono font-semibold">{r.size}</td>
+                  <td className="font-mono">{r.perSide}</td>
+                  <td className="font-mono">{r.maleOwned}</td>
+                  <td className="font-mono font-semibold" style={{ color: r.maleBuy ? "var(--warn)" : "var(--ok)" }}>{r.maleBuy ? `+${r.maleBuy}` : "✓"}</td>
+                  <td className="font-mono font-semibold" style={{ color: "var(--warn)" }}>+{r.femaleBuy} <span className="text-muted font-normal">{r.femalePn}</span></td>
+                  <td className="font-mono font-semibold" style={{ color: "var(--warn)" }}>+{r.sealBuy} <span className="text-muted font-normal">{r.sealPn}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted mt-1.5">
+          Seals = one per wire per half (both sides), so ≈2× the per-side count. The male 22-20 is marginally short
+          (you own 25, need 26 + spares) — top it up too. SW3 (the 3-way switch cluster) is a separate small connector,
+          not GT 280.
         </p>
       </section>
 

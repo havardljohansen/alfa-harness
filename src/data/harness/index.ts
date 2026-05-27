@@ -413,6 +413,56 @@ export function wireGroundSplit(): WireSplitRow[] {
 }
 
 // ---------------------------------------------------------------------------
+// GT 280 bulkhead-plug terminals & seals — EXACT, by gauge. Each wire crossing
+// a GT 280 bulkhead (bh1-4; sw3 is a separate cluster connector) needs a male
+// terminal one side + female the other + a seal each side. Owned: GT 280 male
+// only — female + seals are the audit gap. Derived so it stays accurate.
+// ---------------------------------------------------------------------------
+export interface Gt280TermRow {
+  size: string;
+  perSide: number;
+  malePn: string;
+  maleOwned: number;
+  maleBuy: number;
+  femalePn: string;
+  femaleBuy: number;
+  sealPn: string;
+  sealBuy: number;
+}
+export function gt280TerminalPlan(): Gt280TermRow[] {
+  const GT = new Set(["bh1", "bh2", "bh3", "bh4"]);
+  const sizeOf = (c: GaugeClass) => (c === "signal" ? "22-20" : c === "high" ? "14-12" : "18-16");
+  const perSide: Record<string, number> = { "22-20": 0, "18-16": 0, "14-12": 0 };
+  for (const w of resolvedWires) {
+    if (w.future) continue;
+    for (const v of w.via ?? []) if (GT.has(v)) perSide[sizeOf(w.gaugeClass)]++;
+  }
+  const meta: Record<string, { malePn: string; femalePn: string; sealPn: string }> = {
+    "22-20": { malePn: "15304730-L", femalePn: "15304718-L", sealPn: "15366065" },
+    "18-16": { malePn: "15304731-L", femalePn: "15304719-L", sealPn: "15366066" },
+    "14-12": { malePn: "15304724-L", femalePn: "15304720-L", sealPn: "15366067" },
+  };
+  const owned = new Map(ownedParts.map((p) => [p.mfgPn, p.qtyOwned]));
+  const sp = (n: number) => Math.ceil(n * 1.2); // +20% crimp spares
+  return (["22-20", "18-16", "14-12"] as const).map((size) => {
+    const n = perSide[size];
+    const m = meta[size];
+    const maleOwned = owned.get(m.malePn) ?? 0;
+    return {
+      size,
+      perSide: n,
+      malePn: m.malePn,
+      maleOwned,
+      maleBuy: Math.max(0, sp(n) - maleOwned),
+      femalePn: m.femalePn,
+      femaleBuy: sp(n),
+      sealPn: m.sealPn,
+      sealBuy: sp(n * 2),
+    };
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Complete from-scratch BOM — one flat, orderable list with quantities. Drives
 // the Shopping spreadsheet + CSV export. Terminal/seal/spade counts are
 // estimates (+~20% spares); discrete parts are exact.
