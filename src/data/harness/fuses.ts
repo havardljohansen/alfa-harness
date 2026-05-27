@@ -8,12 +8,15 @@ import type { Fuse } from "./types";
 // ===========================================================================
 export const fuses: Fuse[] = [
   // --- PDM: headlights ------------------------------------------------------
+  // HWB18 = 18 cavities (6×3) = 9 fuse-equivalents; each relay eats 2 positions
+  // (2×relays + fuses ≤ 9, max 3 relays). We run 2 beam relays → 5 fuse slots:
+  // 4 beam outputs (used) + 1 spare. Relay COMMONS feed from the PDM main input
+  // (the relay cavity), NOT a fuse — so there is no "common-feed" fuse position.
   { id: "f-pdm-1", block: "pdm", position: 1, ratingA: 10, name: "Low beam LEFT", circuit: "c-headlights", source: "relay-out", feeds: "H4 low filament, left" },
   { id: "f-pdm-2", block: "pdm", position: 2, ratingA: 10, name: "Low beam RIGHT", circuit: "c-headlights", source: "relay-out", feeds: "H4 low filament, right" },
   { id: "f-pdm-3", block: "pdm", position: 3, ratingA: 10, name: "High beam LEFT", circuit: "c-headlights", source: "relay-out", feeds: "H4 high filament, left + tell-tale" },
   { id: "f-pdm-4", block: "pdm", position: 4, ratingA: 10, name: "High beam RIGHT", circuit: "c-headlights", source: "relay-out", feeds: "H4 high filament, right" },
-  { id: "f-pdm-5", block: "pdm", position: 5, ratingA: 30, name: "Beam relay common feed", circuit: "c-headlights", source: "battery", feeds: "Battery → low/high beam relay commons (PDM internal main)" },
-  { id: "f-pdm-6", block: "pdm", position: 6, ratingA: 0, name: "Spare / front fog (future)", circuit: "c-future-spare", source: "relay-out", feeds: "Reserved", future: true },
+  { id: "f-pdm-5", block: "pdm", position: 5, ratingA: 0, name: "Spare / front fog (future)", circuit: "c-future-spare", source: "relay-out", feeds: "Reserved — the one free slot at the 2-relay / 5-fuse config", future: true },
 
   // --- Ignition bus (RTMR, bussed; fed by ignition main relay) --------------
   { id: "f-ign-1", block: "rtmr-ign", position: 1, ratingA: 10, name: "Ignition coil", circuit: "c-ignition", source: "bus", feeds: "Coil + / distributor" },

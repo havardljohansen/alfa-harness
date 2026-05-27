@@ -83,10 +83,10 @@ function staticEdges(): Edge[] {
   }
 
   // --- PDM internals (hard-wired) ------------------------------------------
-  // Main bus -> beam-relay common feed -> both beam relay commons.
-  edges.push({ a: ep("pdm", "BUS"), b: ep("pdm", "f-pdm-5"), directed: false });
-  edges.push({ a: ep("pdm", "f-pdm-5"), b: ep("rly-low", "30"), directed: false });
-  edges.push({ a: ep("pdm", "f-pdm-5"), b: ep("rly-high", "30"), directed: false });
+  // Main input feeds both beam-relay commons directly (the relay cavity), not
+  // a fuse — fuses sit on the relay OUTPUTS (one per beam filament) below.
+  edges.push({ a: ep("pdm", "BUS"), b: ep("rly-low", "30"), directed: false });
+  edges.push({ a: ep("pdm", "BUS"), b: ep("rly-high", "30"), directed: false });
   // Beam relay outputs -> per-side beam fuses.
   edges.push({ a: ep("rly-low", "87"), b: ep("pdm", "f-pdm-1"), directed: false });
   edges.push({ a: ep("rly-low", "87"), b: ep("pdm", "f-pdm-2"), directed: false });

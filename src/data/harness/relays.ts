@@ -14,10 +14,10 @@ export const fuseBlocks: FuseBlock[] = [
     partRef: "PDM31002ZXM",
     bussed: false,
     zone: "engine-front",
-    fuseWays: 9,
+    fuseWays: 5,
     relayWays: 2,
     grid: { fuseCols: 3, relayCols: 2 },
-    note: "9-circuit, 100 A, IP69K. Holds the low/high-beam relays and the four headlight fuses. Closest to the front lamps → shortest heavy runs.",
+    note: "18 cavities on a 6×3 grid = 9 fuse-equivalents; a relay eats 2 positions (2×relays + fuses ≤ 9, max 3 relays). We run the 2R/5F config: low + high beam relays (commons fed from the main input) + 4 beam-output fuses, leaving ONE spare fuse slot. 100 A, IP69K.",
   },
   {
     id: "rtmr-ign",
