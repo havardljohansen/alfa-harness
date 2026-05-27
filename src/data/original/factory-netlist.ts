@@ -168,10 +168,12 @@ export const factoryNet: FactoryNetWire[] = [
   { id: "o-wiper-53", color: "Green", conf: "read", loadA: 3, from: { comp: "wiper-switch", term: "low" }, to: { comp: "wiper-motor", term: "53" }, section: "wipers", note: "Wiper run." },
   { id: "o-wiper-53a", color: "Red", conf: "read", loadA: 1, from: { comp: "wiper-switch", term: "park" }, to: { comp: "wiper-motor", term: "53a" }, section: "wipers", note: "Self-park feed." },
   { id: "o-wiper-53e", color: "White", conf: "read", loadA: 4, from: { comp: "wiper-switch", term: "high" }, to: { comp: "wiper-motor", term: "53e" }, section: "wipers", note: "Wiper second speed / park sense." },
-  { id: "o-washer-sw", color: "Blue/Black", conf: "scheme", loadA: 2, from: { comp: "fusebox", term: "f2" }, to: { comp: "washer-switch", term: "in" }, fuse: 2, section: "wipers", note: "Washer switch." },
-  { id: "o-washer-pump", color: "Blue/Black", conf: "scheme", loadA: 2, from: { comp: "washer-switch", term: "out" }, to: { comp: "washer-pump", term: "in" }, section: "wipers", note: "Washer pump." },
+  // Washer = a MANUAL FOOT PUMP. It squirts the fluid mechanically (there is NO
+  // electric pump motor on the diagram); its electrical contact, when pressed,
+  // RUNS THE WIPERS. It shares the wiper fuse (2) and feeds the wiper run feed.
+  { id: "o-washer-feed", color: "Blue/Black", conf: "scheme", loadA: 0.1, from: { comp: "fusebox", term: "f2" }, to: { comp: "washer-foot-pump", term: "in" }, fuse: 2, section: "wipers", note: "Foot-pump contact fed from fuse 2 (shared with the wipers). The pump itself is mechanical — it carries no motor current." },
+  { id: "o-washer-trig-wiper", color: "White/Black", conf: "scheme", loadA: 3, from: { comp: "washer-foot-pump", term: "out" }, to: { comp: "wiper-motor", term: "53" }, section: "wipers", note: "Pressing the foot pump triggers the wipers — its contact feeds the wiper RUN terminal (53). No electric washer pump motor exists in the factory car." },
   { id: "o-wiper-body", color: "Black", conf: "read", loadA: 4, from: { comp: "wiper-motor", term: "31" }, to: { comp: "body" }, section: "ground", note: "GROUND: wiper motor." },
-  { id: "o-washer-body", color: "Black", conf: "read", loadA: 2, from: { comp: "washer-pump", term: "31" }, to: { comp: "body" }, section: "ground", note: "GROUND: washer pump." },
 
   // ===========================================================================
   // HEATER FAN  (fuse 3)

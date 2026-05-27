@@ -148,7 +148,7 @@ export const factoryComponents: FactoryComponent[] = [
   { name: "Instrument lights + switch", status: "preserved", modern: "Switch fed from ignition (Run)." },
   // Comfort
   { name: "Wipers (2-speed self-park) + switch", status: "modernized", modern: "Bosch motor; switch triggers low/high relays; self-park via the low relay." },
-  { name: "Washer switch/pump", status: "preserved", modern: "Own momentary push on the ignition bus." },
+  { name: "Washer — manual foot pump (its contact triggers the wipers)", status: "modernized", modern: "Factory item is a foot pump: squirts fluid mechanically AND its contact runs the wipers — no electric pump. Modern rebuild currently fits a separate electric washer pump on its own momentary push (OPEN: could instead keep the foot pump and just trigger the wiper relay)." },
   { name: "Heater fan (blower) + switch", status: "modernized", modern: "Relay for full speed; optional resistor for low; switch carries coil current only." },
   { name: "Interior light + door switches ×2", status: "preserved", modern: "Door-triggered on the constant bus." },
   { name: "Cigar lighter", status: "removed", modern: "Removed — hazard switch fitted in its place." },
@@ -174,6 +174,7 @@ export const factoryArchitectureNotes = [
   "Ignition switch is 3-position (Stop / Run / Start) — no accessory detent.",
   "Lights are independent of the ignition (light switch fed from the battery).",
   "Mechanical fuel pump (no electric pump in the factory car).",
+  "Windscreen washer is a manual FOOT pump — no electric pump motor; pressing it squirts fluid and its contact runs the wipers (shares the wiper fuse).",
   "Loads switched directly by their dash switches — almost no relays (only the horn).",
   "Grounds returned through the body/chassis — no dedicated ground wiring (the classic reliability weak point the modern star-ground replaces).",
 ];
