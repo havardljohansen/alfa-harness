@@ -125,11 +125,20 @@ export function ElkModuleDiagram({ moduleId }: { moduleId: string }) {
       id: "root",
       layoutOptions: {
         "elk.algorithm": "layered", "elk.direction": "RIGHT",
-        "elk.layered.spacing.nodeNodeBetweenLayers": "90", "elk.spacing.nodeNode": "20",
+        "elk.layered.spacing.nodeNodeBetweenLayers": "90", "elk.spacing.nodeNode": "24",
         "elk.edgeRouting": "ORTHOGONAL",
-        // Honour the FIRST/LAST lane pins instead of overriding them for routing.
-        "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+        // Honour the FIRST/LAST lane pins (semiInteractive), but let ELK reorder
+        // EDGES freely to minimise crossings (NODES, not NODES_AND_EDGES), spend
+        // more effort on it (thoroughness), and SPACE parallel wires apart so they
+        // stop stacking on top of each other (the edgeEdge/edgeNode spacings).
+        "elk.layered.considerModelOrder.strategy": "NODES",
         "elk.layered.crossingMinimization.semiInteractive": "true",
+        "elk.layered.thoroughness": "40",
+        "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
+        "elk.spacing.edgeEdge": "14",
+        "elk.spacing.edgeNode": "18",
+        "elk.layered.spacing.edgeEdgeBetweenLayers": "14",
+        "elk.layered.spacing.edgeNodeBetweenLayers": "18",
       },
       children: base.items.map((it) => {
         const lc = layerConstraint(it.id);
