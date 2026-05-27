@@ -10,6 +10,7 @@ import { connectors, connectorPairsNeeded, connectorPairsOwned } from "./connect
 import { complianceNotes } from "./compliance";
 import { ownedParts, bomGaps } from "./parts";
 import { resolveWire, wireTotalsByGauge, wireTotalsByTier, wiresByBand } from "./derive";
+import { moduleOf } from "./modules";
 
 const term = (id: string, label: string, din?: string): Terminal => ({ id, label, din });
 
@@ -142,6 +143,41 @@ export function validateModel(): ValidationIssue[] {
     const used = relays.filter((r) => r.mountedIn === b.id).length;
     if (used > b.relayWays)
       issues.push({ severity: "warn", where: b.id, message: `${used} relays > ${b.relayWays} relay positions` });
+  }
+
+  // Redundant parallels (the piggyback principle): two+ wires leaving the SAME
+  // source node, crossing the SAME bulkhead(s), to the SAME module are doing the
+  // exact same thing — they should piggyback (jumper at the destination) instead
+  // of running parallel back to the hub. Same node = same potential, so this is
+  // always lossless. Flags it so it can't creep back in.
+  {
+    const fromGroups = new Map<string, typeof wires>();
+    for (const w of wires) {
+      if (!w.via?.length) continue; // only wires that actually cross a bulkhead
+      const node = `${w.from.component}.${w.from.terminal}`;
+      const arr = fromGroups.get(node) ?? [];
+      arr.push(w);
+      fromGroups.set(node, arr);
+    }
+    for (const [node, ws] of fromGroups) {
+      if (ws.length < 2) continue;
+      const buckets = new Map<string, typeof wires>();
+      for (const w of ws) {
+        const key = `${[...w.via!].sort().join("+")}→${moduleOf(w.to.component) ?? "?"}`;
+        const arr = buckets.get(key) ?? [];
+        arr.push(w);
+        buckets.set(key, arr);
+      }
+      for (const [key, group] of buckets) {
+        if (group.length >= 2) {
+          issues.push({
+            severity: "warn",
+            where: node,
+            message: `redundant parallel: ${group.map((w) => w.label).join(", ")} run together across [${key}] — piggyback (jumper at the destination) instead of a second feed back to the hub`,
+          });
+        }
+      }
+    }
   }
 
   // Each fuse's rating must not exceed the ampacity of the LOAD-carrying wires

@@ -59,7 +59,7 @@ export const logicalBulkheads: LogicalBulkhead[] = [
     zoneA: "engine-rear",
     zoneB: "engine-front",
     purpose:
-      "The whole front-of-car module unplugs here: headlight PDM + beams, front position lamps, front turn signals + side repeaters, and the horns. Beam-relay triggers and the main-beam tell-tale pass through from the dash; the turn/horn relay outputs come from the main loom. The PDM's battery feed (ring terminal) and the front-clip ground trunk are separate heavy cables, so this one signal plug frees the front clip.",
+      "The whole front-of-car module unplugs here: headlight PDM + beams, front position lamps, front turn signals + side repeaters, and the horns. Beam-relay triggers and the main-beam tell-tale pass through from the dash; the turn/horn relay outputs come from the main loom. Piggybacks keep the pin count down: one front-position feed (RH jumpers off LH), and the side repeaters jumper off the front indicators. The PDM's battery feed (ring) and the front-clip ground trunk are separate heavy cables, so this one signal plug frees the front clip.",
   },
   {
     id: "sw3",

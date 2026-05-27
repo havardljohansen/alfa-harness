@@ -88,7 +88,7 @@ export const harnessModules: HarnessModule[] = [
       "Twin horns",
     ],
     interfaces: [
-      "BH4 — the one signal plug: beam-relay triggers + main-beam tell-tale (through from the dash), front position feeds, front turn outputs, side repeaters, horn output",
+      "BH4 — the one signal plug (7 pins): beam-relay triggers ×2 + main-beam tell-tale, ONE front-position feed, front turn outputs ×2, horn output. The side repeaters jumper off the front indicators and the RH parking lamp jumpers off the LH — no separate BH4 pins (piggyback).",
       "Battery + → PDM input — a separate heavy ring/MIDI-fused cable (not through BH4)",
       "Front-clip ground trunk → battery hub — a separate heavy cable",
     ],
@@ -102,7 +102,7 @@ export const harnessModules: HarnessModule[] = [
     ],
     steps: [
       "Mount the PDM at the front; plug in the two beam relays and the four beam fuses.",
-      "Build the front-lamp bundle: PDM beam outputs → headlights; position/turn/side feeds out to their lamps.",
+      "Build the front-lamp bundle: PDM beam outputs → headlights; ONE position feed (jumper L→R at the lamp); front turn feeds with the side repeaters jumpered off them; horn feed.",
       "Land every front ground on the front-clip block; run its thick trunk back toward the hub.",
       "Terminate all the cross-firewall wires into the BH4 connector half; run the PDM battery feed as its own fused cable.",
       "Bench-test: with BH4 mated and the feed live, confirm low/high/flash, position, indicators + repeaters, and horns.",
@@ -173,7 +173,7 @@ export const harnessModules: HarnessModule[] = [
       "Metri-Pack 280 terminals/seals",
     ],
     steps: [
-      "Build the rear bundle: tail/brake/turn to each cluster, plate lights, reverse, the fuel-pump feed and the tank-sender signal.",
+      "Build the rear bundle: tail/turn to each cluster, plate lights, reverse, fuel-pump feed, tank-sender signal. The brake feed and the position feed each jumper L→R at the rear — one wire apiece through BH3.",
       "Land every rear ground on the boot block; run its thick trunk the length of the car to the hub.",
       "Terminate into the BH3 connector half.",
       "Bench-test: position/brake/indicators per side, reverse, plate lights, and the pump runs on its feed.",
