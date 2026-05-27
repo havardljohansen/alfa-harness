@@ -218,6 +218,10 @@ const RING_KINDS = new Set(["ground", "battery"]);
 
 export interface TerminationTally {
   mp280: number;
+  /** MP280 split by gender. Each bulkhead crossing = 1 male half + 1 female half;
+   *  block/relay/PDM rear ends assumed FEMALE (harness side) — confirm vs datasheet. */
+  mp280Male: number;
+  mp280Female: number;
   seals: number;
   spade: number;
   ring: number;
@@ -225,6 +229,8 @@ export interface TerminationTally {
 
 export function terminationTally(): TerminationTally {
   let mp280 = 0,
+    mp280Male = 0,
+    mp280Female = 0,
     seals = 0,
     spade = 0,
     ring = 0;
@@ -234,14 +240,17 @@ export function terminationTally(): TerminationTally {
       if (MP280_KINDS.has(kind)) {
         mp280++;
         seals++;
+        mp280Female++; // block/relay/PDM rear takes the harness-side female socket
       } else if (RING_KINDS.has(kind)) ring++;
       else spade++;
     }
     const vias = w.via?.length ?? 0;
     mp280 += vias * 2;
     seals += vias * 2;
+    mp280Male += vias; // one male terminal per connector half...
+    mp280Female += vias; // ...and one female, per crossing
   }
-  return { mp280, seals, spade, ring };
+  return { mp280, mp280Male, mp280Female, seals, spade, ring };
 }
 
 export function fuseShoppingList(): FuseLine[] {

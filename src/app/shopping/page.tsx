@@ -1,19 +1,16 @@
-import {
-  tierTotals,
-  fuseShoppingList,
-  terminationTally,
-} from "@/data/harness";
+import { tierTotals, fuseShoppingList, terminationTally } from "@/data/harness";
 import { ownedParts, bomGaps } from "@/data/harness/parts";
-import { connectorPairsNeeded, connectorPairsOwned } from "@/data/harness/connectors";
+import { connectorBom } from "@/data/harness/connectors";
 
 const owned = (pn: string) => ownedParts.find((p) => p.mfgPn === pn)?.qtyOwned ?? 0;
 
 export default function ShoppingPage() {
   const term = terminationTally();
-  const mp280Owned = owned("12110847-L") + owned("12110845-L") + owned("12110843-L") + owned("15304724-L") + owned("15304731-L") + owned("15304730-L");
+  // Owned MP280 terminals split by gender (from the Mouser orders).
+  const maleOwned = owned("15304724-L") + owned("15304731-L") + owned("15304730-L");
+  const femaleOwned = owned("12110847-L") + owned("12110845-L") + owned("12110843-L");
   const sealsOwned = owned("15324982") + owned("15324981") + owned("15324985");
   const spadeOwned = owned("170187-2") + owned("1217084-1");
-  const connShort = Math.max(0, connectorPairsNeeded - connectorPairsOwned);
 
   const need = (have: number, want: number) => ({
     have,
@@ -23,24 +20,75 @@ export default function ShoppingPage() {
   });
 
   const counts = [
-    { label: "Metri-Pack 280 terminals", ...need(mp280Owned, term.mp280) },
+    { label: "MP280 terminals — MALE (connector male halves)", ...need(maleOwned, term.mp280Male) },
+    { label: "MP280 terminals — FEMALE (other halves + block/relay rear)", ...need(femaleOwned, term.mp280Female) },
     { label: "Single-wire seals", ...need(sealsOwned, term.seals) },
-    { label: "Spade (faston) terminals", ...need(spadeOwned, term.spade) },
+    { label: "Spade (faston) terminals — device ends", ...need(spadeOwned, term.spade) },
+    { label: "Ring terminals — battery/ground/B+ studs", ...need(0, term.ring) },
   ];
 
   return (
     <div className="space-y-7">
       <div>
         <h1 className="text-xl font-bold">Shopping list</h1>
-        <p className="text-muted text-sm mt-0.5">
-          Everything to finish the build, in one place. Terminal/seal figures are estimates from
-          the wire schedule (each connector crossing ≈ 2 terminals + 2 seals).
+        <p className="text-muted text-sm mt-0.5 max-w-3xl">
+          Everything to finish the build, in one place. Terminal/seal figures are estimates from the
+          wire schedule (each connector crossing ≈ 1 male + 1 female terminal + 2 seals). Connectors
+          are listed as matched <strong>male + female</strong> pairs so the gender can&apos;t be ordered wrong.
         </p>
       </div>
 
-      {/* Buy now */}
+      {/* Connectors */}
       <section>
-        <h2 className="text-lg font-semibold mb-2">Order</h2>
+        <h2 className="text-lg font-semibold mb-2">Connectors (GT 280) — buy as male + female pairs</h2>
+        <div className="overflow-auto border rounded-lg">
+          <table className="wtable">
+            <thead>
+              <tr>
+                <th>Size</th>
+                <th>Used for</th>
+                <th>Need</th>
+                <th>Own</th>
+                <th>Buy</th>
+                <th>Male PN</th>
+                <th>Female PN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {connectorBom.map((c) => (
+                <tr key={c.ways}>
+                  <td className="font-mono font-semibold whitespace-nowrap">{c.ways}-way</td>
+                  <td className="text-xs text-muted">{c.use}</td>
+                  <td className="font-mono">{c.pairsNeeded}</td>
+                  <td className="font-mono">{c.pairsOwned}</td>
+                  <td className="font-mono font-semibold" style={{ color: c.pairsToBuy ? "var(--warn)" : "var(--ok)" }}>
+                    {c.pairsToBuy ? `+${c.pairsToBuy}` : "✓"}
+                  </td>
+                  <td className="text-xs">
+                    <a href={c.male.url} target="_blank" rel="noreferrer" className="text-accent underline font-mono">
+                      {c.male.mfgPn}
+                    </a>
+                  </td>
+                  <td className="text-xs">
+                    <a href={c.female.url} target="_blank" rel="noreferrer" className="text-accent underline font-mono">
+                      {c.female.mfgPn}
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted mt-1.5">
+          Links go to Mouser (search by Aptiv PN; Mouser PN = <span className="font-mono">829-&lt;PN&gt;</span>). The
+          12-way row is covered by the three owned pairs (two left spare). Each pair = one male housing + one
+          female housing; both use your owned MP280 terminals.
+        </p>
+      </section>
+
+      {/* Buy now: wire + fuses */}
+      <section>
+        <h2 className="text-lg font-semibold mb-2">Wire & fuses</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <div className="text-xs uppercase tracking-wide text-muted mb-1.5">Wire (by gauge tier)</div>
@@ -65,7 +113,6 @@ export default function ShoppingPage() {
               </tbody>
             </table>
           </div>
-
           <div>
             <div className="text-xs uppercase tracking-wide text-muted mb-1.5">MINI / ATM fuses</div>
             <table className="wtable">
@@ -88,9 +135,9 @@ export default function ShoppingPage() {
         </div>
       </section>
 
-      {/* Have enough? */}
+      {/* Terminals: have enough? */}
       <section>
-        <h2 className="text-lg font-semibold mb-2">Do you have enough? (owned vs needed)</h2>
+        <h2 className="text-lg font-semibold mb-2">Terminals — owned vs needed (gendered)</h2>
         <div className="overflow-auto border rounded-lg">
           <table className="wtable">
             <thead>
@@ -113,14 +160,6 @@ export default function ShoppingPage() {
                 </tr>
               ))}
               <tr>
-                <td>12-way GT 280 connector pairs</td>
-                <td className="font-mono">{connectorPairsOwned}</td>
-                <td className="font-mono">{connectorPairsNeeded}</td>
-                <td className="font-mono font-semibold" style={{ color: connShort ? "var(--warn)" : "var(--ok)" }}>
-                  {connShort ? `+${connShort} pairs` : "✓ enough"}
-                </td>
-              </tr>
-              <tr>
                 <td>Relays (Song Chuan ISO-280)</td>
                 <td className="font-mono">11</td>
                 <td className="font-mono">11</td>
@@ -129,6 +168,12 @@ export default function ShoppingPage() {
             </tbody>
           </table>
         </div>
+        <p className="text-xs text-muted mt-1.5">
+          Gender split: each bulkhead crossing needs one terminal in each housing half (1 male + 1 female).
+          Block/relay/PDM rear ends are counted as <strong>female</strong> (harness-side socket) — confirm against
+          the RTMR/PDM datasheets; if any are male, that many shift male. The starter and alternator B+ are
+          ring terminals on studs (counted under rings), not spades.
+        </p>
       </section>
 
       {/* Gap items */}

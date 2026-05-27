@@ -113,3 +113,59 @@ export const connectors: ConnectorGroup[] = logicalBulkheads.flatMap((lb) => {
 /** How many 12-way GT 280 bulkhead pairs the design needs (vs the 3 owned). Clusters excluded. */
 export const connectorPairsNeeded = connectors.filter((c) => c.family !== "cluster").length;
 export const connectorPairsOwned = 3;
+
+// ---------------------------------------------------------------------------
+// Connector shopping — housings by size, as matched MALE + FEMALE pairs so the
+// gender can never be got wrong (you buy one of each PN per pair). Bulkhead /
+// cluster counts are DERIVED from the connector groups above; the two gauge
+// 6-ways are device-side, added explicitly. Mouser PN = "829-" + the Aptiv PN.
+// ---------------------------------------------------------------------------
+const GT280_PN: Record<number, { m: string; f: string }> = {
+  6: { m: "15326640", f: "13521467" },
+  8: { m: "15326655", f: "15326654" },
+  10: { m: "15326661", f: "15326660" },
+  12: { m: "15326915", f: "15326910" },
+};
+const SIZE_USE: Record<number, string> = {
+  6: "Speedo + tach gauge plugs (1 cavity blanked)",
+  8: "BH3 rear · BH4 front · SW3 switch cluster",
+  10: "BH1 dash power (two plugs: 10 + 7)",
+  12: "BH2 dash lighting",
+};
+/** Owned housing pairs by size (from the Mouser orders): three 12-ways only. */
+const OWNED_PAIRS: Record<number, number> = { 12: 3 };
+
+export const mouserUrl = (mfgPn: string) => `https://www.mouser.com/c/?q=${mfgPn}`;
+
+export interface ConnectorBuy {
+  ways: number;
+  pairsNeeded: number;
+  pairsOwned: number;
+  pairsToBuy: number;
+  use: string;
+  male: { mfgPn: string; mouserPn: string; url: string };
+  female: { mfgPn: string; mouserPn: string; url: string };
+}
+
+export const connectorBom: ConnectorBuy[] = (() => {
+  const need = new Map<number, number>();
+  for (const c of connectors) need.set(c.ways, (need.get(c.ways) ?? 0) + 1);
+  need.set(6, (need.get(6) ?? 0) + 2); // two device-side gauge 6-ways
+  const mk = (p: string) => ({ mfgPn: p, mouserPn: `829-${p}`, url: mouserUrl(p) });
+  return [...need.keys()]
+    .sort((a, b) => b - a)
+    .map((ways) => {
+      const pn = GT280_PN[ways];
+      const pairsNeeded = need.get(ways)!;
+      const pairsOwned = OWNED_PAIRS[ways] ?? 0;
+      return {
+        ways,
+        pairsNeeded,
+        pairsOwned,
+        pairsToBuy: Math.max(0, pairsNeeded - pairsOwned),
+        use: SIZE_USE[ways] ?? "",
+        male: mk(pn.m),
+        female: mk(pn.f),
+      };
+    });
+})();
