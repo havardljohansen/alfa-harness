@@ -8,7 +8,8 @@ import { wires } from "./wires";
 import { diodes } from "./diodes";
 import { connectors, connectorPairsNeeded, connectorPairsOwned, connectorBom } from "./connectors";
 import { complianceNotes } from "./compliance";
-import { ownedParts, bomGaps, terminalByGauge } from "./parts";
+import { ownedParts, bomGaps, terminalByGauge, ownedWire } from "./parts";
+import type { GaugeClass } from "./types";
 import { resolveWire, wireTotalsByGauge, wireTotalsByTier, wiresByBand } from "./derive";
 import { moduleOf } from "./modules";
 
@@ -253,22 +254,35 @@ export function terminationTally(): TerminationTally {
   return { mp280, mp280Male, mp280Female, seals, spade, ring };
 }
 
-/** MP280 terminal estimate broken down by wire gauge AND gender — for ordering
- *  the right terminal PN per gauge. Each bulkhead crossing = 1 male + 1 female
- *  at the wire's gauge; block/relay/PDM rear ends counted female. Estimate. */
+// THIS build's actual gauge per functional class (signal runs on the owned
+// 22 AWG / 0.35 mm², all loom-wrapped). The CLEAN-BUILD recommendation stays
+// the optimal gauge in gaugeSpecs (signal = 0.5 mm²).
+export const BUILD_GAUGE_MM2: Record<GaugeClass, number> = {
+  signal: 0.35,
+  low: 0.75,
+  medium: 1.5,
+  high: 2.5,
+  feed: 6,
+  main: 25,
+};
+
+/** MP280 terminal estimate by BUILD gauge AND gender — for ordering the right
+ *  terminal PN per gauge. Each bulkhead crossing = 1 male + 1 female at the
+ *  wire's build gauge; block/relay/PDM rear ends counted female. Estimate. */
 export function terminalsByGaugeGender(): Array<{ mm2: number; gender: "male" | "female"; count: number }> {
   const counts = new Map<string, number>();
   const add = (mm2: number, gender: "male" | "female", n = 1) =>
     counts.set(`${mm2}|${gender}`, (counts.get(`${mm2}|${gender}`) ?? 0) + n);
   for (const w of resolvedWires) {
+    const g = BUILD_GAUGE_MM2[w.gaugeClass];
     const vias = w.via?.length ?? 0;
     if (vias) {
-      add(w.recMm2, "male", vias);
-      add(w.recMm2, "female", vias);
+      add(g, "male", vias);
+      add(g, "female", vias);
     }
     for (const end of [w.from, w.to]) {
       const kind = nodesById.get(end.component)?.kind ?? "";
-      if (MP280_KINDS.has(kind)) add(w.recMm2, "female");
+      if (MP280_KINDS.has(kind)) add(g, "female");
     }
   }
   return [...counts.entries()]
@@ -277,6 +291,25 @@ export function terminalsByGaugeGender(): Array<{ mm2: number; gender: "male" | 
       return { mm2: Number(mm2), gender: gender as "male" | "female", count };
     })
     .sort((a, b) => a.mm2 - b.mm2 || a.gender.localeCompare(b.gender));
+}
+
+/** Wire plan for THIS build — metres needed (cut-band + 15% waste) per build
+ *  gauge, vs owned stock, vs buy. */
+export function buildWirePlan(): Array<{ cls: GaugeClass; awg: string; mm2: number; needM: number; ownM: number; buyM: number }> {
+  const cutByClass = new Map<GaugeClass, number>();
+  for (const w of resolvedWires) {
+    const band = lengthBands.find((b) => b.id === w.lengthBandId);
+    const cut = band?.cutMm ?? w.lengthMm;
+    cutByClass.set(w.gaugeClass, (cutByClass.get(w.gaugeClass) ?? 0) + cut);
+  }
+  const ownByClass = new Map(ownedWire.map((o) => [o.forClass, o]));
+  const order: GaugeClass[] = ["signal", "low", "medium", "high", "feed", "main"];
+  return order.map((cls) => {
+    const own = ownByClass.get(cls);
+    const needM = Math.ceil(((cutByClass.get(cls) ?? 0) * 1.15) / 1000);
+    const ownM = own?.meters ?? 0;
+    return { cls, awg: own?.awg ?? "—", mm2: BUILD_GAUGE_MM2[cls], needM, ownM, buyM: Math.max(0, needM - ownM) };
+  });
 }
 
 export function fuseShoppingList(): FuseLine[] {

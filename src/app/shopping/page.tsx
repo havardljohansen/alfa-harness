@@ -1,36 +1,29 @@
-import { tierTotals, fuseShoppingList, terminationTally, completeBom } from "@/data/harness";
-import { ownedParts, bomGaps } from "@/data/harness/parts";
+import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, buildWirePlan } from "@/data/harness";
+import { ownedParts, bomGaps, terminalByGauge } from "@/data/harness/parts";
 import { connectorBom, mouserUrl } from "@/data/harness/connectors";
 import { externalSuggestions } from "@/data/harness/external-suppliers";
 import { BomCsv } from "@/components/bom-csv";
 
-const owned = (pn: string) => ownedParts.find((p) => p.mfgPn === pn)?.qtyOwned ?? 0;
-// Mouser keyword search — works for both Mouser PNs and MFG PNs.
 const mouser = (q: string) => `https://www.mouser.com/c/?q=${encodeURIComponent(q)}`;
 const coreParts = ownedParts.filter((p) => p.category === "distribution" || p.category === "relay");
+const sp = (n: number) => Math.ceil(n * 1.2); // +20% spares
 
 export default function ShoppingPage() {
   const term = terminationTally();
-  // Owned MP280 terminals split by gender (from the Mouser orders).
-  const maleOwned = owned("15304724-L") + owned("15304731-L") + owned("15304730-L");
-  const femaleOwned = owned("12110847-L") + owned("12110845-L") + owned("12110843-L");
-  const sealsOwned = owned("15324982") + owned("15324981") + owned("15324985");
-  const spadeOwned = owned("170187-2") + owned("1217084-1");
+  const byg = terminalsByGaugeGender();
+  const need = (gauge: number, gender: "male" | "female") =>
+    sp(byg.find((t) => t.mm2 === gauge && t.gender === gender)?.count ?? 0);
 
-  const need = (have: number, want: number) => ({
-    have,
-    want,
-    short: Math.max(0, want - have),
-    ok: have >= want,
-  });
+  // Per-gauge terminal rows (need incl. spares vs owned).
+  const termRows = terminalByGauge
+    .filter((s) => !s.isRing)
+    .flatMap((s) => (["female", "male"] as const).map((g) => {
+      const want = need(s.mm2, g);
+      const have = (g === "female" ? s.ownedF : s.ownedM) ?? 0;
+      return { label: `${s.awg} AWG (${s.mm2} mm²) ${g.toUpperCase()}`, pn: g === "female" ? s.femalePn : s.malePn, want, have, buy: Math.max(0, want - have) };
+    }));
 
-  const counts = [
-    { label: "MP280 terminals — MALE (connector male halves)", ...need(maleOwned, term.mp280Male) },
-    { label: "MP280 terminals — FEMALE (other halves + block/relay rear)", ...need(femaleOwned, term.mp280Female) },
-    { label: "Single-wire seals", ...need(sealsOwned, term.seals) },
-    { label: "Spade (faston) terminals — device ends", ...need(spadeOwned, term.spade) },
-    { label: "Ring terminals — battery/ground/B+ studs", ...need(0, term.ring) },
-  ];
+  const wirePlan = buildWirePlan();
 
   return (
     <div className="space-y-7">
@@ -203,44 +196,62 @@ export default function ShoppingPage() {
         </div>
       </section>
 
-      {/* Terminals: have enough? */}
+      {/* Wire — this build (owned vs buy) */}
       <section>
-        <h2 className="text-lg font-semibold mb-2">Terminals — owned vs needed (gendered)</h2>
+        <h2 className="text-lg font-semibold mb-2">Wire — this build (owned vs buy)</h2>
         <div className="overflow-auto border rounded-lg">
           <table className="wtable">
             <thead>
-              <tr>
-                <th>Item</th>
-                <th>Owned</th>
-                <th>Needed (est.)</th>
-                <th>Buy more</th>
-              </tr>
+              <tr><th>Class</th><th>Gauge</th><th>Need (m)</th><th>Own (m)</th><th>Buy (m)</th></tr>
             </thead>
             <tbody>
-              {counts.map((c) => (
-                <tr key={c.label}>
-                  <td>{c.label}</td>
-                  <td className="font-mono">{c.have}</td>
-                  <td className="font-mono">~{c.want}</td>
-                  <td className="font-mono font-semibold" style={{ color: c.ok ? "var(--ok)" : "var(--warn)" }}>
-                    {c.ok ? "✓ enough" : `+${c.short}`}
-                  </td>
+              {wirePlan.map((r) => (
+                <tr key={r.cls}>
+                  <td>{r.cls}</td>
+                  <td className="font-mono">{r.awg !== "—" ? `${r.awg} AWG` : `${r.mm2} mm²`} <span className="text-muted">({r.mm2} mm²)</span></td>
+                  <td className="font-mono">{r.needM}</td>
+                  <td className="font-mono">{r.ownM}</td>
+                  <td className="font-mono font-semibold" style={{ color: r.buyM ? "var(--warn)" : "var(--ok)" }}>{r.buyM ? r.buyM : "✓"}</td>
                 </tr>
               ))}
-              <tr>
-                <td>Relays (Song Chuan ISO-280)</td>
-                <td className="font-mono">11</td>
-                <td className="font-mono">11</td>
-                <td className="font-mono font-semibold" style={{ color: "var(--ok)" }}>✓ exact</td>
-              </tr>
             </tbody>
           </table>
         </div>
         <p className="text-xs text-muted mt-1.5">
-          Gender split: each bulkhead crossing needs one terminal in each housing half (1 male + 1 female).
-          Block/relay/PDM rear ends are counted as <strong>female</strong> (harness-side socket) — confirm against
-          the RTMR/PDM datasheets; if any are male, that many shift male. The starter and alternator B+ are
-          ring terminals on studs (counted under rings), not spades.
+          This build runs <strong>signal on 22 AWG</strong> (owned, all loom-wrapped); the clean-build recommendation
+          stays the optimal 0.5 mm² / 20 AWG. The signal shortfall is bought as <strong>20 AWG</strong> (0.5 mm², the
+          optimal — same 22-20 terminals). Spare 18 AWG (low) can also back up signal. Net wire to buy:
+          ~29 m of 20 AWG (signal), 44 m of 16 AWG (1.5), 17 m of 12 AWG (2.5), 9 m of 4 AWG (25); 18 + 10 AWG covered.
+        </p>
+      </section>
+
+      {/* Terminals — per gauge */}
+      <section>
+        <h2 className="text-lg font-semibold mb-2">Terminals — per gauge (owned vs buy)</h2>
+        <div className="overflow-auto border rounded-lg">
+          <table className="wtable">
+            <thead>
+              <tr><th>Terminal</th><th>PN</th><th>Need (est.)</th><th>Own</th><th>Buy</th></tr>
+            </thead>
+            <tbody>
+              {termRows.map((r) => (
+                <tr key={r.label}>
+                  <td className="text-xs">{r.label}</td>
+                  <td className="font-mono text-xs text-muted">{r.pn ?? "—"}</td>
+                  <td className="font-mono">~{r.want}</td>
+                  <td className="font-mono">{r.have}</td>
+                  <td className="font-mono font-semibold" style={{ color: r.buy ? "var(--warn)" : "var(--ok)" }}>{r.buy ? `+${r.buy}` : "✓"}</td>
+                </tr>
+              ))}
+              <tr><td className="text-xs">Single-wire seals</td><td className="text-muted text-xs">15324982/-81/-85</td><td className="font-mono">~{sp(term.seals)}</td><td className="font-mono">250</td><td className="font-mono font-semibold" style={{ color: "var(--ok)" }}>✓</td></tr>
+              <tr><td className="text-xs">Spade (faston) — device ends</td><td className="text-muted text-xs">170187-2 / 1217084-1</td><td className="font-mono">~{sp(term.spade)}</td><td className="font-mono">65</td><td className="font-mono font-semibold" style={{ color: "var(--warn)" }}>+{Math.max(0, sp(term.spade) - 65)}</td></tr>
+              <tr><td className="text-xs">Ring terminals — studs (6/16/25 mm²)</td><td className="text-muted text-xs">assorted</td><td className="font-mono">~{term.ring}</td><td className="font-mono">0</td><td className="font-mono font-semibold" style={{ color: "var(--warn)" }}>+{term.ring}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted mt-1.5">
+          Signal now uses your <strong>22-20 AWG terminals</strong> (previously spare) — so the 18-16 buy drops to zero.
+          Need = estimate + 20% spares; block/relay/PDM rear ends counted female (confirm vs datasheet).
         </p>
       </section>
 
