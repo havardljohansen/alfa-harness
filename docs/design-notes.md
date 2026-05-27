@@ -34,15 +34,16 @@ The owned bulkhead plugs are **GT 280 12-way** (Aptiv/Delphi `15326915` male / `
 
 **Connector choice per bulkhead:**
 
-| Bulkhead | Pins | Connector |
-|---|---|---|
-| BH1 dash power | 17 | **two 10-way** (10 + 7) — `15326661`/`15326660` |
-| BH2 dash lighting | 12 | one 12-way (owned `15326915`/`15326910`) |
-| BH3 rear | 7 | 8-way |
-| BH4 front | 7 | 8-way |
-| SW3 switch cluster | 7 | 8-way |
+| Bulkhead | Pins | Connector | Source |
+|---|---|---|---|
+| BH1 dash power | 17 | **two 10-way** (10 + 7) — `15326661`/`15326660` | buy 2 |
+| BH2 dash lighting | 12 | 12-way `15326915`/`15326910` | **owned** |
+| BH3 rear | 7 | 12-way (5 spare = towbar/rear headroom) | **owned** |
+| BH4 front | 7 | 12-way (5 spare) | **owned** |
+| SW3 switch cluster | 7 | 8-way | buy 1 |
+| Gauges ×2 (speedo, tach) | 5 | GT 280 6-way, 1 blank `15326640` | buy 2 |
 
-BH1 uses **two 10-ways** rather than two 12-ways — right-sized (a little spare each) and avoids the awkward >12 housing. A 10-way is also the fallback for any future bulkhead that grows past 8.
+This **uses all three owned 12-ways** (BH2 + BH3 + BH4) and buys two 10-ways (BH1), one 8-way (SW3) and two 6-ways (gauges). BH1 is two 10-ways rather than two 12-ways — right-sized and avoids the awkward >12 housing. BH3/BH4 ride the owned 12-ways: no spend, and the spare cavities are free headroom (rear towbar circuit, a front fog, etc.). Right-sizing them to 8-ways would only waste the owned stock.
 
 **Gap sizes — there is NO GT 280 5, 7, 9 or 11-way.** The ladder is 2/3/6/8/10/12/14/16. So a 9-pin need → 10-way; a 5-pin need → 6-way with a cavity blanked, or a Metri-Pack 280 5-way (same terminals, different housing).
 
