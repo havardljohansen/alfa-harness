@@ -249,21 +249,18 @@ const horns: DeviceComponent[] = [
 const switches: SwitchComponent[] = [
   {
     id: "sw-headlight",
-    name: "Headlight / position switch",
+    name: "Headlight switch (Off / Head)",
     kind: "switch",
     zone: "dash",
     terminals: [
-      t("30c", "Constant in — position lamps", "30"),
       t("30i", "Ignition (Run) in — beam enable", "15"),
-      t("58", "Position lamps out", "58"),
       t("56", "Beam enable out → dip switch", "56"),
     ],
     positions: [
       { name: "Off", closes: [] },
-      { name: "Position", closes: [["30c", "58"]] },
-      { name: "Head", closes: [["30c", "58"], ["30i", "56"]] },
+      { name: "Head", closes: [["30i", "56"]] },
     ],
-    note: "Dual-pole: position lamps run off CONSTANT (key-off OK); the beam-enable feed comes from ignition Run, so the beam relays can only fire with the key on. Carries only coil + small position-lamp current.",
+    note: "Headlights only — SIGNAL-ONLY. Head routes ignition-Run to the dip/flash switch, which triggers the beam relay coils (beams need the key on). The position/tail lamps are NOT on this switch any more — they're running lights on the ignition bus (on with the key), so the switch carries no load at all. (If your period switch has a 3rd 'Park' detent, it's unused — sidelights are automatic.)",
   },
   {
     id: "sw-dipflash",
@@ -514,14 +511,6 @@ const instruments: DeviceComponent[] = [
     kind: "warning-light",
     zone: "dash",
     terminals: [t("in", "From high-beam feed", "56a"), t("g", "Ground", "31")],
-  },
-  {
-    id: "wl-park",
-    name: "Tell-tale — position/parking (green)",
-    kind: "warning-light",
-    zone: "dash",
-    terminals: [t("in", "From switched position feed", "58"), t("g", "Ground", "31")],
-    note: "Factory dash had a parking-lights tell-tale alongside the main-beam one.",
   },
   {
     id: "wl-turn",

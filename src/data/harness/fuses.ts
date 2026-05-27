@@ -28,13 +28,13 @@ export const fuses: Fuse[] = [
   { id: "f-ign-7", block: "rtmr-ign", position: 7, ratingA: 7.5, name: "Reverse light", circuit: "c-reverse", source: "bus", feeds: "Reverse lamp via gearbox switch" },
   { id: "f-ign-8", block: "rtmr-ign", position: 8, ratingA: 10, name: "Fuel pump", circuit: "c-fuel", source: "bus", feeds: "Electric fuel pump via relay" },
   { id: "f-ign-9", block: "rtmr-ign", position: 9, ratingA: 7.5, name: "3-way switch cluster + panel dimmer", circuit: "c-instruments", source: "bus", feeds: "Single low-current supply piggybacked across all three 3-way switches; also powers the panel dimmer via the instrument-light switch" },
-  { id: "f-ign-10", block: "rtmr-ign", position: 10, ratingA: 5, name: "O2 / AFR (future)", circuit: "c-future-o2", source: "bus", feeds: "Wideband controller + AFR gauge", future: true },
+  { id: "f-ign-10", block: "rtmr-ign", position: 10, ratingA: 7.5, name: "Position/tail running lights", circuit: "c-position", source: "bus", feeds: "Front park + rear tail + plate lamps — on with the key (running lights, no switch). Was reserved for a future O2/AFR; reassigned (O2 on this carb is speculative — reallocate a slot if ever fitted)." },
 
   // --- Constant bus (RTMR, bussed; battery direct) --------------------------
   { id: "f-con-1", block: "rtmr-const", position: 1, ratingA: 5, name: "Hazard flashers", circuit: "c-hazard", source: "bus", feeds: "Hazard switch → both turn relay coils (coil current only)" },
   { id: "f-con-2", block: "rtmr-const", position: 2, ratingA: 15, name: "Horns", circuit: "c-horn", source: "bus", feeds: "Horn relay common" },
   { id: "f-con-3", block: "rtmr-const", position: 3, ratingA: 10, name: "Brake lights", circuit: "c-brake", source: "bus", feeds: "Brake switch → stop lamps" },
-  { id: "f-con-4", block: "rtmr-const", position: 4, ratingA: 7.5, name: "Position/tail lamps (switched)", circuit: "c-position", source: "bus", feeds: "Headlight switch → all front + rear position/tail + both plate lamps + green tell-tale" },
+  { id: "f-con-4", block: "rtmr-const", position: 4, ratingA: 0, name: "Spare (was position/tail)", circuit: "c-future-spare", source: "bus", feeds: "Reserved — position/tail lamps moved to the ignition bus as key-on running lights", future: true },
   { id: "f-con-5", block: "rtmr-const", position: 5, ratingA: 0, name: "Spare (was tail/position RIGHT)", circuit: "c-future-spare", source: "bus", feeds: "Reserved — position lamps consolidated onto one switched fuse", future: true },
   { id: "f-con-6", block: "rtmr-const", position: 6, ratingA: 5, name: "Interior light", circuit: "c-interior", source: "bus", feeds: "Courtesy light + door switches" },
   { id: "f-con-7", block: "rtmr-const", position: 7, ratingA: 0, name: "Spare (was cigar lighter)", circuit: "c-future-spare", source: "bus", feeds: "Reserved — lighter removed, hazard switch took its place", future: true },

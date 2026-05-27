@@ -51,7 +51,7 @@ export const circuits: Circuit[] = [
     id: "c-position",
     name: "Position / tail / plate lights",
     group: "exterior-lights",
-    description: "Front position + rear tail + number-plate lights, on the CONSTANT bus so they work key-off.",
+    description: "Front position + rear tail + number-plate lights — IGNITION-fed running lights: on with the key, no switch (the light switch only does headlights). Loses key-off parking lights, but the headlight switch carries zero load.",
     status: "core",
     originalFuse: "4,5",
     compliance: ["required-lighting", "indicator-colour"],

@@ -68,8 +68,8 @@ export const factoryFuses: FactoryFuse[] = [
   { n: 1, ratingA: 8, loads: "Lighter, courtesy lights", modern: "Lighter removed (→ hazard switch); courtesy light kept on the constant bus." },
   { n: 2, ratingA: 8, loads: "Wipers, brake lights", modern: "Wipers relayed (ign bus); brake lights on the constant bus." },
   { n: 3, ratingA: 8, loads: "Turn signals, fan", modern: "Turn signals + heater fan relayed (ign bus)." },
-  { n: 4, ratingA: 8, loads: "LR tail, L plate, RF parking, reverse", modern: "Position lamps on one switched fuse; reverse on the ign bus." },
-  { n: 5, ratingA: 8, loads: "RR tail, R plate, LF parking", modern: "Folded into the single switched position fuse." },
+  { n: 4, ratingA: 8, loads: "LR tail, L plate, RF parking, reverse", modern: "Position lamps now IGNITION running lights (on with the key, no switch); reverse on the ign bus." },
+  { n: 5, ratingA: 8, loads: "RR tail, R plate, LF parking", modern: "Folded in — position lamps are now ignition running lights on one fuse." },
   { n: 6, ratingA: 8, loads: "Gauges", modern: "Gauges + warning lamps on the ign bus." },
   { n: 7, ratingA: 8, loads: "L main beam", modern: "Relay-driven high beam (PDM)." },
   { n: 8, ratingA: 8, loads: "R main beam", modern: "Relay-driven high beam (PDM)." },
@@ -124,10 +124,10 @@ export interface FactoryComponent {
 export const factoryComponents: FactoryComponent[] = [
   // Lighting
   { name: "Headlights L/R (main + dip)", status: "modernized", modern: "Relay-driven from the PDM, ignition-gated, H4-capable." },
-  { name: "Front parking lights L/R", status: "preserved", modern: "On the switched position circuit." },
+  { name: "Front parking lights L/R", status: "modernized", modern: "Now ignition-fed running lights (on with the key) — off the headlight switch, which is headlights-only." },
   { name: "Front turn signals L/R", status: "modernized", modern: "Relay-driven; weak column switch carries coil current only." },
   { name: "Side Signal (side markers/repeaters) L/R", status: "preserved", modern: "Restored — flash with the indicators (EU repeater)." },
-  { name: "Rear tail/brake L/R", status: "preserved", modern: "Tail switched off the light switch; brake on the constant bus." },
+  { name: "Rear tail/brake L/R", status: "modernized", modern: "Tail on the ignition running-light circuit (on with the key); brake on the constant bus so it works key-off." },
   { name: "Rear turn signals L/R", status: "modernized", modern: "Relay-driven." },
   { name: "Number-plate lights (×2)", status: "preserved", modern: "Both retained on the position circuit." },
   { name: "Reverse light + gearbox switch", status: "preserved", modern: "On the ignition bus." },
@@ -143,7 +143,7 @@ export const factoryComponents: FactoryComponent[] = [
   { name: "Speedometer", status: "preserved", modern: "Mechanical; illumination only electrically." },
   { name: "Tachometer", status: "preserved", modern: "Triggered from coil −." },
   { name: "Main-beam tell-tale (blue)", status: "preserved", modern: "From the high-beam feed." },
-  { name: "Parking-lights tell-tale (green)", status: "preserved", modern: "Restored from the switched position feed." },
+  { name: "Parking-lights tell-tale (green)", status: "removed", modern: "Dropped — position lamps are now always-on running lights with the key, so a parking tell-tale would just be permanently lit. Redundant." },
   { name: "Turn tell-tale", status: "preserved", modern: "Single lamp OR-fed from both sides via diodes." },
   { name: "Instrument lights + switch", status: "preserved", modern: "Switch fed from ignition (Run)." },
   // Comfort

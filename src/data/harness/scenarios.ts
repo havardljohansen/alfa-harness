@@ -68,9 +68,9 @@ export const scenarios: Scenario[] = [
     },
   },
   {
-    id: "position-keyoff",
-    story: "Key out, headlight switch to Position → side/tail/plate lamps light (they must work key-off).",
-    state: { ignition: "off", switches: { "sw-headlight": "Position" } },
+    id: "position-running-lights",
+    story: "Key in Run → side/tail/plate lamps come on automatically as running lights (no switch; the light switch only does headlights).",
+    state: { ignition: "run", switches: {} },
     expect: {
       live: [
         ["park-fl", "58"],
@@ -82,15 +82,26 @@ export const scenarios: Scenario[] = [
     },
   },
   {
+    id: "position-keyoff-dark",
+    story: "Key out → position/tail lamps are OFF (they're ignition running lights now, not key-off parking lights).",
+    state: { ignition: "off", switches: {} },
+    expect: {
+      dead: [
+        ["park-fl", "58"],
+        ["tail-rl", "58"],
+      ],
+    },
+  },
+  {
     id: "headlights-need-key",
-    story: "Key out, headlight switch to Head + dip → headlights stay OFF (gated by the key); position lamps still on.",
+    story: "Key out, headlight switch to Head + dip → headlights stay OFF (gated by the key); position lamps off too (running lights need the key).",
     state: { ignition: "off", switches: { "sw-headlight": "Head", "sw-dipflash": "Dip" } },
     expect: {
       dead: [
         ["hl-L", "56b"],
         ["hl-R", "56b"],
+        ["park-fl", "58"],
       ],
-      live: [["park-fl", "58"]],
       relaysOff: ["rly-low", "rly-high"],
     },
   },
@@ -256,15 +267,14 @@ export const scenarios: Scenario[] = [
   },
   {
     id: "tail-position",
-    story: "Key out, light switch to Position → rear tails + both plate lamps + green tell-tale light (switched, not always-on).",
-    state: { ignition: "off", switches: { "sw-headlight": "Position" } },
+    story: "Key in Run → rear tails + both plate lamps light as running lights (ignition-fed, no switch).",
+    state: { ignition: "run", switches: {} },
     expect: {
       live: [
         ["tail-rl", "58"],
         ["tail-rr", "58"],
         ["plate", "58"],
         ["plate-r", "58"],
-        ["wl-park", "in"],
       ],
     },
   },
