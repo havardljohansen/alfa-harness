@@ -54,13 +54,15 @@ export const logicalBulkheads: LogicalBulkhead[] = [
     name: "Rear loom",
     zoneA: "engine-front",
     zoneB: "rear",
-    purpose: "To the boot: tail, brake, rear turn, plate, reverse, fuel pump, tank sender.",
+    ways: 8,
+    purpose: "To the boot: tail, brake, rear turn, plate, reverse, fuel pump, tank sender. 7 pins in an 8-way (1 spare).",
   },
   {
     id: "bh4",
     name: "Front clip — lighting, blinkers & horn",
     zoneA: "engine-rear",
     zoneB: "engine-front",
+    ways: 8,
     purpose:
       "The whole front-of-car module unplugs here: headlight PDM + beams, front position lamps, front turn signals + side repeaters, and the horns. Beam-relay triggers and the main-beam tell-tale pass through from the dash; the turn/horn relay outputs come from the main loom. Piggybacks keep the pin count down: one front-position feed (RH jumpers off LH), and the side repeaters jumper off the front indicators. The PDM's battery feed (ring) and the front-clip ground trunk are separate heavy cables, so this one signal plug frees the front clip.",
   },
