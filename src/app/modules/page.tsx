@@ -16,6 +16,25 @@ export default function ModulesPage() {
         </p>
       </div>
 
+      {/* Pictorial-style sample (schemdraw) for comparison */}
+      <section className="rounded-lg border border-amber-700/50 bg-panel">
+        <div className="px-3 py-2 border-b">
+          <h2 className="font-semibold">Pictorial style — sample (front headlights)</h2>
+          <p className="text-xs text-muted mt-0.5">
+            A <strong>schemdraw</strong> sample in the factory-PDF style — real component symbols (relays, lamps,
+            grounds) + labelled wires — for comparison with the interactive node diagrams below. Trade-off: looks
+            like the PDF, but each circuit is hand-laid-out (more work, doesn&apos;t auto-sync from the model as
+            cleanly) and it&apos;s a static image.
+          </p>
+        </div>
+        <div className="p-3">
+          <div className="rounded bg-white p-3 inline-block max-w-full overflow-auto">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`${basePath}/diagrams/sample-front-headlight.svg`} alt="Front headlight pictorial schematic sample" className="max-w-full" />
+          </div>
+        </div>
+      </section>
+
       {harnessModules.map((m) => (
         <section key={m.id} className="rounded-lg border bg-panel break-inside-avoid">
           <div className="px-3 py-2 border-b">
