@@ -76,6 +76,8 @@ describe("model integrity", () => {
       // K6+ coil-pack HT outputs — go to spark plugs via HT leads (not modeled as harness wires).
       "k6plus-coil-1.HT-1", "k6plus-coil-1.HT-4",
       "k6plus-coil-2.HT-2", "k6plus-coil-2.HT-3",
+      // K6+ ECU tach-out — exists on the ECU but unwired since both engines drive tach mechanically.
+      "k6plus-ecu.tach-out",
       // 155 senders/switches — case-grounded via block thread (same pattern as Nord snd-oil.g / sw-oillight)
       "snd-oil-155.g", "sw-oillight-155.g",
       // 155 alternator/starter — wires now present (w-alt-155-b, w-alt-155-gnd, w-starter-155-30)

@@ -458,6 +458,168 @@ export const scenarios: Scenario[] = [
       dead: [["k6plus-ecu", "+12V"]], // 155 ECU is NOT (engine-155ts wires excluded)
     },
   },
+  // === 155 swap — additional positive/negative coverage ===
+  {
+    id: "swap-155-keyoff-ecu-dead",
+    story: "155 fitted, Key OUT → K6+ ECU + amps + coil packs all dead (chassis ign bus is dead, so EM1 pin 1 is dead, so the kit gets no power). Constant bus stays alive as always.",
+    state: { ignition: "off", switches: {}, engine: "155" },
+    expect: {
+      dead: [
+        ["k6plus-ecu", "+12V"],
+        ["k6plus-amp-1", "+12V"],
+        ["k6plus-amp-2", "+12V"],
+        ["k6plus-coil-1", "+"],
+        ["k6plus-coil-2", "+"],
+        ["em1", "pin-1"],
+      ],
+      live: [["rtmr-const", "BUS"]],
+    },
+  },
+  {
+    id: "swap-155-amps-coils-distributed",
+    story: "155 fitted, Key RUN → power distributes through the kit-internal loom: ECU+12V feeds amp 1, amp 2, and the +12V rail. Amps drive coil packs (electrically, the amps' coil-out reaches the coil-pack +).",
+    state: { ignition: "run", switches: {}, engine: "155" },
+    expect: {
+      live: [
+        ["k6plus-amp-1", "+12V"],
+        ["k6plus-amp-2", "+12V"],
+        ["k6plus-amp-1", "coil-out"], // amp → coil drive path is bidirectional in our boolean model (kit-internal)
+        ["k6plus-amp-2", "coil-out"],
+        ["k6plus-coil-1", "+"],
+        ["k6plus-coil-2", "+"],
+      ],
+    },
+  },
+  {
+    id: "swap-155-temp-sender-ground-reaches",
+    story: "155 fitted, Key RUN → 155 TS temp sender's ground reaches the chassis ground stud via EM1 pin 5. Confirms the sender-return path through the connector. (Signal-side voltage isn't traceable in the boolean model — sender output is a continuously variable resistance that depends on physical temperature.)",
+    state: { ignition: "run", switches: {}, engine: "155" },
+    expect: {
+      live: [["g-fuel", "+"]], // gauge cluster has ign feed regardless of engine (g-temp.+ is daisy-chained internally — not modeled as a wire)
+      grounded: [["snd-temp-155", "g"]], // sender ground returns via EM1 pin 5
+    },
+  },
+  {
+    id: "swap-155-oil-warning-feed-live",
+    story: "155 fitted, Key RUN → wl-oil dash warning lamp has its ign feed live (chassis-side path unchanged from Nord). The lamp's ground side waits for sw-oillight-155 to close (oil-pressure-low event) — we don't simulate that, but the FEED path is verified.",
+    state: { ignition: "run", switches: {}, engine: "155" },
+    expect: {
+      live: [["wl-oil", "+"]],
+    },
+  },
+  {
+    id: "swap-155-cps-tps-fed-from-ecu",
+    story: "155 fitted, Key RUN → CPS and TPS get +5V reference from K6+ ECU (kit-internal). Their signals feed back to the ECU. All kit-internal — no chassis EM1 pin involvement.",
+    state: { ignition: "run", switches: {}, engine: "155" },
+    expect: {
+      live: [
+        ["k6plus-cps", "+5V"],
+        ["k6plus-tps", "+5V"],
+        ["k6plus-cps", "sig"],
+        ["k6plus-tps", "sig"],
+      ],
+    },
+  },
+  {
+    id: "swap-155-headlights-unchanged",
+    story: "155 fitted, Key RUN, dash switch HIGH → low+high beam architecture works exactly as with Nord. Chassis lighting is engine-agnostic.",
+    state: { ignition: "run", switches: { "sw-headlight": "High" }, engine: "155" },
+    expect: {
+      live: [["hl-L", "56a"], ["hl-R", "56a"]],
+      relaysOn: ["rly-high"],
+    },
+  },
+  {
+    id: "swap-155-brake-lights-unchanged",
+    story: "155 fitted, brake pressed → brake lamps light. Chassis brake circuit (sw-brake → f-con-3 → tail.54) untouched by engine swap.",
+    state: { ignition: "off", switches: { "sw-brake": "Pressed" }, engine: "155" },
+    expect: {
+      live: [["tail-rl", "54"], ["tail-rr", "54"]],
+    },
+  },
+  {
+    id: "swap-155-hazards-unchanged",
+    story: "155 fitted, hazards on → both turn relays energise and indicators light. Constant-bus hazard architecture unaffected by engine choice.",
+    state: { ignition: "off", switches: { "sw-hazard": "On" }, engine: "155" },
+    expect: {
+      live: [["turn-fl", "L"], ["turn-fr", "R"], ["turn-rl", "L"], ["turn-rr", "R"]],
+      relaysOn: ["rly-turnL", "rly-turnR"],
+    },
+  },
+  {
+    id: "swap-155-nord-engine-fully-dark",
+    story: "155 fitted → ALL Nord engine components (coil, distributor, Nord alternator, Nord starter, Nord senders, Nord oil switch) are absent from the active model. Their wires are owned by engine-nord which is excluded when engine='155'.",
+    state: { ignition: "run", switches: { "sw-headlight": "High" }, engine: "155" },
+    expect: {
+      dead: [
+        ["coil", "15"],
+        ["coil", "1"],
+        ["alternator", "D+"],
+        ["starter", "50"],
+        ["snd-temp", "s"],
+        ["snd-oil", "s"],
+        ["sw-oillight", "s"],
+      ],
+    },
+  },
+  {
+    id: "nord-default-all-k6plus-dark",
+    story: "Default (Nord fitted, no engine flag) → ALL K6+ kit components dark: ECU, amps, coil packs, sensors, 155 senders, 155 alternator, 155 starter. Engine-155ts wires excluded.",
+    state: { ignition: "run", switches: { "sw-headlight": "High" } },
+    expect: {
+      dead: [
+        ["k6plus-ecu", "+12V"],
+        ["k6plus-amp-1", "+12V"],
+        ["k6plus-amp-2", "+12V"],
+        ["k6plus-coil-1", "+"],
+        ["k6plus-coil-2", "+"],
+        ["k6plus-cps", "sig"],
+        ["k6plus-tps", "sig"],
+        ["snd-temp-155", "s"],
+        ["snd-oil-155", "s"],
+        ["sw-oillight-155", "s"],
+        ["alternator-155", "D+"],
+        ["starter-155", "50"],
+      ],
+    },
+  },
+  // === 155 swap — fault injection ===
+  {
+    id: "swap-155-em1-pin1-broken-ecu-dead",
+    story: "155 fitted, Key RUN, EM1 pin 1 chassis wire broken (w-em1-pwr-chassis) → K6+ ECU + amps + coils all lose +12V. The single feed is a single point of failure for the entire ignition system.",
+    state: { ignition: "run", switches: {}, engine: "155", brokenWire: "w-em1-pwr-chassis" },
+    expect: {
+      dead: [
+        ["k6plus-ecu", "+12V"],
+        ["k6plus-amp-1", "+12V"],
+        ["k6plus-coil-1", "+"],
+      ],
+    },
+  },
+  {
+    id: "swap-155-em1-pin9-broken-no-crank",
+    story: "155 fitted, Key START, EM1 pin 9 chassis wire broken → starter trigger doesn't reach 155 starter solenoid. Engine can't crank.",
+    state: { ignition: "start", switches: {}, engine: "155", brokenWire: "w-em1-strt-chassis" },
+    expect: {
+      dead: [["starter-155", "50"], ["em1", "pin-9"]],
+      relaysOn: ["rly-starter"], // relay still closes; just no path to the starter
+    },
+  },
+  {
+    id: "swap-155-fuse-ign1-blown-engine-dead",
+    story: "155 fitted, Key RUN, f-ign-1 blown → chassis pin-1 feed dead → entire K6+ kit dark. The 20A swap-day fuse is the kit's single chassis-side protection.",
+    state: { ignition: "run", switches: {}, engine: "155", blownFuse: "f-ign-1" },
+    expect: {
+      dead: [
+        ["k6plus-ecu", "+12V"],
+        ["k6plus-amp-1", "+12V"],
+        ["k6plus-amp-2", "+12V"],
+        ["em1", "pin-1"],
+      ],
+      // Rest of the ign bus still alive (f-ign-1 is the only fuse blown)
+      live: [["rtmr-ign", "BUS"], ["g-fuel", "+"], ["fuel-pump", "in"]],
+    },
+  },
 
   // -------------------------------------------------------------------------
   // Future-provisioned brake redundancy + failure-warning lamp (2026-05-28).

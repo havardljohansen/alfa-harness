@@ -191,7 +191,9 @@ export const wires: Wire[] = [
   // EM1 engine-side (155): each pin to its K6+ kit component
   { id: "w-em1-pwr-engine-155", label: "EM1.ECU+", name: "EM1 pin 1 → K6+ ECU +12V (155 engine module pigtail)", circuit: "c-ignition", from: { component: "em1", terminal: "pin-1" }, to: { component: "k6plus-ecu", terminal: "+12V" }, gaugeClass: "high", route: ["engine-rear"], future: true, color: "Red/Black" },
   { id: "w-em1-egnd-engine-155", label: "EM1.ECUG", name: "EM1 pin 2 → K6+ ECU ground (clean ground return)", circuit: "c-power", from: { component: "em1", terminal: "pin-2" }, to: { component: "k6plus-ecu", terminal: "gnd" }, gaugeClass: "high", route: ["engine-rear"], future: true, color: "Black" },
-  { id: "w-em1-tach-engine-155", label: "ECU.TACH", name: "K6+ ECU tach-out → EM1 pin 3 (clean square-wave tach signal)", circuit: "c-instruments", from: { component: "k6plus-ecu", terminal: "tach-out" }, to: { component: "em1", terminal: "pin-3" }, gaugeClass: "signal", route: ["engine-rear"], future: true, color: "Brown" },
+  // (was w-em1-tach-engine-155 — removed when both engines decided on mechanical
+  // tach via cable/gear adapter. ECU has a tach-out terminal but it's unwired
+  // in our chassis since the tach is mechanical end-to-end.)
   { id: "w-em1-tsig-engine-155", label: "155.TEMP.S", name: "155 TS temp sender → EM1 pin 4", circuit: "c-instruments", from: { component: "snd-temp-155", terminal: "s" }, to: { component: "em1", terminal: "pin-4" }, gaugeClass: "signal", route: ["engine-rear"], future: true, color: "White/Black" },
   { id: "w-em1-tgnd-engine-155", label: "155.TEMP.G", name: "155 TS temp sender ground → EM1 pin 5", circuit: "c-instruments", from: { component: "snd-temp-155", terminal: "g" }, to: { component: "em1", terminal: "pin-5" }, gaugeClass: "signal", route: ["engine-rear"], future: true, color: "Black" },
   { id: "w-em1-osig-engine-155", label: "155.OIL.S", name: "155 TS oil sender → EM1 pin 6", circuit: "c-instruments", from: { component: "snd-oil-155", terminal: "s" }, to: { component: "em1", terminal: "pin-6" }, gaugeClass: "signal", route: ["engine-rear"], future: true, color: "Pink" },

@@ -141,6 +141,24 @@ function staticEdges(engine: "nord" | "155"): Edge[] {
   edges.push({ a: ep("rly-high", "87"), b: ep("pdm", "f-pdm-3"), directed: false });
   edges.push({ a: ep("rly-high", "87"), b: ep("pdm", "f-pdm-4"), directed: false });
 
+  // --- K6+ kit internal pass-throughs (engine=155 only) --------------------
+  // Boolean-model abstractions for the kit's internal signal generation:
+  // - The ECU's regulated 5V reference is derived from +12V (used by CPS/TPS)
+  // - Ignition amps drive their coil-out when powered (we don't model timing)
+  // - Sensors with +5V supply generate signals at their .sig output
+  // Without these, sensor outputs would be perpetually dead in the boolean
+  // model since their physical inputs (crank rotation, throttle position) are
+  // not represented.
+  if (engine === "155") {
+    edges.push({ a: ep("k6plus-ecu", "+12V"), b: ep("k6plus-ecu", "5V-ref"), directed: false });
+    edges.push({ a: ep("k6plus-ecu", "+12V"), b: ep("k6plus-ecu", "fan-trg-out"), directed: false });
+    edges.push({ a: ep("k6plus-ecu", "+12V"), b: ep("k6plus-ecu", "cts-pass"), directed: false });
+    edges.push({ a: ep("k6plus-amp-1", "+12V"), b: ep("k6plus-amp-1", "coil-out"), directed: false });
+    edges.push({ a: ep("k6plus-amp-2", "+12V"), b: ep("k6plus-amp-2", "coil-out"), directed: false });
+    edges.push({ a: ep("k6plus-cps", "+5V"), b: ep("k6plus-cps", "sig"), directed: false });
+    edges.push({ a: ep("k6plus-tps", "+5V"), b: ep("k6plus-tps", "sig"), directed: false });
+  }
+
   // --- Flasher in rtmr-const cavity 5 (NO-762-LED, ISO-280 socket) ----------
   // The flasher's 49 (input) pin sits in the cavity's 30 position, which is
   // bussed to the constant input stud internally — no chassis wire. We model
