@@ -12,7 +12,7 @@ import { BlockGrid, ConnectorGrid } from "@/components/layout-grids";
 import type { CircuitGroup, GaugeClass } from "@/data/harness/types";
 import { solveCircle, optimalOrder, type REdge } from "@/lib/circle-route";
 import { parseWireColor, swatchBackground, FALLBACK as COLOR_FALLBACK } from "@/data/harness/wire-colors";
-import { Plug, Cpu, Lightbulb, Volume2, Battery, BatteryCharging, ToggleRight, Gauge, Fan, Rainbow, Zap } from "lucide-react";
+import { Plug, Cpu, Lightbulb, Volume2, Battery, BatteryCharging, ToggleRight, Gauge, Fan, Rainbow, Zap, SoapDispenserDroplet } from "lucide-react";
 
 const gauge = new Map(gaugeSpecs.map((g) => [g.class, g] as const));
 const cutByBand = new Map(lengthBands.map((b) => [b.id, b.cutMm] as const));
@@ -71,6 +71,7 @@ function BoxIcon({ box, bw }: { box: Box; bw: number }) {
   else if (k === "battery") Icon = Battery;
   else if (k === "alternator") Icon = BatteryCharging;
   else if (k === "coil") Icon = Zap;
+  else if (k === "pump") Icon = SoapDispenserDroplet;
   else if (box.id === "heater-fan") Icon = Fan;
   else if (box.id === "wiper") Icon = Rainbow;
   else if (k === "switch" || k === "ignition-switch") Icon = ToggleRight;
