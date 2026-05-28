@@ -244,11 +244,18 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
 
       {/* circular visualization — fills the viewport, square, with a min size */}
       <div className="rounded-lg border bg-panel relative">
+        {/* interaction hints — both affordances are quietly muted but on-screen
+            so a new viewer knows what's clickable / hoverable */}
+        <div className="px-3 py-1.5 text-[11px] text-muted border-b flex items-center justify-between gap-3 flex-wrap">
+          <span>Hover a wire → tooltip with label, gauge, length, colour</span>
+          <span>Click a box → focus only its pin/relay layout below</span>
+          <span className="text-[10px] opacity-70">{focus !== null ? `Focused: ${code(boxes[focus].id)} — click again to clear` : ""}</span>
+        </div>
         {/* info icon — tap reveals the code → title legend (no hover on mobile) */}
         <button onClick={() => setInfo((v) => !v)} aria-label="Show component codes"
-          className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full border border-white/30 bg-panel/80 text-xs leading-none hover:bg-white/10">ⓘ</button>
+          className="absolute top-9 right-2 z-10 w-6 h-6 rounded-full border border-white/30 bg-panel/80 text-xs leading-none hover:bg-white/10">ⓘ</button>
         {info && (
-          <div className="absolute top-9 right-2 z-10 max-h-[60%] w-56 overflow-auto rounded border bg-panel/95 backdrop-blur p-2 text-[11px] shadow-lg">
+          <div className="absolute top-16 right-2 z-10 max-h-[60%] w-56 overflow-auto rounded border bg-panel/95 backdrop-blur p-2 text-[11px] shadow-lg">
             <div className="uppercase tracking-wide text-muted mb-1">Codes</div>
             {shown.map((bi) => (
               <div key={boxes[bi].id} className="flex gap-2">
