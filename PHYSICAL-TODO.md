@@ -62,6 +62,31 @@ assignments in `wires.ts`).
 **How to check:** count wires at the switch connector; note each colour
 and which switch terminal it leaves.
 
+### `[x]` Column stalk push-in — flash LOW or HIGH? RESOLVED via AlfaBB 2026-05-28
+**Factory finding:** on **all 105/115 cars (Giulia GT, GTV, Spider, Junior,
+including the 2-headlight Step nose)**, pushing the column stalk IN flashes
+**LOW beams**, not high. Confirmed by:
+- '67 Step nose owner direct report (push stalk → low beams flash; with
+  high beams already on, push stalk also flashes low filaments → both
+  filaments lit simultaneously, dimmer due to shared bulb load)
+- Multiple AlfaBB threads cross-referenced via search summary: *"On all
+  105/115 cars, the flash-to-pass function is on the low-beam circuit"*
+
+**Model state (2026-05-28):** we deliberately flash **HIGH** (deviation
+from factory). Rationale — period-correct isn't a project priority, and
+flash-HIGH is the technically leaner + more functional choice on our
+modernized harness:
+- HIGH-beam relay common is constant from PDM main → flash-to-pass works
+  key-off out of the box
+- LOW-beam relay is ign-gated (our asymmetric design) → flash-LOW would
+  cost either key-off capability (B1) or the auto-off-key-out benefit (B2)
+- HIGH is more visible as a daylight warning (kjørelys-mandate context)
+- Modern driver expectation matches (every car since ~1980 flashes high)
+
+**No further action needed.** Note left for the trail because someone
+reading the AlfaBB threads later will otherwise assume our flash-HIGH is a
+bug. See `components.ts` sw-flash for the in-code note.
+
 ---
 
 ## Wire route lengths — measurements to refine the model
