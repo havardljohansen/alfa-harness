@@ -177,6 +177,9 @@ export interface ConnectorPin {
   wireLabel: string; // which wire passes through this pin
   signal: string;
   reserved?: boolean;
+  /** Wire insulation colour (`"Red"`, `"Yellow/Black"` etc.). Carried through
+   *  from Wire.color so the pin layout can render colour-coded cell borders. */
+  color?: string;
 }
 
 export interface ConnectorGroup {

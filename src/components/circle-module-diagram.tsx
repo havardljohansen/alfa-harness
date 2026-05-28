@@ -193,9 +193,12 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
       </span>
     );
     if (box.role === "connector") {
+      // Dots removed — pin cells themselves now carry the wire colours as
+      // border accents (see layout-grids.tsx ConnectorGrid). For non-connector
+      // figures the dots stay since their layouts don't render per-terminal colour.
       return (
         <div className="border rounded p-2 bg-panel">
-          <div className="text-xs font-semibold"><span className="font-mono">{box.id}</span> · {box.name}<span className="text-muted font-normal"> — connector pin layout</span> {swatches}</div>
+          <div className="text-xs font-semibold"><span className="font-mono">{box.id}</span> · {box.name}<span className="text-muted font-normal"> — connector pin layout</span></div>
           {physForLogical(box.id).map((c) => (
             <div key={c.id} className="mt-1.5">
               <div className="text-[10px] text-muted">{c.name} · {c.pins.length}/{c.ways} pins</div>

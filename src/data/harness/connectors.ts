@@ -123,6 +123,7 @@ export const connectors: ConnectorGroup[] = logicalBulkheads.flatMap((lb) => {
       wireLabel: w.label,
       signal: w.name,
       reserved: w.future,
+      color: w.color,
     })),
   }));
 });

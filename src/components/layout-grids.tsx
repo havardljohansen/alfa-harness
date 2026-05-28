@@ -1,4 +1,5 @@
 import type { ConnectorGroup, Fuse, FuseBlock, RelayAssignment } from "@/data/harness/types";
+import { parseWireColor } from "@/data/harness/wire-colors";
 
 // Visual physical layouts — a suggested grid you can map onto the real part.
 // Cavity numbering follows the position numbers; confirm orientation/keying
@@ -76,12 +77,23 @@ export function ConnectorGrid({ connector }: { connector: ConnectorGroup }) {
     <div className="grid gap-1 mt-2" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0,1fr))` }}>
       {Array.from({ length: connector.ways }, (_, i) => {
         const pin = pinByNum.get(i + 1);
+        const stroke = pin ? parseWireColor(pin.color) : null;
+        // Colored thick border = the wire's insulation colour. Two-tone wires
+        // get a base-coloured solid border; the stripe info still appears in
+        // the diagram chip + tooltip.
+        const borderStyle: React.CSSProperties = stroke
+          ? { borderColor: stroke.base, borderWidth: 2, borderStyle: stroke.stripe ? "dashed" : "solid" }
+          : {};
         return (
           <div
             key={i}
             className="rounded border p-1 text-center min-h-[40px] flex flex-col justify-center"
-            style={{ background: pin ? (pin.reserved ? "#0d1117" : "#141922") : "#0d1117", opacity: pin ? 1 : 0.45 }}
-            title={pin?.signal}
+            style={{
+              background: pin ? (pin.reserved ? "#0d1117" : "#141922") : "#0d1117",
+              opacity: pin ? 1 : 0.45,
+              ...borderStyle,
+            }}
+            title={pin ? `${pin.signal}${pin.color ? ` · ${pin.color}` : ""}` : undefined}
           >
             <div className="font-mono text-[10px] text-muted">{i + 1}</div>
             {pin ? <span className="label-chip text-[9px]">{pin.wireLabel}</span> : <span className="text-[10px] text-muted">—</span>}
