@@ -55,3 +55,5 @@ harness/*.html
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+Screenshot 2026-*.png
