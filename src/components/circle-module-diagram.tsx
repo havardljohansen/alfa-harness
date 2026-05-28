@@ -135,15 +135,33 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
 
   const { shown, shownSet, sub, internal, boundary, m, boxAtSlot, slotOfSub, routed } = L;
 
-  // boundary stubs: short half-edges at a shown box, for wires going off to a
-  // component that isn't shown — so you know the connection is there.
+  // Stubs: short radial dashes at a box's inner edge, indicating a connection
+  // that exists but isn't currently routed as a full path. Two cases:
+  //   (a) BOUNDARY — wire goes to a component that isn't shown (isolation
+  //       mode). Stub at the shown end only.
+  //   (b) FILTERED — wire is between two shown boxes but the user toggled it
+  //       off via the chip selector. Stub at BOTH ends so you can see the
+  //       connection exists without rendering the full path.
   const stubs = useMemo(() => {
     const center = routed.size / 2;
     const rInner = routed.boxR - routed.box / 2;
     const STUB = Math.min(20, rInner * 0.12);
     const halfW = ((routed.box / 2) / rInner) * 0.8;
     const perBox: Record<number, Conn[]> = {};
-    for (const c of boundary) { if (!(wsel.size === 0 || wsel.has(c.idx))) continue; const orig = shownSet.has(c.a) ? c.a : c.b; (perBox[orig] ??= []).push(c); }
+    // (a) Boundary stubs — only ones for ACTIVE boundary wires
+    for (const c of boundary) {
+      if (!wireActive(c.idx)) continue;
+      const orig = shownSet.has(c.a) ? c.a : c.b;
+      (perBox[orig] ??= []).push(c);
+    }
+    // (b) Filtered-off internal stubs — both ends of any internal wire that's
+    //     been toggled off via the chip selector. So toggling a connection
+    //     off doesn't make it disappear — it just shrinks to two stubs.
+    for (const c of internal) {
+      if (wireActive(c.idx)) continue;
+      (perBox[c.a] ??= []).push(c);
+      (perBox[c.b] ??= []).push(c);
+    }
     const out: { idx: number; d: string; color: string; stripe?: string }[] = [];
     for (const origStr in perBox) {
       const orig = +origStr, list = perBox[orig];
@@ -208,12 +226,22 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
     );
   };
 
+  // When isolating components, show only chips for wires that run BETWEEN the
+  // selected components (both endpoints in the isolation set). Becomes a
+  // wiring-checklist for the section you're about to build — anything else is
+  // noise. Stubs for wires that leave the selection (boundary) are still
+  // shown on the diagram itself, just not as chips here.
+  const visibleConns = isolating ? internal : conns;
+
   return (
     <div>
       {/* wire toggle list */}
-      <div className="text-[11px] uppercase tracking-wide text-muted mb-1">Connections — click to hide/show</div>
+      <div className="text-[11px] uppercase tracking-wide text-muted mb-1">
+        Connections — click to hide/show
+        {isolating && <span className="normal-case text-muted/70 ml-2">(only wires between selected components — boundary stubs visible on the diagram)</span>}
+      </div>
       <div className="flex flex-wrap gap-1 mb-2">
-        {conns.map((c) => {
+        {visibleConns.map((c) => {
           const on = wsel.has(c.idx);
           return (
             <button key={c.idx} onClick={() => toggleWire(c.idx)} title={connTitle(boxes, c)}
