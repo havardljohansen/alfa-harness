@@ -104,16 +104,11 @@ function staticEdges(): Edge[] {
   edges.push({ a: ep("instr-pwm", "lo"), b: ep("instr-pwm", "out"), directed: true });
   edges.push({ a: ep("instr-pwm", "hi"), b: ep("instr-pwm", "out"), directed: true });
 
-  // --- Relay coil fixed side -----------------------------------------------
-  for (const r of relays) {
-    if (GROUND_TRIGGERED.has(r.id)) {
-      // 85 = constant +12 (from the constant bus); 86 = switched ground.
-      edges.push({ a: ep(r.id, "85"), b: ep("rtmr-const", "BUS"), directed: false });
-    } else {
-      // 85 = ground.
-      edges.push({ a: ep(r.id, "85"), b: ep("gnd-eng", "g"), directed: false });
-    }
-  }
+  // Relay coil terminal 85 used to be wired here implicitly (gnd-eng for most,
+  // rtmr-const.BUS for the ground-triggered horn relay). Now defined as
+  // explicit wires in wires.ts (w-rly-*-gnd + w-rly-horn-pwr) so the build
+  // sheet shows them. The GROUND_TRIGGERED set above is still used by
+  // simulate() to identify which side of the coil needs +12V vs ground.
 
   return edges;
 }

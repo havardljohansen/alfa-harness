@@ -225,4 +225,27 @@ export const wires: Wire[] = [
   { id: "w-o2-feed", label: "O2.+I", name: "Gauges feed → AFR gauge (future; jumper at the dash)", circuit: "c-future-o2", from: { component: "g-fuel", terminal: "+" }, to: { component: "g-afr", terminal: "+" }, gaugeClass: "low", route: ["dash"], future: true, color: "Magenta", note: "Future AFR gauge taps the instruments feed at the dash (its old dedicated ign slot, f-ign-10, was reassigned to the running lights — O2 on a carb is speculative)." },
   { id: "w-o2-sig", label: "O2.SIG", name: "O2 controller → AFR gauge (future)", circuit: "c-future-o2", from: { component: "o2-sensor", terminal: "sig" }, to: { component: "g-afr", terminal: "sig" }, gaugeClass: "signal", route: ["engine-rear", "dash"], via: ["bh1"], future: true, color: "Magenta" },
   { id: "w-o2-gnd", label: "O2.GND", name: "O2 sensor ground (future)", circuit: "c-future-o2", from: { component: "o2-sensor", terminal: "g" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-rear", "engine-front"], future: true, color: "Black" },
+
+  // =========================================================================
+  // RELAY COIL POWER / GROUND — terminal 85 wiring for each relay coil.
+  // For 11 of 12 relays, 85 = ground. For rly-horn, 85 = constant +12V (the
+  // horn button grounds 86 instead). Previously these were implicit static
+  // edges in the propagation engine; surfacing them explicitly so the build
+  // sheet shows every physical wire that has to be run.
+  // =========================================================================
+  // PDM-mounted relays — short ground to the front-clip block (closest stud)
+  { id: "w-rly-low-gnd", label: "RLY.LO.85", name: "Low-beam relay coil ground (inside PDM cavity)", circuit: "c-headlights", from: { component: "rly-low", terminal: "85" }, to: { component: "gnd-front", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  { id: "w-rly-high-gnd", label: "RLY.HI.85", name: "High-beam relay coil ground (inside PDM cavity)", circuit: "c-headlights", from: { component: "rly-high", terminal: "85" }, to: { component: "gnd-front", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  // RTMR-mounted relays — ground to the engine-bay hub (gnd-eng)
+  { id: "w-rly-fan-gnd", label: "RLY.FAN.85", name: "Heater-fan relay coil ground", circuit: "c-cooling", from: { component: "rly-fan", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  { id: "w-rly-fuel-gnd", label: "RLY.FUEL.85", name: "Fuel-pump relay coil ground", circuit: "c-fuel", from: { component: "rly-fuel", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  { id: "w-rly-ignmain-gnd", label: "RLY.IGN.85", name: "Ignition-main relay coil ground", circuit: "c-ignition", from: { component: "rly-ignmain", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  { id: "w-rly-washer-gnd", label: "RLY.WASH.85", name: "Washer-pump relay coil ground (future)", circuit: "c-wipers", from: { component: "rly-washer", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], future: true, color: "Black" },
+  { id: "w-rly-turnL-gnd", label: "RLY.TL.85", name: "Turn-L relay coil ground", circuit: "c-turn", from: { component: "rly-turnL", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  { id: "w-rly-turnR-gnd", label: "RLY.TR.85", name: "Turn-R relay coil ground", circuit: "c-turn", from: { component: "rly-turnR", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  { id: "w-rly-wlow-gnd", label: "RLY.WL.85", name: "Wiper-LOW relay coil ground", circuit: "c-wipers", from: { component: "rly-wlow", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  { id: "w-rly-whigh-gnd", label: "RLY.WH.85", name: "Wiper-HIGH relay coil ground", circuit: "c-wipers", from: { component: "rly-whigh", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  { id: "w-rly-starter-gnd", label: "RLY.STRT.85", name: "Starter relay coil ground", circuit: "c-starting", from: { component: "rly-starter", terminal: "85" }, to: { component: "gnd-eng", terminal: "g" }, gaugeClass: "signal", route: ["engine-front"], color: "Black" },
+  // Horn relay — ground-TRIGGERED, so terminal 85 sits at constant +12V instead
+  { id: "w-rly-horn-pwr", label: "RLY.HORN.85", name: "Horn relay coil +12V (ground-triggered — horn button grounds 86)", circuit: "c-horn", from: { component: "rly-horn", terminal: "85" }, to: { component: "rtmr-const", terminal: "BUS" }, gaugeClass: "signal", route: ["engine-front"], color: "Red", note: "Period horn-button wiring: the steering-wheel button can only short to chassis, so the relay coil sits permanently at +12V on terminal 85 and the button grounds terminal 86 when pressed. Other relays use the conventional 85=ground, 86=switched-+12 pattern." },
 ];
