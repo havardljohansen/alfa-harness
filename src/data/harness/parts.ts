@@ -417,13 +417,22 @@ export const bomGaps: BomGap[] = [
     suggestion: "Any decent heat gun; auto-stripper; a basic DMM or a 12 V test light.",
   },
   {
-    id: "diodes",
-    item: "Signal / flyback diodes (1N4007, or 1N4148 for the tell-tales)",
-    qty: "6 + spares (buy a 10-pack)",
+    id: "diodes-signal",
+    item: "Signal isolation diodes (1N4007 or 1N4148)",
+    qty: "4 + spares (buy a 10-pack ~£3)",
     category: "component",
     reason:
-      "4 inline signal diodes — hazard→turn isolation (×2) and the single turn tell-tale OR-ed from both sides (×2) — plus 2 relay-coil flyback diodes (fuel + ignition-main). All on ≤0.2 A signal/coil wires. The 2 flyback diodes are only needed if the Song Chuan relays lack built-in coil suppression — check the relay datasheet first.",
-    suggestion: "1N4007 (1 A) general purpose; 1N4148 fine for the tell-tale OR-ing.",
+      "4 inline signal diodes for OR-isolation on coil-trigger / tell-tale nodes: hazard→turn isolation (×2, d-haz-L + d-haz-R) and the shared green turn tell-tale OR-ed from both sides (×2, d-tell-L + d-tell-R). All on ≤0.2 A signal-level wires. (Relay-coil flyback diodes deliberately omitted — our Song Chuan 301-1A-C-R1 / 301-1C-S-R1 relays carry an integral 1 kΩ coil-suppression resistor per the R1 suffix, which is sufficient for the mechanical-switch coil-trigger application.)",
+    suggestion: "1N4007 (1 A / 1000 V) general purpose; 1N4148 also fine for the tell-tale OR-ing.",
+  },
+  {
+    id: "diodes-park-iso",
+    item: "Schottky diodes for PARK-override OR-isolation (3 A / 40 V)",
+    qty: "2 + 2 spares (4 total ~£2)",
+    category: "component",
+    reason:
+      "2 inline Schottky power diodes (d-park-ign-iso front + d-park-ign-iso-rear) — sit on the ign-feed leg of the parking-light feed at park-fl.58 and tail-rl.58. Prevent the dash-switch PARK key-off override from back-feeding the ignition bus when engaged with the key off (would otherwise phantom-power gauges, coil etc.). Schottky preferred over 1N400x for the lower forward drop at the ~2 A continuous parking-light load. Added to the model in the headlight refactor — see ARCHITECTURE.md + diodes.ts.",
+    suggestion: "1N5822 (3 A / 40 V) or SB540 — both common Mouser stock. Anode at the rtmr-ign side.",
   },
   {
     id: "term-16-14",

@@ -43,25 +43,13 @@ export const diodes: Diode[] = [
     currentA: 0.05,
     suggestion: "1N4148/1N4007 — anode at the right turn output.",
   },
-  {
-    id: "d-coil-fuel",
-    name: "Fuel-relay coil flyback",
-    purpose:
-      "Suppresses the inductive spike when the fuel-pump relay de-energises (protects the ignition/inertia switch contacts). Only needed if the relay lacks a built-in diode.",
-    onWire: "w-fuel-trg",
-    reversed: true,
-    currentA: 0.15,
-    suggestion: "1N4007 across coil 85↔86, cathode to +.",
-  },
-  {
-    id: "d-coil-ignmain",
-    name: "Ignition-main coil flyback",
-    purpose: "Coil-suppression diode across the ignition main relay coil.",
-    onWire: "w-ignmain-trg",
-    reversed: true,
-    currentA: 0.15,
-    suggestion: "1N4007 across coil 85↔86.",
-  },
+  // Coil-flyback diodes for fuel + ignition-main relays were previously
+  // modelled here but removed: the Song Chuan 301-1A-C-R1 (SPST) and
+  // 301-1C-S-R1 (SPDT) relays we use both carry an integral 1 kΩ coil-
+  // suppression resistor (the "R1" suffix). That resistor provides ~70-80%
+  // of what a flyback diode would, and the switches driving these coils are
+  // mechanical (vintage dash buttons + ignition contacts) — tolerant of the
+  // residual spike. Belt-and-braces was overkill given the relay choice.
   {
     id: "d-park-ign-iso",
     name: "Parking-light ign-feed isolation",

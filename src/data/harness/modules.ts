@@ -142,7 +142,7 @@ export const harnessModules: HarnessModule[] = [
       "GT 280 12-way pairs ×2 each for BH1 + BH2 (4 plugs today) — or one 24-way per bulkhead",
       "Dash ground block + trunk",
       "187/250 spade terminals for gauges/switches",
-      "Signal diodes ×6 (turn tell-tale OR-ing ×2, hazard isolation ×2, ign-main flyback, fuel flyback) + 2 Schottky for park-light ign-feed OR-isolation (d-park-ign-iso front + rear)",
+      "Signal diodes ×4 (turn tell-tale OR-ing ×2, hazard isolation ×2 — 1N4007 or 1N4148) + 2 Schottky for park-light ign-feed OR-isolation (d-park-ign-iso front + rear, 1N5822 or SB540)",
       "Period-correct washer push button (low-current trigger; pump install deferred)",
     ],
     steps: [
