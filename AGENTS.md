@@ -16,3 +16,7 @@ The harness is a single TypeScript model in `src/data/harness/` (wires, componen
 - **Adding a new component is gated:** the `detachable-module coverage` test in `harness.test.ts` fails until the new node is assigned to a module in `modules.ts`. That failure is the reminder to write/revise that module's sheet.
 - Keep the rest consistent in the same pass: the per-circuit sheets, `factory.ts` (architecture reference — keep it truthful so there's no confusion when building), and any module `interfaces`/`ground` notes the change affects.
 - Always run QA before pushing: `npx tsc --noEmit && npm test && npm run build`. The build sheets are only useful if they match the wiring — a stale sheet is a defect, not a cosmetic lag.
+
+# Physical TODO — track verifications that need the car in hand
+
+Anything that can't be settled from code or factory diagrams goes in `PHYSICAL-TODO.md` at the project root. Items there are written so a future session knows what the model currently ASSUMES and how to confirm it (switch contact tests with a multimeter, wire-route tape measurements, bulb/connector identification, mounting fit-up). When something flagged there gets verified, record the date + finding inline rather than deleting — preserve the history. Add new items as you discover open questions during model work; don't bury them in scattered code comments.
