@@ -11,6 +11,37 @@ so the history is preserved.
 
 ---
 
+## Verified components — online sweep 2026-05-28
+
+Comprehensive online verification of original 105/115 component behaviour
+vs our model. Deep dive with sources lives in `VERIFIED-COMPONENTS.md`;
+this is the summary.
+
+| System | Status | Notes |
+|---|---|---|
+| Ignition switch | ✅ match | DIN 30/15/50; terminal 16 (ballast bypass) N/A — no ballast |
+| Charging system | ✅ match | B+/D+/case-gnd; w-wl-charge handles self-excitation correctly |
+| Coil + ballast | ⚠ **DECISION NEEDED** | Modern coil = current model OK. Original Marelli = need to add ballast + ign-switch terminal 16 bypass |
+| Starter | ✅ match | rly-starter SPDT → solenoid S; R terminal correctly omitted |
+| Brake light switch | ⚠ **REAL GAP** | Factory has TWO parallel hydraulic pressure switches; we have one. Safety redundancy missing. |
+| Brake-failure warning lamp | ⚠ minor gap | Separate diff-pressure warning lamp not modelled |
+| Reverse light switch | ✅ match | 2-wire switched +12 V in gearbox |
+| Senders (fuel/oil/temp) | ✅ topology match | Resistance curves documented for part sourcing |
+| Hazard switch | ✅ functional | Period switch has internal flashing lamp; we use the green turn tell-tale instead |
+| H4 bulbs both filaments | ✅ match | Confirmed normal-by-design (momentary); recommend Philips/Osram |
+
+**Open decisions:**
+1. **Coil**: stick with modern 3 Ω (current model) or restore original Marelli 1.5 Ω + ballast?
+2. **Brake redundancy**: add second parallel `sw-brake-2` for FMEA-correct fault tolerance?
+3. **Brake-failure warning lamp**: add `wl-brake` driven by master-cylinder diff switch?
+
+See `VERIFIED-COMPONENTS.md` for the full rationale + source quotes + AlfaBB
+thread links.
+
+---
+
+---
+
 ## Headlight switching — RESOLVED via AlfaBB 2026-05-28
 
 ### `[x]` Headlight switch — does LOW + HIGH simultaneous output exist?
