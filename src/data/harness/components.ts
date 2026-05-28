@@ -399,7 +399,7 @@ const switches: SwitchComponent[] = [
 const motors: DeviceComponent[] = [
   {
     id: "wiper",
-    name: "Wiper motor (Bosch-type, 2-speed self-park)",
+    name: "Wiper motor (Bosch-type, 2-speed self-park, DIN 72552 pinout)",
     kind: "motor",
     zone: "engine-rear",
     terminals: [
@@ -408,6 +408,7 @@ const motors: DeviceComponent[] = [
       t("53a", "Park switch feed", "53a"),
       t("31", "Ground", "31"),
     ],
+    note: "Harness wired for the FULL 4-wire DIN-72552 Bosch topology (53/53a/53b/31) — the modern replacement Bosch motors sold for 105/115 cars by Classic Alfa, Alfaholics, Centerline etc. all expose these 4 pins. The SPDT rly-wlow (87 → 53 energised, 87a → 53a de-energised) provides the park-return path back to the motor's internal park-cam contact, giving full self-park. 3-WIRE compatibility: an original 3-wire Bosch motor (e.g. 0 390 326 002, Alfa PN 105 02 65 052 04, common on the 1960s/early-1970s 105 cars) omits 53a — leave w-wpark-out unconnected at the motor end (cap + heat-shrink) and the other three wires (53/53b/31) still work. CAVEAT: without the 53a return, those motors lose external self-park; they stop wherever the switch was released. Some 3-wire variants self-park internally via a different mechanism — verify against the specific motor's data sheet. If you're sourcing a motor now, the 4-wire variant is the safer choice for full functionality with this harness; see PHYSICAL-TODO.md for the verification checklist.",
   },
   {
     id: "washer-pump",

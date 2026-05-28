@@ -89,6 +89,41 @@ bug. See `components.ts` sw-flash for the in-code note.
 
 ---
 
+## Wiper motor — choose 4-wire over 3-wire
+
+### `[ ]` Confirm wiper motor topology before sourcing
+**Why:** harness wired for the **full 4-wire Bosch DIN-72552** pinout
+(53/53a/53b/31). Self-park works correctly via rly-wlow's NC contact
+(87a → 53a → motor's internal park-cam contact). A 3-wire motor missing
+the 53a pin will work but loses external self-park (motor stops wherever
+the switch was released).
+
+**Recommendation:** 4-wire replacement motor. The modern aftermarket
+options for 105/115 cars (Classic Alfa, Alfaholics, Centerline) all expose
+4 pins by default. The 3-wire variant is the period-original Bosch
+0 390 326 002 (Alfa PN 105 02 65 052 04) — fine if you specifically want
+period-correct, but accept the self-park downgrade with our topology.
+
+**Compatibility table:**
+
+| Motor topology | Plug-in fit | Self-park | Notes |
+|---|---|---|---|
+| 4-wire Bosch (53/53a/53b/31) | ✅ direct | ✅ full | recommended |
+| 3-wire (53/53b/31, internal park) | ✅ leave 53a unconnected | ⚠ degraded — relay's NC output goes nowhere | acceptable |
+| 3-wire (+/slow-ctrl/fast-ctrl) | ❌ — different topology | n/a | NOT compatible — would require rewiring rly-wlow & rly-whigh from switched-power to switched-ground |
+
+**How to check the motor:** before connecting, peek at the motor's
+nameplate / Bosch part number, or measure terminal continuity (53a should
+show internal continuity to park-cam contact when at rest; in a 3-wire
+motor there's simply no 53a pin to probe).
+
+**Action when sourcing:** order a 4-wire motor unless period-correct trumps
+self-park; record the part number + supplier in the BOM. The wire colours
+on aftermarket motors are NOT standardised — confirm wire-to-terminal
+mapping against the motor data sheet, don't rely on colour alone.
+
+---
+
 ## Wire route lengths — measurements to refine the model
 
 ### `[ ]` Measure actual cross-zone routes
