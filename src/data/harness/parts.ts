@@ -365,15 +365,9 @@ export const bomGaps: BomGap[] = [
       "Dash accessory circuit (ignition-switched, f-ign-3): a 12 V → USB-C PD converter for fast charging, plus a Bluetooth amplifier/head unit (no memory lead — it's key-on). Both user-supplied; the harness gives one ign-switched 12 V feed + ground at the dash, and the stereo jumpers off the USB feed.",
     suggestion: "Any 12 V USB-C PD converter (~20–60 W); a compact 12 V Bluetooth amplifier with USB jack. Not Mouser — general / automotive accessory supplier.",
   },
-  {
-    id: "led-flasher",
-    item: "Electronic LED flasher — ISO-280 footprint",
-    qty: "1",
-    category: "component",
-    reason:
-      "Indicators are LED. The flasher feeds the turn-relay commons, so it carries the (tiny) LED load — a thermal flasher won't flash. Mount it EXTERNALLY next to the RTMR: the constant-RTMR's last ISO-280 cavity is now reserved for the future washer relay, so the drop-in-slot option isn't free. A standard 3-pin electronic LED flasher next to the block is the norm anyway.",
-    suggestion: "Aftermarket (not Mouser) — a standard 3-pin electronic LED flasher (Memotronics EF32RLNP, Custom LED ELFR-1, Painless 80230) mounted next to the block.",
-  },
+  // (led-flasher entry removed 2026-05-28 — superseded by flasher-iso280 below.
+  // The flasher moved from external mount into rtmr-const cavity 5; the Bussmann
+  // NO-762-LED is the chosen socket-mount part.)
   // --- Specialty tools (one-time; not consumed in the harness) ---------------
   {
     id: "tool-mp280-crimp",
