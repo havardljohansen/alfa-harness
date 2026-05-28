@@ -173,6 +173,7 @@ export const factoryArchitectureNotes = [
   "10 fuses, all 8 A; all wire 1.0 mm² unless noted — coarse by modern standards.",
   "Ignition switch is 3-position (Stop / Run / Start) — no accessory detent.",
   "Lights are independent of the ignition (light switch fed from the battery).",
+  "Headlight dash switch is a 4-pin COMPOUND assembly with two independent axes (verified empirically on the 2-headlight Junior variant — different from the 4-headlight GTV's switch): a rotary KNOB (3 positions: OFF / PARK / LOW-headlights, with OFF as the dead starting position) AND a separate dash LEVER (2 positions, NORMAL / HIGH) that energises the HIGH-beam output INDEPENDENTLY of the knob. Practical implication: HIGH can be selected with the knob at OFF, PARK, or LOW — three valid combinations where high beams are on. Wire count: 1 constant in + PARK out + LOW out + HIGH out = 4. Column lever does turn signals + flash-to-pass only (NOT dip).",
   "Mechanical fuel pump (no electric pump in the factory car).",
   "Windscreen washer is a manual FOOT pump — no electric pump motor; pressing it squirts fluid and its contact runs the wipers (shares the wiper fuse).",
   "Loads switched directly by their dash switches — almost no relays (only the horn).",

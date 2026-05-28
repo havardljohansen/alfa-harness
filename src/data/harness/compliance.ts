@@ -33,9 +33,23 @@ export const complianceNotes: ComplianceNote[] = [
   {
     id: "headlights-ign-gated",
     severity: "caution",
-    topic: "Headlights gated by ignition",
-    text: "You want main/dip beams to need key-position I. That's allowed and is a sensible anti-flat-battery measure, BUT keep PARKING/POSITION lamps and HAZARDS on constant battery so marker lights and 4-ways still work with the engine off (and so you're never legally without position lights when parked). The design does exactly this — don't move position lamps onto the ignition feed.",
-    ref: "General roadworthiness — position lamps operable when parked",
+    topic: "Headlights gated by ignition (asymmetric)",
+    text: "Asymmetric ignition gating by design: LOW beams need key-position I (anti-flat-battery — the daily-driving position can be left set and the lights die with the key). HIGH beams work key-off (emergency lighting + a deliberate 'you forgot' indicator since high beams aren't subtle). PARKING lights have two paths: auto-on with ignition (so they're never absent while driving), AND the dash switch's PARK detent forces them on key-off for roadside parking. HAZARDS stay on the constant bus so the 4-ways work engine-off.",
+    ref: "Design choice — see truth table in c-headlights notes",
+  },
+  {
+    id: "daylight-lights-mandate",
+    severity: "check",
+    topic: "Driving-lights mandate (kjørelys hele døgnet)",
+    text: "Norway has required lights-on at all times while driving since 1988 (Forskrift om kjøring med motorvogn / trafikkreglene). Required source = nærlys (low beam) eller kjørelys (DRL). Parking/position lamps alone do NOT satisfy the rule. Practical implication for this build: the daily driving position of the dash rotary is LOW — leave it there, low beams come on with the key, mandate met automatically. The dash switch's OFF position (parking lights only via the auto-ign feed) is for key-on-stationary use only; driving in that position is non-compliant.",
+    ref: "Trafikkreglene — kjøring med lys hele døgnet (1988-)",
+  },
+  {
+    id: "roadside-parking-lamps",
+    severity: "check",
+    topic: "Roadside parking after dark",
+    text: "When parked roadside in unlit conditions where the car isn't visible from 50 m, front + rear position lamps must be lit (trafikkreglene § 17). The dash switch's PARK detent provides this: click into PARK before removing the key → parking lamps stay on via the constant bus override. Remember to click out of PARK if you want zero drain. (Hazards are an alternative for emergency stops but draw more current and signal a different intent.)",
+    ref: "Trafikkreglene § 17 — parkering",
   },
   {
     id: "hazard-add",

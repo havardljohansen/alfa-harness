@@ -241,6 +241,11 @@ export interface Wire {
   complianceRef?: string; // ComplianceNote id
   /** Inline signal diode id(s) carried by this wire (see diodes.ts). */
   diodes?: string[];
+  /** Wire insulation colour. Solid = "Red", "Yellow", … Two-tone (base/stripe)
+   *  = "Yellow/Black", "Blue/Black", … Factory-derived for the wires that have
+   *  a clear 1969 equivalent; new colours for modern-only circuits. See
+   *  `wire-colors.ts` for the palette and hex resolution. */
+  color?: string;
   note?: string;
 }
 

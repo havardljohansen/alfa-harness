@@ -29,6 +29,12 @@ interface LogicalBulkhead {
   family?: "gt280" | "cluster";
   /** Cavities in this connector. Defaults to the 12-way GT 280; clusters size to fit. */
   ways?: number;
+  /** How many physical plug pairs this bulkhead is planned to use. Default 1 —
+   *  most bulkheads should fit in a single connector. Multi-plug bulkheads
+   *  (currently just bh1, planned as 2 × 10-way) must declare it explicitly so
+   *  the model-integrity test catches overflow into an extra plug as a
+   *  refactor regression. */
+  expectedPlugs?: number;
 }
 
 export const logicalBulkheads: LogicalBulkhead[] = [
@@ -38,8 +44,9 @@ export const logicalBulkheads: LogicalBulkhead[] = [
     zoneA: "engine-rear",
     zoneB: "dash",
     ways: 10,
+    expectedPlugs: 2,
     purpose:
-      "Ignition feeds, sender signals (temp/oil/tach), charge lamp, dash power, wiper/fan coil feeds. The main firewall crossing — 17 wires across two 10-way GT 280 plugs (10 + 7).",
+      "Ignition feeds, sender signals (temp/oil/tach), charge lamp, dash power, wiper/fan coil feeds, headlight switch constant feed (post-refactor), flash constant feed (post-refactor). The main firewall crossing — 19 wires across two 10-way GT 280 plugs (10 + 9).",
   },
   {
     id: "bh2",
@@ -55,16 +62,16 @@ export const logicalBulkheads: LogicalBulkhead[] = [
     zoneA: "engine-front",
     zoneB: "rear",
     ways: 8,
-    purpose: "To the boot: tail, brake, rear turn, plate, reverse, fuel pump, tank sender. 7 pins in an 8-way (1 spare).",
+    purpose: "To the boot: tail, brake, rear turn, plate, reverse, fuel pump, tank sender + rear PARK key-off override leg. 8 pins in an 8-way (fully populated — no spare after the headlight architecture refactor added w-park-override-rear). If a future change adds another BH3-crossing wire, bump to 12-way.",
   },
   {
     id: "bh4",
     name: "Front clip — lighting, blinkers & horn",
     zoneA: "engine-rear",
     zoneB: "engine-front",
-    ways: 8,
+    ways: 12,
     purpose:
-      "The whole front-of-car module unplugs here: headlight PDM + beams, front position lamps, front turn signals + side repeaters, and the horns. Beam-relay triggers and the main-beam tell-tale pass through from the dash; the turn/horn relay outputs come from the main loom. Piggybacks keep the pin count down: one front-position feed (RH jumpers off LH), and the side repeaters jumper off the front indicators. The PDM's battery feed (ring) and the front-clip ground trunk are separate heavy cables, so this one signal plug frees the front clip.",
+      "The whole front-of-car module unplugs here: headlight PDM + beams, front position lamps + PARK key-off override, front turn signals + side repeaters, and the horns. Beam-relay triggers and the main-beam tell-tale pass through from the dash; the turn/horn relay outputs come from the main loom. Piggybacks keep the pin count down: one front-position feed (RH jumpers off LH), and the side repeaters jumper off the front indicators. The PDM's battery feed (ring) and the front-clip ground trunk are separate heavy cables, so this one 12-way signal plug frees the front clip. (Bumped from 8-way to 12-way after the headlight refactor added w-park-override-fr — 9 wires in an 8-way overflowed to 2 plugs, defeating the 'one plug frees the clip' design intent.)",
   },
   {
     id: "sw3",

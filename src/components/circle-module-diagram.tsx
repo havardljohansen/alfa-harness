@@ -11,6 +11,7 @@ import { gaugeSpecs, lengthBands } from "@/data/harness/zones";
 import { BlockGrid, ConnectorGrid } from "@/components/layout-grids";
 import type { CircuitGroup, GaugeClass } from "@/data/harness/types";
 import { solveCircle, optimalOrder, type REdge } from "@/lib/circle-route";
+import { parseWireColor, swatchBackground, FALLBACK as COLOR_FALLBACK } from "@/data/harness/wire-colors";
 
 const gauge = new Map(gaugeSpecs.map((g) => [g.class, g] as const));
 const cutByBand = new Map(lengthBands.map((b) => [b.id, b.cutMm] as const));
@@ -26,6 +27,9 @@ const isConnector = (id: string) => connName.has(id);
 const isBlock = (id: string) => { const k = node.get(id)?.kind; return k === "fuse-block" || k === "distribution"; };
 const isGround = (id: string) => node.get(id)?.kind === "ground";
 
+// Categorical fallback for connections whose first wire has no `color` set
+// (currently only the 3 modernised HL switching wires that need a colour
+// decision). Used when `parseWireColor(w.color)` returns null.
 const GROUP_COLOR: Record<CircuitGroup, string> = {
   power: "#9aa7b8", charging: "#e8b04b", starting: "#c98a4b", ignition: "#e2554a",
   headlights: "#f5c451", "exterior-lights": "#8bd17c", signals: "#56b4e9",
@@ -37,14 +41,17 @@ const code = (id: string) => (id.length > 9 ? id.slice(0, 8) + "…" : id); // s
 const TWO_PI = Math.PI * 2;
 
 type Box = { id: string; name: string; role: "connector" | "block" | "device"; external: boolean; kind: string };
-type WireInfo = { id: string; label: string; cls: GaugeClass; mm2: number; awg: number; cutMm: number };
-type Conn = { idx: number; a: number; b: number; color: string; label: string; wires: WireInfo[] };
+type WireInfo = { id: string; label: string; cls: GaugeClass; mm2: number; awg: number; cutMm: number; color?: string; colorBg: string };
+type Conn = { idx: number; a: number; b: number; color: string; stripe?: string; colorBg: string; label: string; wires: WireInfo[] };
 
 // hover tooltip text for a connection — each underlying wire's full heat-shrink
-// code, label, gauge (AWG / mm²) and cut length.
+// code, label, gauge (AWG / mm²), cut length, and insulation colour.
 function connTitle(boxes: Box[], c: Conn) {
   const head = `${boxes[c.a].name} ↔ ${boxes[c.b].name}`;
-  const lines = c.wires.map((w) => `${w.id}  (${w.label})  ·  ${w.awg} AWG / ${w.mm2} mm²  ·  ${(w.cutMm / 1000).toFixed(1)} m`);
+  const lines = c.wires.map((w) => {
+    const colour = w.color ? `  ·  ${w.color}` : "";
+    return `${w.id}  (${w.label})  ·  ${w.awg} AWG / ${w.mm2} mm²  ·  ${(w.cutMm / 1000).toFixed(1)} m${colour}`;
+  });
   return [head, ...lines].join("\n");
 }
 
@@ -82,9 +89,14 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
       const ai = addBox(s), bi = addBox(t);
       const a = Math.min(ai, bi), b = Math.max(ai, bi);
       const key = `${a}|${b}`;
-      if (!pairs.has(key)) pairs.set(key, { idx: pairs.size, a, b, color: GROUP_COLOR[circuitGroup.get(w.circuit)!] ?? "#888", label: w.label, wires: [] });
+      if (!pairs.has(key)) {
+        const stroke = parseWireColor(w.color);
+        const base = stroke?.base ?? GROUP_COLOR[circuitGroup.get(w.circuit)!] ?? COLOR_FALLBACK;
+        const bg = stroke ? swatchBackground(w.color) : base;
+        pairs.set(key, { idx: pairs.size, a, b, color: base, stripe: stroke?.stripe, colorBg: bg, label: w.label, wires: [] });
+      }
       const g = gauge.get(w.gaugeClass);
-      pairs.get(key)!.wires.push({ id: w.id, label: w.label, cls: w.gaugeClass, mm2: g?.mm2 ?? 0, awg: g?.awg ?? 0, cutMm: cutByBand.get(w.lengthBandId) ?? w.lengthMm });
+      pairs.get(key)!.wires.push({ id: w.id, label: w.label, cls: w.gaugeClass, mm2: g?.mm2 ?? 0, awg: g?.awg ?? 0, cutMm: cutByBand.get(w.lengthBandId) ?? w.lengthMm, color: w.color, colorBg: swatchBackground(w.color) });
     }
     return { boxes, conns: [...pairs.values()], grounds: [...grounds] };
   }, [moduleId]);
@@ -132,7 +144,7 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
     const halfW = ((routed.box / 2) / rInner) * 0.8;
     const perBox: Record<number, Conn[]> = {};
     for (const c of boundary) { if (!(wsel.size === 0 || wsel.has(c.idx))) continue; const orig = shownSet.has(c.a) ? c.a : c.b; (perBox[orig] ??= []).push(c); }
-    const out: { idx: number; d: string; color: string }[] = [];
+    const out: { idx: number; d: string; color: string; stripe?: string }[] = [];
     for (const origStr in perBox) {
       const orig = +origStr, list = perBox[orig];
       const slot = slotOfSub[sub.get(orig)!];
@@ -142,7 +154,7 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
         const a = baseAng + off;
         const x1 = center + rInner * Math.cos(a), y1 = center + rInner * Math.sin(a);
         const x2 = center + (rInner - STUB) * Math.cos(a), y2 = center + (rInner - STUB) * Math.sin(a);
-        out.push({ idx: c.idx, d: `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`, color: c.color });
+        out.push({ idx: c.idx, d: `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`, color: c.color, stripe: c.stripe });
       });
     }
     return out;
@@ -159,7 +171,7 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
     const incident = conns.filter((c) => c.a === bi || c.b === bi);
     const swatches = (
       <span className="inline-flex gap-1 ml-1 align-middle">
-        {incident.map((c) => <span key={c.idx} className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: c.color }} title={c.label} />)}
+        {incident.map((c) => <span key={c.idx} className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: c.colorBg }} title={c.label} />)}
       </span>
     );
     if (box.role === "connector") {
@@ -206,7 +218,7 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
           return (
             <button key={c.idx} onClick={() => toggleWire(c.idx)} title={connTitle(boxes, c)}
               className={`text-[11px] px-1.5 py-0.5 rounded border flex items-center gap-1 font-mono ${on ? "bg-white/10 border-white/30" : wsel.size ? "opacity-45 border-white/15 hover:opacity-100" : "bg-white/5 border-white/15 hover:bg-white/10"}`}>
-              <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: c.color }} />
+              <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: c.colorBg }} />
               {code(boxes[c.a].id)} ↔ {code(boxes[c.b].id)}
             </button>
           );
@@ -250,14 +262,27 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
           <svg viewBox={`0 0 ${routed.size} ${routed.size}`} className="block w-full h-auto">
             {routed.rings.map((r, k) => <circle key={k} cx={routed.size / 2} cy={routed.size / 2} r={r} fill="none" stroke="rgba(125,211,252,0.12)" strokeWidth={1} />)}
             {internal.map((c, i) => wireActive(c.idx) ? (
-              <path key={c.idx} d={routed.paths[i]} fill="none" stroke={c.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" style={{ cursor: "help" }}>
-                <title>{connTitle(boxes, c)}</title>
-              </path>
+              <g key={c.idx} style={{ cursor: "help" }}>
+                <path d={routed.paths[i]} fill="none" stroke={c.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+                {c.stripe && (
+                  <path d={routed.paths[i]} fill="none" stroke={c.stripe} strokeWidth={2} strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="10 12" />
+                )}
+                {/* invisible wide hover target so the tooltip is easy to grab */}
+                <path d={routed.paths[i]} fill="none" stroke="transparent" strokeWidth={10}>
+                  <title>{connTitle(boxes, c)}</title>
+                </path>
+              </g>
             ) : null)}
             {stubs.map((s) => (
-              <path key={`stub-${s.idx}`} d={s.d} fill="none" stroke={s.color} strokeWidth={2.5} strokeLinecap="round" strokeDasharray="1 3" style={{ cursor: "help" }}>
-                <title>{connTitle(boxes, conns[s.idx])}</title>
-              </path>
+              <g key={`stub-${s.idx}`} style={{ cursor: "help" }}>
+                <path d={s.d} fill="none" stroke={s.color} strokeWidth={2.5} strokeLinecap="round" strokeDasharray="1 3" />
+                {s.stripe && (
+                  <path d={s.d} fill="none" stroke={s.stripe} strokeWidth={2.5} strokeLinecap="butt" strokeDasharray="3 7" />
+                )}
+                <path d={s.d} fill="none" stroke="transparent" strokeWidth={12}>
+                  <title>{connTitle(boxes, conns[s.idx])}</title>
+                </path>
+              </g>
             ))}
             {boxAtSlot.map((subIdx, slot) => {
               const orig = shown[subIdx];

@@ -26,6 +26,12 @@ export interface Scenario {
 const off: SimState = { ignition: "off", switches: {} };
 
 export const scenarios: Scenario[] = [
+  // -------------------------------------------------------------------------
+  // POSITIVE / OPERATIONAL — assert the right things happen for normal use.
+  // Grouped loosely by topic: power & ignition → headlights → indicators →
+  // accessory loads (wipers, fan, fuel, etc.). Order is the order you'd walk
+  // through the user-story (key off → key on → drive away).
+  // -------------------------------------------------------------------------
   {
     id: "all-off",
     story: "Key out, everything off → the constant bus is live but no lamp is, and no relay is energised.",
@@ -93,26 +99,67 @@ export const scenarios: Scenario[] = [
     },
   },
   {
-    id: "headlights-need-key",
-    story: "Key out, headlight switch to Head + dip → headlights stay OFF (gated by the key); position lamps off too (running lights need the key).",
-    state: { ignition: "off", switches: { "sw-headlight": "Head", "sw-dipflash": "Dip" } },
+    id: "low-beams-need-key",
+    story: "Key out, dash switch set to LOW → low beams stay OFF. NOTE: this scenario asserts `relaysOn: ['rly-low']` even though the bulbs are dead — that's intentional. The coil energises (sw-headlight LOW output is constant-fed via the dash switch, so rly-low clicks audibly), but the bulbs don't light because the relay COMMON is gated by ignition (rly-low.30 is fed from ign-bus via f-ign-6, and ign-bus is dead with no key). See rly-low's fn description for the asymmetric-gating design. This is what makes the 'set LOW and forget' UX work — driver leaves the switch at LOW permanently and the lights die with the key. Parking lamps also dark (no PARK detent engaged, ign-bus dead means no auto-ign feed).",
+    state: { ignition: "off", switches: { "sw-headlight": "Low" } },
     expect: {
       dead: [
         ["hl-L", "56b"],
         ["hl-R", "56b"],
         ["park-fl", "58"],
       ],
-      relaysOff: ["rly-low", "rly-high"],
+      relaysOn: ["rly-low"], // coil ENERGISES (constant-fed) — the gate is at the relay common, not the coil. See story.
+      relaysOff: ["rly-high"],
+    },
+  },
+  {
+    // ASSUMES INTERPRETATION 1 (compound switch where lever HIGH is independent
+    // of knob rotation). If physical verification (task #17 / PHYSICAL-TODO)
+    // finds interpretation 2 or 3 (lever gated by knob), this scenario becomes
+    // meaningless and the sw-headlight position "Off+Hi" doesn't exist.
+    id: "high-beams-key-off",
+    story: "Key out, dash knob OFF + lever HIGH → high beams light (key-independent — lever is wired straight from constant feed to HIGH relay coil); no low, no parking. Emergency lighting.",
+    state: { ignition: "off", switches: { "sw-headlight": "Off+Hi" } },
+    expect: {
+      live: [["hl-L", "56a"], ["hl-R", "56a"], ["wl-main", "in"]],
+      dead: [["hl-L", "56b"], ["park-fl", "58"]],
+      relaysOn: ["rly-high"],
+      relaysOff: ["rly-low"],
+    },
+  },
+  {
+    // ASSUMES INTERPRETATION 1 (lever HIGH independent of knob rotation).
+    id: "park-plus-high-key-off",
+    story: "Key out, dash knob PARK + lever HIGH → parking lamps AND high beams together (both key-independent).",
+    state: { ignition: "off", switches: { "sw-headlight": "Park+Hi" } },
+    expect: {
+      live: [["park-fl", "58"], ["tail-rl", "58"], ["hl-L", "56a"], ["hl-R", "56a"]],
+      dead: [["hl-L", "56b"], ["rtmr-ign", "BUS"]],
+      relaysOn: ["rly-high"],
+    },
+  },
+  {
+    id: "park-override-key-off",
+    story: "Key out, dash switch to PARK → parking lamps light front + rear via the dash-switch override (constant-fed); ignition bus stays dead (back-feed blocked by d-park-ign-iso).",
+    state: { ignition: "off", switches: { "sw-headlight": "Park" } },
+    expect: {
+      live: [["park-fl", "58"], ["park-fr", "58"], ["tail-rl", "58"], ["tail-rr", "58"], ["plate", "58"]],
+      dead: [
+        ["hl-L", "56b"], ["hl-L", "56a"],
+        ["rtmr-ign", "BUS"], // diode prevents back-feed of the ign-bus
+        ["usb-charge", "in"], // proof the ign-bus isn't back-fed (would otherwise wake the accessory feed)
+      ],
+      relaysOff: ["rly-low", "rly-high", "rly-fuel", "rly-ignmain"],
     },
   },
   {
     id: "low-beams-run",
-    story: "Key on (Run), Head + Dip → both low beams light; high beams stay off.",
-    state: { ignition: "run", switches: { "sw-headlight": "Head", "sw-dipflash": "Dip" } },
+    story: "Key on (Run), dash switch to LOW → both low beams light (coil energised + ign-gated common now live); parking lamps also on via auto-running-light feed; high stays off.",
+    state: { ignition: "run", switches: { "sw-headlight": "Low" } },
     expect: {
       live: [
-        ["hl-L", "56b"],
-        ["hl-R", "56b"],
+        ["hl-L", "56b"], ["hl-R", "56b"],
+        ["park-fl", "58"], ["tail-rl", "58"], // parking lamps on via f-ign-10
       ],
       dead: [["hl-L", "56a"]],
       relaysOn: ["rly-low"],
@@ -120,16 +167,28 @@ export const scenarios: Scenario[] = [
     },
   },
   {
-    id: "high-beams",
-    story: "Key I, Head + Main → both high beams + blue tell-tale light.",
-    state: { ignition: "run", switches: { "sw-headlight": "Head", "sw-dipflash": "Main" } },
+    // ASSUMES INTERPRETATION 1 (lever HIGH independent of knob rotation).
+    id: "high-beams-run-knob-off",
+    story: "Key on, dash knob OFF + lever HIGH → high beams + blue tell-tale; low stays off (knob OFF means no low signal); parking on via auto-running-light feed.",
+    state: { ignition: "run", switches: { "sw-headlight": "Off+Hi" } },
     expect: {
-      live: [
-        ["hl-L", "56a"],
-        ["hl-R", "56a"],
-        ["wl-main", "in"],
-      ],
+      live: [["hl-L", "56a"], ["hl-R", "56a"], ["wl-main", "in"], ["park-fl", "58"]],
+      dead: [["hl-L", "56b"]],
       relaysOn: ["rly-high"],
+      relaysOff: ["rly-low"],
+    },
+  },
+  {
+    // ASSUMES INTERPRETATION 1 (lever HIGH independent of knob rotation).
+    // This is THE most diagnostic scenario for the geometry question — if the
+    // physical switch has a mechanical or electrical interlock, this state
+    // can't physically exist and the scenario is meaningless.
+    id: "low-plus-high-run",
+    story: "Key on, dash knob LOW + lever HIGH → BOTH low and high filaments light (compound switch allows it). Acceptable for short bursts on H4 bulbs; the driver typically rotates the knob back to PARK or OFF before sustained high-beam driving. This is the canonical 'both lit' state on the compound switch.",
+    state: { ignition: "run", switches: { "sw-headlight": "Low+Hi" } },
+    expect: {
+      live: [["hl-L", "56a"], ["hl-R", "56a"], ["hl-L", "56b"], ["hl-R", "56b"], ["wl-main", "in"], ["park-fl", "58"]],
+      relaysOn: ["rly-low", "rly-high"],
     },
   },
   {
@@ -279,22 +338,16 @@ export const scenarios: Scenario[] = [
     },
   },
   {
-    id: "flash-to-pass",
-    story: "Key on, headlights OFF, flick Flash → high beams fire (flash-to-pass must work without the headlight switch).",
-    state: { ignition: "run", switches: { "sw-headlight": "Off", "sw-dipflash": "Flash" } },
+    id: "flash-to-pass-run",
+    story: "Key on, dash switch OFF, push column flash → high beams fire momentarily (flash-to-pass works regardless of dash switch position).",
+    state: { ignition: "run", switches: { "sw-headlight": "Off", "sw-flash": "Flash" } },
     expect: { relaysOn: ["rly-high"], live: [["hl-L", "56a"]] },
   },
   {
-    id: "main-needs-headlight",
-    story: "Key on, headlights OFF, dip switch to Main (not flash) → high beam stays OFF (normal beams still need the headlight switch).",
-    state: { ignition: "run", switches: { "sw-headlight": "Off", "sw-dipflash": "Main" } },
-    expect: { relaysOff: ["rly-high", "rly-low"] },
-  },
-  {
-    id: "flash-needs-key",
-    story: "Key out, flick Flash → nothing (flash is ignition-fed).",
-    state: { ignition: "off", switches: { "sw-dipflash": "Flash" } },
-    expect: { relaysOff: ["rly-high"] },
+    id: "flash-works-key-off",
+    story: "Key OUT, push column flash → high beams fire momentarily (flash is on the constant bus, key-independent — handy for signalling in a dark garage or to oncoming traffic).",
+    state: { ignition: "off", switches: { "sw-flash": "Flash" } },
+    expect: { relaysOn: ["rly-high"], live: [["hl-L", "56a"]] },
   },
   {
     id: "starter-relay",
@@ -385,13 +438,26 @@ export const scenarios: Scenario[] = [
   },
   {
     id: "flash-not-low",
-    story: "Flash-to-pass fires the HIGH beam only — it must NOT light the low beam (catches the flash feed sneaking into the dip circuit).",
-    state: { ignition: "run", switches: { "sw-headlight": "Off", "sw-dipflash": "Flash" } },
+    story: "Column flash-to-pass fires HIGH only — it must NOT light the low beam (catches the flash feed sneaking into the dip circuit).",
+    state: { ignition: "run", switches: { "sw-headlight": "Off", "sw-flash": "Flash" } },
     expect: {
       relaysOn: ["rly-high"],
       relaysOff: ["rly-low"],
       live: [["hl-L", "56a"]],
       dead: [["hl-L", "56b"]],
+    },
+  },
+  {
+    id: "park-override-no-back-feed",
+    story: "Key OUT, dash to PARK → parking lamps light via the override, but the ignition bus stays DEAD (Schottky d-park-ign-iso prevents back-feed). The fuel pump, accessory feed, gauges etc. must all stay off — proof the diode is wired the right way around.",
+    state: { ignition: "off", switches: { "sw-headlight": "Park" } },
+    expect: {
+      live: [["park-fl", "58"], ["tail-rl", "58"]],
+      dead: [
+        ["rtmr-ign", "BUS"],
+        ["fuel-pump", "in"], ["usb-charge", "in"], ["g-fuel", "+"], ["coil", "15"],
+      ],
+      relaysOff: ["rly-ignmain", "rly-fuel"],
     },
   },
   {
@@ -402,6 +468,180 @@ export const scenarios: Scenario[] = [
       live: [["tail-rl", "54"], ["tail-rr", "54"]],
       dead: [["turn-rl", "L"], ["turn-rr", "R"]],
       relaysOff: ["rly-turnL", "rly-turnR"],
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // PRE-BUILD VERIFICATION — added after the headlight architecture refactor.
+  // Negative tests for the new diode-OR nodes + legal walkthrough wiring.
+  // Goal: every behaviour described in the user-story walkthrough is covered
+  // by a passing test BEFORE any wire is cut.
+  // -------------------------------------------------------------------------
+  {
+    id: "flash-plus-hl-high-no-backfeed",
+    story: "Key off, dash knob OFF + lever HIGH (sw-headlight at Off+Hi) AND column flash pressed simultaneously → high beams fire; both source paths to rly-high.86 (w-hl-hi-trg and w-flash-out) coexist; neither source should back-feed the other's switch (both are sw-headlight.30 and sw-flash.in on constant — same voltage source, no risk; this test asserts the model agrees).",
+    state: { ignition: "off", switches: { "sw-headlight": "Off+Hi", "sw-flash": "Flash" } },
+    expect: {
+      live: [["hl-L", "56a"], ["hl-R", "56a"]],
+      relaysOn: ["rly-high"],
+      relaysOff: ["rly-low"], // make sure flash doesn't sneak into low somehow
+    },
+  },
+  {
+    id: "park-plus-run-no-sneak",
+    story: "Key on (RUN) + dash knob PARK → parking lamps lit (via both auto-ign feed AND PARK override OR'd at the lamp node); no sneak path lights anything unintended; ign-bus stays cleanly contained; HL switch's PARK leg doesn't cross-talk to LOW or HIGH outputs through internal switch dead contacts.",
+    state: { ignition: "run", switches: { "sw-headlight": "Park" } },
+    expect: {
+      live: [["park-fl", "58"], ["tail-rl", "58"], ["rtmr-ign", "BUS"]],
+      dead: [
+        ["hl-L", "56b"], ["hl-L", "56a"], // LOW + HIGH outputs of the relay stay dead
+        ["rly-low", "87"], ["rly-high", "87"], // beam relay outputs dead
+      ],
+      relaysOff: ["rly-low", "rly-high"],
+    },
+  },
+  {
+    id: "hazards-plus-park-key-off",
+    story: "Key OUT, hazards ON, dash knob PARK → hazards flash (both turn relays cycling) AND parking lamps light (PARK override); both work independently on the constant bus with no cross-talk; ign-bus stays dead despite both circuits being active.",
+    state: { ignition: "off", switches: { "sw-hazard": "On", "sw-headlight": "Park" } },
+    expect: {
+      live: [
+        ["park-fl", "58"], ["tail-rl", "58"], // parking from PARK override
+        ["turn-fl", "L"], ["turn-fr", "R"], // hazards both sides
+        ["wl-turn", "in"], // turn tell-tale
+      ],
+      dead: [
+        ["rtmr-ign", "BUS"], // ign-bus must stay dead — both park-iso diodes doing their job
+        ["fuel-pump", "in"], ["usb-charge", "in"], ["coil", "15"], // proof ign-bus is contained
+        ["hl-L", "56b"], ["hl-L", "56a"], // headlamps stay dark
+      ],
+      relaysOn: ["rly-turnL", "rly-turnR"],
+      relaysOff: ["rly-low", "rly-high", "rly-ignmain", "rly-fuel"],
+    },
+  },
+  {
+    id: "low-coil-no-bus-leak",
+    story: "Key on, dash at LOW → low beams light via the ign-gated common (rly-low.30 ← f-ign-6). Critical: verify the new w-low-com wire only carries current INTO the relay common, doesn't create a path from the bulbs BACK to the ign bus (which would phantom-power things when bulbs are removed, etc.). Asserts the ign-bus loads stay independent of low-beam state.",
+    state: { ignition: "run", switches: { "sw-headlight": "Low" } },
+    expect: {
+      live: [
+        ["hl-L", "56b"], ["hl-R", "56b"], // low beams on
+        ["rtmr-ign", "BUS"], ["coil", "15"], ["usb-charge", "in"], // ign-bus loads stay normal
+      ],
+      dead: [["hl-L", "56a"]], // HIGH stays off
+      relaysOn: ["rly-low"],
+      relaysOff: ["rly-high"],
+    },
+  },
+  {
+    id: "charge-lamp-feed-live-key-on",
+    story: "Key on (engine NOT running — propagation engine has no 'engine running' state, so this models the key-on-stationary case): the charge warning lamp's FEED side must be live so the bulb can light during the alternator self-excitation phase. This proves the gauges-feed (Pink, f-ign-2) reaches wl-charge through the warning-lamp jumper.",
+    state: { ignition: "run", switches: {} },
+    expect: {
+      live: [["wl-charge", "+"]], // feed side live (proves the gauges→warning-lamp jumper exists)
+    },
+  },
+  {
+    id: "oil-pressure-lamp-feed-live-key-on",
+    story: "Key on (engine NOT running): the oil-pressure warning lamp's FEED side must be live so the bulb can light when the engine isn't running (oil-switch closed = no pressure). Proves the gauges-feed reaches wl-oil through the warning-lamp jumper.",
+    state: { ignition: "run", switches: {} },
+    expect: {
+      live: [["wl-oil", "+"]],
+    },
+  },
+  {
+    id: "plate-lights-with-tails",
+    story: "Key on → rear tails AND BOTH plate lights light (plate lights jumper off the rear-tail node, both sides). Proves the plate-light wiring is per-side and not single-point-of-failure.",
+    state: { ignition: "run", switches: {} },
+    expect: {
+      live: [["plate", "58"], ["plate-r", "58"], ["tail-rl", "58"], ["tail-rr", "58"]],
+    },
+  },
+  {
+    id: "reverse-only-when-engaged",
+    story: "Key on + reverse engaged → reverse lamp lights. Verifies the reverse switch routes ign-fed power through to the rear lamp via BH3.",
+    state: { ignition: "run", switches: { "sw-reverse": "Reverse" } },
+    expect: {
+      live: [["reverse", "in"]],
+    },
+  },
+  {
+    id: "reverse-needs-key",
+    story: "Reverse engaged but key OUT → reverse lamp must stay dark (it's on the ign-bus via f-ign-7).",
+    state: { ignition: "off", switches: { "sw-reverse": "Reverse" } },
+    expect: {
+      dead: [["reverse", "in"]],
+    },
+  },
+  {
+    id: "heater-fan-high",
+    story: "Key Run, heater-fan switch HIGH → fan relay energises, blower runs at full speed; switch carries only coil current.",
+    state: { ignition: "run", switches: { "sw-heaterfan": "High" } },
+    expect: {
+      relaysOn: ["rly-fan"],
+      live: [["heater-fan", "in"]],
+    },
+  },
+  {
+    id: "heater-fan-off",
+    story: "Key Run, heater-fan switch Off → fan relay de-energised, blower dark.",
+    state: { ignition: "run", switches: { "sw-heaterfan": "Off" } },
+    expect: {
+      relaysOff: ["rly-fan"],
+      dead: [["heater-fan", "in"]],
+    },
+  },
+  {
+    id: "washer-pump-runs",
+    story: "Key Run, washer button pressed → washer relay closes, pump runs (period-correct dash button carries only the relay-coil trigger, modern electric pump carried by the relay).",
+    state: { ignition: "run", switches: { "sw-washer": "Pressed" } },
+    expect: {
+      relaysOn: ["rly-washer"],
+      live: [["washer-pump", "53c"]],
+    },
+  },
+  {
+    id: "wiper-self-park-when-off",
+    story: "Key Run, wiper switch OFF (default) → LOW relay de-energised, its NC contact (87a) connects to motor 53a so the wiper homes itself. Critical test for the SPDT pinout of rly-wlow — if 87 and 87a are swapped at the relay socket, the motor runs continuously instead of parking.",
+    state: { ignition: "run", switches: { "sw-wiper": "Off" } },
+    expect: {
+      relaysOff: ["rly-wlow", "rly-whigh"],
+      live: [["wiper", "53a"]], // self-park feed via NC contact
+      dead: [["wiper", "53"], ["wiper", "53b"]],
+    },
+  },
+  {
+    // NOTE: this is a HEADLINE baseline, not exhaustive — it covers the loads
+    // most likely to regress on a refactor (ign bus + auto-on circuits + the
+    // big switched accessories). Not every of the ~100 model nodes is asserted.
+    // Treat additions to this scenario as a deliberate "this state too is
+    // load-bearing to the baseline."
+    id: "key-run-headline-baseline",
+    story: "Key RUN, all switches at default — the headline 'engine off, key in run' state. Asserts the high-leverage loads that should be live (ign bus, auto-on running lights, gauges, fuel pump, accessory) and dead (headlamps, wipers, blower, indicators). Catches sneak paths and architecture regressions on common refactors. Not exhaustive — see the per-circuit scenarios for complete coverage.",
+    state: { ignition: "run", switches: {} },
+    expect: {
+      live: [
+        ["rtmr-const", "BUS"], // constant bus always
+        ["rtmr-ign", "BUS"], // ign bus live (rly-ignmain closed)
+        ["coil", "15"], // engine ready to run
+        ["g-fuel", "+"], // gauges feed live
+        ["wl-oil", "+"], ["wl-charge", "+"], // warning-lamp feeds (the bulbs may or may not light — depends on engine/alternator state — but the feed side must be live)
+        ["park-fl", "58"], ["park-fr", "58"], ["tail-rl", "58"], ["tail-rr", "58"], ["plate", "58"], ["plate-r", "58"], // auto-on running lights
+        ["fuel-pump", "in"], // electric pump runs key-on
+        ["usb-charge", "in"], ["stereo", "+B"], // accessory feed live
+      ],
+      dead: [
+        ["hl-L", "56a"], ["hl-L", "56b"], // headlamps off (dash switch default = Off)
+        ["wiper", "53"], ["wiper", "53b"], // wipers not running (sw-wiper default = Off)
+        ["heater-fan", "in"], // blower off
+        ["horn-hi", "in"], // horn quiet
+        ["turn-fl", "L"], ["turn-fr", "R"], // no indicators
+        ["reverse", "in"], // not in reverse
+        ["tail-rl", "54"], // brake not pressed
+        ["washer-pump", "53c"], // washer not pressed
+      ],
+      relaysOn: ["rly-ignmain", "rly-fuel"], // ign main + fuel pump auto-on with key
+      relaysOff: ["rly-low", "rly-high", "rly-fan", "rly-horn", "rly-turnL", "rly-turnR", "rly-wlow", "rly-whigh", "rly-starter", "rly-washer"],
     },
   },
 ];

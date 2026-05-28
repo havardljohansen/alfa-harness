@@ -83,9 +83,10 @@ function staticEdges(): Edge[] {
   }
 
   // --- PDM internals (hard-wired) ------------------------------------------
-  // Main input feeds both beam-relay commons directly (the relay cavity), not
-  // a fuse — fuses sit on the relay OUTPUTS (one per beam filament) below.
-  edges.push({ a: ep("pdm", "BUS"), b: ep("rly-low", "30"), directed: false });
+  // Main input feeds the HIGH-beam relay common directly (the relay cavity),
+  // not a fuse. The LOW-beam relay common takes its feed EXTERNALLY via
+  // w-low-com (from rtmr-ign.f-ign-6) — this is the asymmetric ign-gating
+  // that makes LOW key-dependent while HIGH stays key-independent.
   edges.push({ a: ep("pdm", "BUS"), b: ep("rly-high", "30"), directed: false });
   // Beam relay outputs -> per-side beam fuses.
   edges.push({ a: ep("rly-low", "87"), b: ep("pdm", "f-pdm-1"), directed: false });
