@@ -1,4 +1,4 @@
-import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, buildWirePlan, recommendedSpares, wireGroundSplit, gt280TerminalPlan } from "@/data/harness";
+import { tierTotals, fuseShoppingList, terminationTally, completeBom, terminalsByGaugeGender, recommendedSpares, wireGroundSplit, gt280TerminalPlan } from "@/data/harness";
 import { ownedParts, bomGaps, terminalByGauge } from "@/data/harness/parts";
 import { connectorBom, mouserUrl } from "@/data/harness/connectors";
 import { externalSuggestions } from "@/data/harness/external-suppliers";
@@ -25,8 +25,6 @@ export default function ShoppingPage() {
       const have = (g === "female" ? s.ownedF : s.ownedM) ?? 0;
       return { label: `${s.awg} AWG (${s.mm2} mm²) ${g.toUpperCase()}`, pn: g === "female" ? s.femalePn : s.malePn, want, have, buy: Math.max(0, want - have) };
     }));
-
-  const wirePlan = buildWirePlan();
 
   return (
     <div className="space-y-7">
@@ -262,42 +260,13 @@ export default function ShoppingPage() {
         </div>
       </section>
 
-      {/* Wire — this build (owned vs buy) */}
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Wire — this build (owned vs buy)</h2>
-        <div className="overflow-auto border rounded-lg">
-          <table className="wtable">
-            <thead>
-              <tr><th>Class</th><th>Gauge</th><th>Need (m)</th><th>Own (m)</th><th>Buy (m)</th></tr>
-            </thead>
-            <tbody>
-              {wirePlan.map((r) => (
-                <tr key={r.cls}>
-                  <td>{r.cls}</td>
-                  <td className="font-mono">{r.awg !== "—" ? `${r.awg} AWG` : `${r.mm2} mm²`} <span className="text-muted">({r.mm2} mm²)</span></td>
-                  <td className="font-mono">{r.needM}</td>
-                  <td className="font-mono">{r.ownM}</td>
-                  <td className="font-mono font-semibold" style={{ color: r.buyM ? "var(--warn)" : "var(--ok)" }}>{r.buyM ? r.buyM : "✓"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="text-xs text-muted mt-1.5">
-          This build runs <strong>signal on 22 AWG</strong> (owned, all loom-wrapped); the clean-build recommendation
-          stays the optimal 0.5 mm² / 20 AWG, and the signal shortfall is bought as 20 AWG (same 22-20 terminals).
-          Spare 18 AWG (low) can also back up signal. Buy quantities per class are in the table above; the ground /
-          non-ground split is below. Lengths include 15% waste; future/capped wires (O2, PWM low-speed) are excluded.
-        </p>
-      </section>
-
       {/* Wire — ground vs non-ground */}
       <section>
         <h2 className="text-lg font-semibold mb-2">Wire — ground vs non-ground</h2>
         <div className="overflow-auto border rounded-lg">
           <table className="wtable">
             <thead>
-              <tr><th>Class</th><th>Gauge</th><th>Ground (m)</th><th>Non-ground (m)</th><th>Total (m)</th><th>Own (m)</th><th>Buy (m)</th></tr>
+              <tr><th>Class</th><th>Gauge</th><th>Ground (m)</th><th>Non-ground (m)</th><th>Total (m)</th></tr>
             </thead>
             <tbody>
               {wireSplit.map((r) => (
@@ -306,16 +275,14 @@ export default function ShoppingPage() {
                   <td className="font-mono text-xs whitespace-nowrap">{r.gauge}</td>
                   <td className="font-mono">{r.groundM}</td>
                   <td className="font-mono">{r.nonGroundM}</td>
-                  <td className="font-mono">{r.totalM}</td>
-                  <td className="font-mono">{r.ownedM}</td>
-                  <td className="font-mono font-semibold" style={{ color: r.buyM ? "var(--warn)" : "var(--ok)" }}>{r.buyM ? r.buyM : "✓"}</td>
+                  <td className="font-mono font-semibold">{r.totalM}</td>
                 </tr>
               ))}
               <tr className="font-semibold">
                 <td colSpan={2}>Totals</td>
                 <td className="font-mono">{wsGround}</td>
                 <td className="font-mono">{wsNon}</td>
-                <td className="font-mono" colSpan={3}>{wsGround + wsNon} m total</td>
+                <td className="font-mono">{wsGround + wsNon}</td>
               </tr>
             </tbody>
           </table>
@@ -323,7 +290,7 @@ export default function ShoppingPage() {
         <p className="text-xs text-muted mt-1.5">
           Ground = any wire landing on a module ground block or the battery −. The ground side is dominated by the
           heavy feed/medium runs (the module trunks + lamp/device earths); the bulk of the harness is non-ground
-          signal. Totals match the owned-vs-buy table above.
+          signal. Lengths include 15% waste; future/capped wires (O2, PWM low-speed) are excluded.
         </p>
       </section>
 

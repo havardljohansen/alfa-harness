@@ -8,7 +8,7 @@ import { wires } from "./wires";
 import { diodes } from "./diodes";
 import { connectors, connectorPairsNeeded, connectorPairsOwned, connectorBom } from "./connectors";
 import { complianceNotes } from "./compliance";
-import { ownedParts, bomGaps, terminalByGauge, ownedWire } from "./parts";
+import { ownedParts, bomGaps, terminalByGauge } from "./parts";
 import type { GaugeClass } from "./types";
 import { resolveWire, wireTotalsByGauge, wireTotalsByTier, wiresByBand } from "./derive";
 import { moduleOf } from "./modules";
@@ -255,11 +255,10 @@ export function terminationTally(): TerminationTally {
   return { mp280, mp280Male, mp280Female, seals, spade, ring };
 }
 
-// THIS build's actual gauge per functional class (signal runs on the owned
-// 22 AWG / 0.35 mm², all loom-wrapped). The CLEAN-BUILD recommendation stays
-// the optimal gauge in gaugeSpecs (signal = 0.5 mm²).
+// Build gauge per functional class — matches the clean-build recommendation in
+// gaugeSpecs (signal = 0.5 mm² / 20 AWG, sized for mechanical robustness).
 export const BUILD_GAUGE_MM2: Record<GaugeClass, number> = {
-  signal: 0.35,
+  signal: 0.5,
   low: 0.75,
   medium: 1.5,
   high: 2.5,
@@ -292,26 +291,6 @@ export function terminalsByGaugeGender(): Array<{ mm2: number; gender: "male" | 
       return { mm2: Number(mm2), gender: gender as "male" | "female", count };
     })
     .sort((a, b) => a.mm2 - b.mm2 || a.gender.localeCompare(b.gender));
-}
-
-/** Wire plan for THIS build — metres needed (cut-band + 15% waste) per build
- *  gauge, vs owned stock, vs buy. */
-export function buildWirePlan(): Array<{ cls: GaugeClass; awg: string; mm2: number; needM: number; ownM: number; buyM: number }> {
-  const cutByClass = new Map<GaugeClass, number>();
-  for (const w of resolvedWires) {
-    if (w.future) continue; // O2 / PWM low-speed are capped/deferred — not "buy now"
-    const band = lengthBands.find((b) => b.id === w.lengthBandId);
-    const cut = band?.cutMm ?? w.lengthMm;
-    cutByClass.set(w.gaugeClass, (cutByClass.get(w.gaugeClass) ?? 0) + cut);
-  }
-  const ownByClass = new Map(ownedWire.map((o) => [o.forClass, o]));
-  const order: GaugeClass[] = ["signal", "low", "medium", "high", "feed", "main"];
-  return order.map((cls) => {
-    const own = ownByClass.get(cls);
-    const needM = Math.ceil(((cutByClass.get(cls) ?? 0) * 1.15) / 1000);
-    const ownM = own?.meters ?? 0;
-    return { cls, awg: own?.awg ?? "—", mm2: BUILD_GAUGE_MM2[cls], needM, ownM, buyM: Math.max(0, needM - ownM) };
-  });
 }
 
 export function fuseShoppingList(): FuseLine[] {
@@ -351,9 +330,9 @@ export function recommendedSpares(): SpareItem[] {
 }
 
 // ---------------------------------------------------------------------------
-// Wire shopping — split GROUND vs NON-GROUND, by build gauge, owned vs buy.
-// Lengths carry the standard 15% waste; future/capped wires (O2, PWM low-speed)
-// are excluded. Ground = any wire landing on a ground block or the battery −.
+// Wire shopping — split GROUND vs NON-GROUND, by build gauge. Lengths carry
+// the standard 15% waste; future/capped wires (O2, PWM low-speed) are excluded.
+// Ground = any wire landing on a ground block or the battery −.
 // ---------------------------------------------------------------------------
 const GND_NODES = new Set(["gnd-eng", "gnd-front", "gnd-dash", "gnd-rear"]);
 const isGroundWire = (w: ResolvedWire) =>
@@ -363,7 +342,7 @@ const isGroundWire = (w: ResolvedWire) =>
   (w.from.component === "battery" && w.from.terminal === "-");
 
 const CLASS_BUY_GAUGE: Record<GaugeClass, string> = {
-  signal: "22 AWG / 0.35 mm²",
+  signal: "20 AWG / 0.5 mm²",
   low: "18 AWG / 0.75 mm²",
   medium: "16 AWG / 1.5 mm²",
   high: "14 AWG / 2.5 mm²",
@@ -377,12 +356,9 @@ export interface WireSplitRow {
   groundM: number;
   nonGroundM: number;
   totalM: number;
-  ownedM: number;
-  buyM: number;
 }
 
 export function wireGroundSplit(): WireSplitRow[] {
-  const ownedByClass = new Map(ownedWire.map((o) => [o.forClass, o.meters]));
   const bandCut = new Map(lengthBands.map((b) => [b.id, b.cutMm]));
   const order: GaugeClass[] = ["signal", "low", "medium", "high", "feed", "main"];
   const acc = new Map<GaugeClass, { g: number; n: number }>();
@@ -391,23 +367,19 @@ export function wireGroundSplit(): WireSplitRow[] {
     if (w.future) continue;
     const a = acc.get(w.gaugeClass);
     if (!a) continue;
-    const cut = bandCut.get(w.lengthBandId) ?? w.lengthMm; // band cut length — matches buildWirePlan
+    const cut = bandCut.get(w.lengthBandId) ?? w.lengthMm;
     if (isGroundWire(w)) a.g += cut;
     else a.n += cut;
   }
   const m = (mm: number) => Math.ceil((mm * 1.15) / 1000);
   return order.map((c) => {
     const a = acc.get(c)!;
-    const totalM = m(a.g + a.n);
-    const ownedM = ownedByClass.get(c) ?? 0;
     return {
       gaugeClass: c,
       gauge: CLASS_BUY_GAUGE[c],
       groundM: m(a.g),
       nonGroundM: m(a.n),
-      totalM,
-      ownedM,
-      buyM: Math.max(0, totalM - ownedM),
+      totalM: m(a.g + a.n),
     };
   });
 }

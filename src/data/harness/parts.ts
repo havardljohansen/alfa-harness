@@ -480,27 +480,8 @@ export interface TerminalSpec {
   note?: string;
 }
 
-// ---------------------------------------------------------------------------
-// Owned wire stock (this build). Silicone tinned-copper. Signal runs on the
-// 22 AWG for THIS build (all wires loom-wrapped, so the thin-wire vibration
-// concern is mitigated). The CLEAN-BUILD recommendation stays the optimal
-// gauge (signal = 0.5 mm² / 20 AWG — see gaugeSpecs); 22 AWG is a deviation.
-// ---------------------------------------------------------------------------
-export interface OwnedWire {
-  awg: string;
-  mm2: number;
-  meters: number;
-  forClass: string; // which build gauge-class this stock serves
-}
-export const ownedWire: OwnedWire[] = [
-  { awg: "22", mm2: 0.35, meters: 50, forClass: "signal" },
-  { awg: "18", mm2: 0.75, meters: 50, forClass: "low" }, // spare 18 AWG also backs up signal
-  { awg: "12", mm2: 2.5, meters: 8, forClass: "high" }, // 12 AWG (3.3 mm²) covers the 2.5 tier
-  { awg: "10", mm2: 6, meters: 13, forClass: "feed" },
-];
-
 export const terminalByGauge: TerminalSpec[] = [
-  { mm2: 0.35, awg: "22-20", femalePn: "12110843-L", malePn: "15304730-L", owned: true, ownedF: 50, ownedM: 25, note: "THIS build's signal wires (22 AWG) — now puts the owned 22-20 terminals to use." },
+  { mm2: 0.5, awg: "22-20", femalePn: "12110843-L", malePn: "15304730-L", owned: true, ownedF: 50, ownedM: 25, note: "Signal wires (20 AWG / 0.5 mm²) — 22-20 AWG terminal covers them." },
   { mm2: 0.75, awg: "18-16", femalePn: "12110847-L", malePn: "15304731-L", owned: true, ownedF: 50, ownedM: 25 },
   { mm2: 1.5, awg: "16-14", femalePn: "12129409-L", malePn: "16-14 male (confirm)", owned: false, ownedF: 0, ownedM: 0, note: "Buy — owned set skips 16-14. Female 12129409-L verified." },
   { mm2: 2.5, awg: "14-12", femalePn: "12110845-L", malePn: "15304724-L", owned: true, ownedF: 25, ownedM: 25 },
