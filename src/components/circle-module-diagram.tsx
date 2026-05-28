@@ -57,12 +57,14 @@ function BoxIcon({ box, bw }: { box: Box; bw: number }) {
   else if (k === "switch" || k === "ignition-switch") Icon = ToggleRight;
   else if (k === "gauge") Icon = Gauge;
   if (!Icon) return null;
-  const size = Math.max(8, bw * 0.28);
-  // Lucide renders as a nested <svg>; place it in the top-left of the box's
-  // counter-rotated frame so it sits above the centred code text.
+  // Icon as a watermark filling most of the box: ~70% of box width, centred.
+  // Text overlays on top at full opacity; the icon stays low-opacity so it
+  // signals box type without fighting the label for legibility.
+  const size = bw * 0.7;
+  const offset = (bw - size) / 2;
   return (
-    <g opacity="0.7" color="#7dd3fc">
-      <Icon x={2} y={2} width={size} height={size} strokeWidth={1.8} />
+    <g opacity="0.3" color="#7dd3fc">
+      <Icon x={offset} y={offset} width={size} height={size} strokeWidth={1.5} />
     </g>
   );
 }
