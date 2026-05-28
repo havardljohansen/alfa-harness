@@ -12,6 +12,7 @@ import { BlockGrid, ConnectorGrid } from "@/components/layout-grids";
 import type { CircuitGroup, GaugeClass } from "@/data/harness/types";
 import { solveCircle, optimalOrder, type REdge } from "@/lib/circle-route";
 import { parseWireColor, swatchBackground, FALLBACK as COLOR_FALLBACK } from "@/data/harness/wire-colors";
+import { Plug, Cpu, Lightbulb, Volume2, Battery, ToggleRight, Gauge } from "lucide-react";
 
 const gauge = new Map(gaugeSpecs.map((g) => [g.class, g] as const));
 const cutByBand = new Map(lengthBands.map((b) => [b.id, b.cutMm] as const));
@@ -41,6 +42,30 @@ const code = (id: string) => (id.length > 9 ? id.slice(0, 8) + "…" : id); // s
 const TWO_PI = Math.PI * 2;
 
 type Box = { id: string; name: string; role: "connector" | "block" | "device"; external: boolean; kind: string };
+
+// Lucide icons for the box types most useful to spot at a glance. Mapped by
+// component kind (or role for connectors). Anything not in this list just
+// gets text-only — keep the icons sparing so they signal type, not noise.
+function BoxIcon({ box, bw }: { box: Box; bw: number }) {
+  const k = box.kind;
+  let Icon: typeof Plug | null = null;
+  if (box.role === "connector") Icon = Plug;
+  else if (k === "fuse-block" || k === "distribution") Icon = Cpu;
+  else if (k === "lamp" || k === "warning-light") Icon = Lightbulb;
+  else if (k === "horn") Icon = Volume2;
+  else if (k === "battery") Icon = Battery;
+  else if (k === "switch" || k === "ignition-switch") Icon = ToggleRight;
+  else if (k === "gauge") Icon = Gauge;
+  if (!Icon) return null;
+  const size = Math.max(8, bw * 0.28);
+  // Lucide renders as a nested <svg>; place it in the top-left of the box's
+  // counter-rotated frame so it sits above the centred code text.
+  return (
+    <g opacity="0.7" color="#7dd3fc">
+      <Icon x={2} y={2} width={size} height={size} strokeWidth={1.8} />
+    </g>
+  );
+}
 type WireInfo = { id: string; label: string; cls: GaugeClass; mm2: number; awg: number; cutMm: number; color?: string; colorBg: string };
 type Conn = { idx: number; a: number; b: number; color: string; stripe?: string; colorBg: string; label: string; wires: WireInfo[] };
 
@@ -337,10 +362,13 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
                       stroke={foc ? "#7dd3fc" : box.role === "connector" ? "#5a6678" : box.external ? "#3a4250" : "#2a323f"}
                       strokeWidth={foc ? 2.5 : box.role === "connector" ? 1.6 : 1}
                       strokeDasharray={box.external ? "3 2" : undefined} />
-                    <text x={bw / 2} y={bw / 2} transform={`rotate(${p.labelRot} ${bw / 2} ${bw / 2})`}
-                      textAnchor="middle" dominantBaseline="central" fontSize={Math.max(7, Math.min(10, bw / 4))} fill="#e7ecf3">
-                      {code(box.id)}
-                    </text>
+                    <g transform={`rotate(${p.labelRot} ${bw / 2} ${bw / 2})`}>
+                      <BoxIcon box={box} bw={bw} />
+                      <text x={bw / 2} y={bw / 2}
+                        textAnchor="middle" dominantBaseline="central" fontSize={Math.max(7, Math.min(10, bw / 4))} fill="#e7ecf3">
+                        {code(box.id)}
+                      </text>
+                    </g>
                   </g>
                 </g>
               );
