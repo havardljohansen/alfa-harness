@@ -467,11 +467,11 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "gt280-tpa",
-    item: "GT 280 secondary lock / TPA — for the 2 extra connector pairs",
-    qty: "4 more (5 pairs = 10 halves; you own 6)",
+    item: "GT 280 secondary lock / TPA — size-specific PN per way-count",
+    qty: "2× 6-way + 2× 10-way; 0-2 spare 12-way (you own exact count)",
     category: "lock",
-    reason: "GT 280 TPAs are SIZE-SPECIFIC — different Aptiv PN per connector way-count. You own 6 × 15436200 (12-way) — covers 12-way connectors (bh2 + bh4 + em1 = 3 pairs). Need 5 more 12-way (1 spare + 2 for em1/bh4 if not already covered), PLUS new TPAs for the smaller plugs (10-way for bh1, 6-way for gauges). The 8-way TPA PN couldn't be confirmed via distributor search (2026-05-28); 8-way GT 280 plugs may rely on primary lock only — investigate when bh3 is being built or skip TPA on that plug. Mouser 829-15436200 was qty 0 stock 2026-05-28 — backorder accepted (5 pcs).",
-    suggestion: "By size: 6-way TPA = 15436198 (×2 for the gauge connectors). 8-way TPA = PN unconfirmed (skip or source separately when building bh3). 10-way TPA = 15430900 (×2 for the two bh1 plugs). 12-way TPA = 15436200 (own 6, backorder 5 more). Alt sources for any out-of-stock: Waytek, Custom Connector Kits, Del City, EFI Connection.",
+    reason: "GT 280 TPAs are SIZE-SPECIFIC — different Aptiv PN per connector way-count. You own 6 × 15436200 (12-way) which is the EXACT need for the 3 × 12-way connector pairs (bh2 + bh4 + em1, ×2 halves each = 6 TPAs). No new 12-way required for build coverage — 0-2 spare is the sane buy. The smaller plug sizes need their own TPA PN: 10-way for bh1 (2 plugs) and 6-way for the gauge connectors. The 8-way TPA PN couldn't be confirmed via distributor search (2026-05-28); 8-way GT 280 plugs may rely on primary lock only — investigate when bh3 is being built or skip TPA on that plug.",
+    suggestion: "Per size: 6-way TPA = 15436198 (×2 for the gauge connectors). 8-way TPA = PN unconfirmed (skip or source separately when building bh3). 10-way TPA = 15430900 (×2 for the two bh1 plugs). 12-way TPA = 15436200 (own 6, exact match for build — buy 0-2 only as spares). Alt sources if any out-of-stock at Mouser: Waytek, Custom Connector Kits, Del City, EFI Connection.",
   },
   // --- Future brake-redundancy + brake-failure warning parts (provisioned in harness; buy when fitted) ---
   {
