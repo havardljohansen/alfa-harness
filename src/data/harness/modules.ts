@@ -34,9 +34,9 @@ export const harnessModules: HarnessModule[] = [
     summary:
       "The trunk everything else plugs into: the two bussed RTMRs (constant + ignition bus) and every relay, plus the two PWM modules and the engine-mounted devices fed directly from the bus. The RTMR hub mounts on the LEFT side of the engine bay (looking forward through the windscreen) — so the firewall plugs land on the left.",
     componentIds: [
-      "rtmr-ign", "rtmr-const", "battery", "alternator", "coil", "dist", "flasher",
-      "starter", "wiper", "heater-fan", "washer-pump", "fan-resistor", "instr-pwm",
-      "snd-temp", "snd-oil", "sw-oillight", "o2-sensor", "sw-brake", "sw-reverse",
+      "rtmr-ign", "rtmr-const", "battery", "flasher",
+      "wiper", "heater-fan", "washer-pump", "fan-resistor", "instr-pwm",
+      "sw-brake", "sw-reverse",
       "rly-horn", "rly-fan", "rly-fuel", "rly-ignmain", "rly-turnL", "rly-turnR",
       "rly-wlow", "rly-whigh", "rly-starter", "rly-washer", "gnd-eng",
     ],
@@ -44,7 +44,7 @@ export const harnessModules: HarnessModule[] = [
       "RTMR constant bus + RTMR ignition bus",
       "Relays: ignition-main, starter, fuel, horn, turn L/R, wiper low/high, fan, washer (future, in the spare constant-RTMR slot)",
       "Instrument-light PWM dimmer + heater-fan PWM/resistor (loom-side)",
-      "Engine devices fed from the bus: coil, distributor, alternator sense, temp/oil senders, wiper motor, electric washer pump (install deferred), blower motor",
+      "Loom-side devices (engine-mounted devices are in the engine-nord module, plugged in via EM1)",
     ],
     interfaces: [
       "BH1 + BH2 → dashboard module",
@@ -188,6 +188,84 @@ export const harnessModules: HarnessModule[] = [
       "Land every rear ground on the boot block; run its thick trunk the length of the car to the hub.",
       "Terminate into the BH3 connector half.",
       "Bench-test: position/brake/indicators per side, reverse, plate lights, and the pump runs on its feed.",
+    ],
+  },
+  {
+    id: "engine-nord",
+    name: "Engine module — OPTION A: original 1300 Nord (today's build)",
+    summary:
+      "Everything physically on the original Nord engine, behind the EM1 connector. Detaches with the engine as one assembly. Today's active configuration.",
+    componentIds: [
+      "coil", "dist", "alternator", "starter", "snd-temp", "snd-oil", "sw-oillight",
+      "o2-sensor",  // future O2 — lives on the engine, capped until fitted
+    ],
+    contains: [
+      "Ignition coil (single, distributor-fed) + distributor with mechanical advance",
+      "Generator-era alternator with built-in voltage regulator (B+, D+, ground)",
+      "Starter motor with integral solenoid (B+ stud, DIN 50 trigger)",
+      "Coolant-temperature sender (1-wire, screws into the head)",
+      "Oil-pressure sender (gauge feed, modern add)",
+      "Oil-pressure switch (warning lamp, factory-original)",
+      "Future O2 sensor location — currently capped at the connector",
+    ],
+    interfaces: [
+      "EM1 — single 12-way Metri-Pack 280 connector to the chassis loom. 8 active pins: ignition +12V, ground, tach, temp signal+gnd, oil signal, oil warning, alt D+, starter solenoid trigger.",
+      "Direct stud-mount heavy cables (NOT via EM1): battery + → starter B+; alternator B+ → battery; alternator case → engine block ground bond",
+    ],
+    ground: "Local engine-block grounds (coil mount, sender threads, alternator case); the heavy engine-block-to-chassis strap bonds to gnd-eng in the main loom.",
+    parts: [
+      "Original Nord coil (+ amplifier if Bosch CDI; bare coil otherwise) + distributor with mechanical advance + plug leads (4 cylinders)",
+      "Modern alternator (Bosch-pattern, 55-65 A) replacing the original generator",
+      "Modern starter motor (Bosch-pattern, gear-reduction preferred for hot starting)",
+      "Temperature sender (period thread, period curve to match the gauge)",
+      "Oil-pressure sender (1-wire, modern add for the gauge)",
+      "Oil-pressure switch (period, 1-wire, factory-style)",
+      "12-way Metri-Pack 280 male/female pair for EM1 (engine side mates with chassis side)",
+      "~30 cm engine-side pigtails per active EM1 pin (8 wires)",
+    ],
+    steps: [
+      "Bench-build the engine-side pigtail bundle: 8 wires from the EM1 male connector half terminating at the coil + senders + alternator D+ + starter solenoid trigger. Wire gauges per the EM1 pin map (high for ignition + ground + starter; signal for the rest).",
+      "Install the bundle on the engine with appropriate clipping/anti-vibration; route to where EM1 will mate on the firewall bracket.",
+      "Land the 2 heavy cables (alt B+, starter B+) and the engine ground strap directly to their stud terminations — NOT through EM1.",
+      "With engine in: mate EM1, bolt heavy cables, bolt ground strap. Bench-test: charge lamp on at key-on, engine cranks, tach reads, gauges respond.",
+    ],
+  },
+  {
+    id: "engine-155ts",
+    name: "Engine module — OPTION B: 155 Twin Spark on carbs (future swap)",
+    summary:
+      "Documented-only — the future replacement engine and its Alfaholics 3D Mapped Ignition Kit (Emerald K6+). The kit ships with its own pre-fitted loom; our chassis harness needs zero modification at swap day, just plug the kit loom into the existing EM1 and bump f-ign-1's blade from 10 A to 20 A. See ARCHITECTURE.md for the full design.",
+    componentIds: [
+      // Intentionally empty — the K6+ ECU, amplifiers, coil packs, CPS, TPS,
+      // and 155 TS sensors all live INSIDE the Alfaholics kit's universal loom
+      // (behind EM1) and are not in the chassis model.
+    ],
+    contains: [
+      "Alfaholics 3D Mapped Ignition Kit (Emerald K6+ ECU + 2 coil packs + 2 ignition amplifiers + crank position sensor + throttle position sensor + pre-fitted universal kit loom + programming kit)",
+      "Alfa Romeo 155 Twin Spark 2.0 engine block with carburetors (Webers or Dellortos)",
+      "All sensors and coils live BEHIND EM1 — the chassis loom doesn't see them individually",
+    ],
+    interfaces: [
+      "EM1 — same 12-way connector used by engine-nord; the kit loom terminates in the mating half. 8 pins active at swap (same purposes as engine-nord); pins 10-12 optionally lit up for ECU fan control / CTS pass-through / spare.",
+      "Same 2 direct stud-mount heavy cables (alt B+, starter B+) — unchanged from engine-nord. Same engine-block ground strap.",
+      "f-ign-1 blade bumped from 10 A → 20 A in the rtmr-ign block (same slot, blade swap only).",
+    ],
+    ground: "All ECU + amp + coil grounds returned through EM1 pin 2 to gnd-eng. No new ground architecture required.",
+    parts: [
+      "Alfaholics 3D Mapped Ignition Kit — Twin Spark variant (single SKU includes everything engine-side)",
+      "12-way Metri-Pack 280 female-half (mates with engine-nord's male-half; carry-over from chassis loom)",
+      "20 A MINI blade fuse to replace the 10 A in f-ign-1 at swap day",
+      "PENDING VERIFICATION (see PHYSICAL-TODO.md task #17 + the K6+ section): confirm the kit's ECU is actually an Emerald K6+, confirm the amplifier + coil pack part numbers, confirm the 155 TS sensor connector compatibility with our EM1 pinout (may need adapter pigtails inside the kit loom).",
+    ],
+    steps: [
+      "BEFORE physical swap: read ARCHITECTURE.md sections 6-10 to understand the swap-day sequence and pending verifications.",
+      "Pre-install the Alfaholics kit on the 155 TS engine on the bench: ECU mounted, kit loom routed, coil packs + amps installed, CPS + TPS fitted, plug leads to 8 plugs. Verify the kit loom terminates at the EM1 mating connector with the correct pinout.",
+      "Pull the old Nord engine: unplug EM1, unbolt the 2 heavy cables, unbolt the engine ground strap, hoist out.",
+      "Drop in the 155 TS with kit fitted: lower, mount, plug EM1, bolt 2 heavy cables, bolt ground strap.",
+      "Swap f-ign-1's blade fuse: 10 A → 20 A in the rtmr-ign block (same slot).",
+      "OPTIONAL: if using ECU fan control, add a chassis-side jumper from EM1 pin 10 to rly-fan.86 (diode-OR'd with existing sw-heaterfan trigger).",
+      "Power on: ECU LED boots, tach reads on cranking, spark on all 8 plugs, engine starts on the Alfaholics base map.",
+      "Document the swap in the car's service log (manufacturer + map ID per veteran-vehicle compliance — see compliance notes).",
     ],
   },
   {

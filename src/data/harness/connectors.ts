@@ -74,6 +74,16 @@ export const logicalBulkheads: LogicalBulkhead[] = [
       "The whole front-of-car module unplugs here: headlight PDM + beams, front position lamps + PARK key-off override, front turn signals + side repeaters, and the horns. Beam-relay triggers and the main-beam tell-tale pass through from the dash; the turn/horn relay outputs come from the main loom. Piggybacks keep the pin count down: one front-position feed (RH jumpers off LH), and the side repeaters jumper off the front indicators. The PDM's battery feed (ring) and the front-clip ground trunk are separate heavy cables, so this one 12-way signal plug frees the front clip. (Bumped from 8-way to 12-way after the headlight refactor added w-park-override-fr — 9 wires in an 8-way overflowed to 2 plugs, defeating the 'one plug frees the clip' design intent.)",
   },
   {
+    id: "em1",
+    name: "Engine-management interface (chassis loom ↔ engine pigtails / future K6+ kit)",
+    zoneA: "engine-front",
+    zoneB: "engine-rear",
+    ways: 12,
+    expectedPlugs: 1,
+    purpose:
+      "Engine-bay boundary connector — the single light-signal interface between the chassis loom and whatever engine is fitted. Today (Nord) carries 8 active pins: ignition feed + ground + tach + temp signal/ground + oil signal + oil warning + alt D+ + starter solenoid trigger. Future (155 TS + Alfaholics K6+ kit) carries the same 8 active pins to equivalent terminals inside the kit's universal loom, plus optionally lights up pins 10-12 (ECU fan trigger / CTS pass-through / spare). Pin assignment is identical for both engines — only the engine-side pigtail destinations differ. Heavy cables (alt B+, starter B+, alt case ground) bypass EM1 entirely as direct stud-mount terminations. See ARCHITECTURE.md for the full pin map.",
+  },
+  {
     id: "sw3",
     name: "3-way switch cluster (firewall)",
     zoneA: "engine-rear",

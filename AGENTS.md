@@ -20,3 +20,7 @@ The harness is a single TypeScript model in `src/data/harness/` (wires, componen
 # Physical TODO — track verifications that need the car in hand
 
 Anything that can't be settled from code or factory diagrams goes in `PHYSICAL-TODO.md` at the project root. Items there are written so a future session knows what the model currently ASSUMES and how to confirm it (switch contact tests with a multimeter, wire-route tape measurements, bulb/connector identification, mounting fit-up). When something flagged there gets verified, record the date + finding inline rather than deleting — preserve the history. Add new items as you discover open questions during model work; don't bury them in scattered code comments.
+
+# Future engine swap — architecture in ARCHITECTURE.md
+
+The plug-in design for a future Alfa 155 Twin Spark engine swap (with the Alfaholics 3D Mapped Ignition Kit / Emerald K6+) is documented in `ARCHITECTURE.md`. Conceptual + physical/electrical only; implementation deferred. Read it before making engine-bay model changes so they stay forward-compatible with the EM1 connector boundary design.
