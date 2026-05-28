@@ -57,8 +57,8 @@ export const harnessModules: HarnessModule[] = [
     ground: "Engine-bay HUB block (gnd-eng) — battery − and engine strap land here; the other modules' trunks return to it.",
     parts: [
       "Bussmann RTMR ×2 (bussed)",
-      "ISO-280 relays ×11 in use (6 SPST + 5 SPDT) + 1 future SPST (washer, reserves the constant-RTMR's last cavity)",
-      "External electronic LED flasher (next to the constant RTMR)",
+      "ISO-280 relays ×11 in use (6 SPST + 5 SPDT) — future washer SPST goes EXTERNAL next to the RTMR (flasher took the cavity)",
+      "Bussmann NO-762-LED ISO-280 electronic flasher in rtmr-const cavity 5 (drop-in for an ISO-280 relay)",
       "MINI/ATM fuses (assorted) + spares",
       "Instrument PWM dimmer + heater PWM/resistor module",
       "MIDI/MEGA holders for the bus feeds",

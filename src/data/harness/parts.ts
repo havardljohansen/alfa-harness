@@ -435,6 +435,15 @@ export const bomGaps: BomGap[] = [
     suggestion: "1N5822 (3 A / 40 V) or SB540 — both common Mouser stock. Anode at the rtmr-ign side.",
   },
   {
+    id: "flasher-iso280",
+    item: "Bussmann NO-762-LED electronic flasher (ISO-280 socket mount)",
+    qty: "2 (1 fitted in rtmr-const cavity 5 + 1 glovebox spare) — ~£20",
+    category: "component",
+    reason:
+      "Committed 2026-05-28: the LED flasher moves OFF the external bracket and INTO rtmr-const cavity 5. Drop-in for an ISO-280 relay socket — same 4 pins, 2.8 mm spades. Buy 2: one fitted, one identical spare in the glovebox so a roadside failure is a 30-second swap (the same socket that takes any other ISO-280 relay). Pick the -LED variant unconditionally even with current incandescent indicators — it's load-independent so it'll flash either way, and forward-compatibility with an eventual LED-indicator swap costs nothing extra.",
+    suggestion: "Mouser 'Bussmann NO-762-LED' (or NO.762-LED depending on listing). 4-pin 2.8 mm ISO-280, 12 V, 162 W max, electronic / load-independent. If Mouser's listing doesn't show stock, Crimp Supply / Swe-Check carry it. The non-LED NO.762 is interchangeable but offers no benefit here — skip.",
+  },
+  {
     id: "term-16-14",
     item: "Metri-Pack 280 terminals, 16-14 AWG (block/device side) — for the 1.5 mm² wires",
     qty: "~20 + spares",

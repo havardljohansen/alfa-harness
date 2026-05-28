@@ -20,7 +20,13 @@ const term = (id: string, label: string, din?: string): Terminal => ({ id, label
 // their terminals) resolve, and the explorer can draw them.
 // ---------------------------------------------------------------------------
 const relayNodes: DeviceComponent[] = relays.map((r) => {
-  const block = fuseBlocks.find((b) => b.id === r.mountedIn)!;
+  // mountedIn is usually a fuse-block id (rtmr-const / rtmr-ign / pdm). It can
+  // also be a freeform location string for externally-mounted relays (e.g. the
+  // washer-future relay, evicted from rtmr-const when the flasher took its
+  // cavity). For external mounts we don't have a block to copy the zone from,
+  // so we parse it out of the location string or fall back to engine-front.
+  const block = fuseBlocks.find((b) => b.id === r.mountedIn);
+  const zone = block?.zone ?? (r.mountedIn.includes("dash") ? "dash" : r.mountedIn.includes("rear") ? "rear" : "engine-front");
   const terminals = [
     term("30", "Common", "30"),
     term("85", "Coil −", "85"),
@@ -32,7 +38,7 @@ const relayNodes: DeviceComponent[] = relays.map((r) => {
     id: r.id,
     name: r.name,
     kind: "relay" as const,
-    zone: block.zone,
+    zone,
     terminals,
     partRef: r.partRef,
     note: r.fn,

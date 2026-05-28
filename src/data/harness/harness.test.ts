@@ -3,6 +3,7 @@ import { simulate } from "./engine";
 import { scenarios } from "./scenarios";
 import { validateModel, resolvedWires, allNodes } from "./index";
 import { relays, fuseBlocks } from "./relays";
+import { fuses } from "./fuses";
 import { ownedParts } from "./parts";
 import { harnessModules, moduleOf } from "./modules";
 import { switchComponents } from "./components";
@@ -55,18 +56,20 @@ describe("model integrity", () => {
     // discipline. The point is: NEW orphans (the wl-charge.+ kind of bug) fail
     // this test; documented exceptions don't.
     const ALLOWED_ORPHANS = new Set([
-      // Flasher ground (DIN 31) — standard period flashers ground through
-      // their metal case via the dash-mount bracket; no separate ground wire.
-      "flasher.31",
       // Future O2 sensor wideband heater pins — capped at the sensor connector
       // until the O2 sensor is fitted (deferred — see w-o2-* wires marked future).
       "o2-sensor.htr+", "o2-sensor.htr-",
       // Future AFR gauge — illumination + ground will be wired when the gauge
       // is physically fitted (w-o2-feed is the only AFR wire so far, marked future).
       "g-afr.ill", "g-afr.g",
+      // Flasher feed (DIN 49) — fed from the rtmr-const bus stud through the
+      // ISO-280 cavity (no chassis wire). Handled by an engine.ts static edge
+      // (flasher.49 ↔ rtmr-const.BUS). See the flasher-cavity describe block.
+      "flasher.49",
       // Spare fuse positions — documented as future / reserved in fuses.ts.
       "pdm.f-pdm-5",        // Spare / future front fog
       "rtmr-const.f-con-7", // Spare (was cigar lighter, removed)
+      "rtmr-const.f-con-8", // Spare (was flasher feed, freed when flasher moved into cavity 5)
       // Lamp ground terminals — case-grounded via the lamp socket / housing
       // bonded to chassis sheet metal. The factory did this; we follow suit.
       // (Each lamp HOUSING gets a single ground bond at its mount; the
@@ -166,6 +169,83 @@ describe("detachable-module coverage", () => {
     const real = new Set(allNodes.map((n) => n.id));
     const bogus = harnessModules.flatMap((m) => m.componentIds.filter((id) => !real.has(id)).map((id) => `${m.id}:${id}`));
     expect(bogus, `module references unknown component: ${bogus.join(", ")}`).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Flasher-in-cavity refinement (2026-05-28) — structural tests beyond what
+// the scenario expectations can express. These catch regressions that wouldn't
+// show up in the live/dead boolean simulation (e.g. the wrong fuse being
+// load-bearing, the ground wire being dropped, the cavity count getting out
+// of sync). Each test names the failure mode it protects against.
+// ---------------------------------------------------------------------------
+describe("flasher cavity refinement (rtmr-const cavity 5, Bussmann NO-762-LED)", () => {
+  it("w-flasher-in is GONE (replaced by engine static edge to rtmr-const.BUS)", () => {
+    // Failure mode: someone restores the old external wire alongside the new
+    // cavity arrangement, double-feeding the flasher.
+    expect(wires.find((w) => w.id === "w-flasher-in")).toBeUndefined();
+  });
+
+  it("w-flasher-gnd is present (cavity 85 → gnd-eng)", () => {
+    // Failure mode: the case-ground assumption silently persists after the
+    // move into the cavity, leaving the flasher with no ground.
+    const gnd = wires.find((w) => w.id === "w-flasher-gnd");
+    expect(gnd, "w-flasher-gnd missing — the cavity has no chassis bond, the flasher needs an explicit ground wire").toBeDefined();
+    expect(gnd!.from.component).toBe("flasher");
+    expect(gnd!.from.terminal).toBe("31");
+    expect(gnd!.to.component).toBe("gnd-eng");
+  });
+
+  it("flasher.31 reaches ground in the simulator", () => {
+    // Behavioural confirmation that the new ground wire actually closes the
+    // circuit. If w-flasher-gnd were misrouted (wrong endpoint), the
+    // structural test above would still pass but the simulator's ground set
+    // would not include flasher.31.
+    const r = simulate({ ignition: "off", switches: {} });
+    expect(r.ground.has("flasher.31"), "flasher.31 must be in the ground set — confirms w-flasher-gnd routes to a real ground node").toBe(true);
+  });
+
+  it("f-con-8 is freed (ratingA 0 and marked future) — no longer on the c-turn power path", () => {
+    // Failure mode: someone reads f-con-8 as 'Flasher constant feed', sees
+    // its rating non-zero, and starts wiring something through it again
+    // thinking it's load-bearing for turn signals.
+    const f = fuses.find((x) => x.id === "f-con-8");
+    expect(f).toBeDefined();
+    expect(f!.ratingA, "f-con-8 should be 0 (freed when flasher moved into cavity 5)").toBe(0);
+    expect(f!.future, "f-con-8 should be marked future/spare").toBe(true);
+    expect(f!.circuit, "f-con-8 should no longer claim c-turn").not.toBe("c-turn");
+  });
+
+  it("rtmr-const has exactly 4 in-cavity NON-future relays + the flasher = 5 cavities filled", () => {
+    // Failure mode: the washer-future relay creeps back in to rtmr-const,
+    // overflowing the 5-cavity block (now that the flasher takes one).
+    const constMounted = relays.filter((r) => r.mountedIn === "rtmr-const");
+    expect(constMounted.length, `rtmr-const should have exactly 4 relay assignments (+ 1 flasher cavity), got ${constMounted.length}: ${constMounted.map((r) => r.id).join(", ")}`).toBe(4);
+    const ways = fuseBlocks.find((b) => b.id === "rtmr-const")!.relayWays;
+    expect(ways).toBe(5); // 4 relays + 1 flasher cavity
+    // washer-future MUST be evicted to external mount.
+    const washer = relays.find((r) => r.id === "rly-washer")!;
+    expect(washer.mountedIn, "rly-washer must be external (flasher took its cavity)").not.toBe("rtmr-const");
+  });
+
+  it("turn-relay 30 (common) reaches BUS ONLY via the flasher pass-through", () => {
+    // Failure mode: somewhere in the model a sneak path lets the turn-relay
+    // commons get constant +12 V without going through the flasher (e.g.
+    // someone wires f-con-8 to turn-relay 30 directly). That would make the
+    // indicators light SOLID instead of flashing — a real-world bug we'd
+    // miss in the boolean simulator without this assertion.
+    //
+    // We test this by reading the wires file: the ONLY wire ending at
+    // rly-turnL.30 (other than the BUS path through flasher) should be from
+    // flasher.49a; and rly-turnR.30 should come from rly-turnL.30 only.
+    const incomingL = wires.filter((w) => w.to.component === "rly-turnL" && w.to.terminal === "30").concat(wires.filter((w) => w.from.component === "rly-turnL" && w.from.terminal === "30"));
+    const sourcesL = incomingL.map((w) => `${w.from.component}.${w.from.terminal}→${w.to.component}.${w.to.terminal}`);
+    // The only source touching rly-turnL.30 should be flasher.49a (incoming)
+    // and rly-turnR.30 (jumper outgoing).
+    const expectedTouches = new Set(["flasher.49a→rly-turnL.30", "rly-turnL.30→rly-turnR.30"]);
+    for (const t of sourcesL) {
+      expect(expectedTouches.has(t), `Unexpected wire touching rly-turnL.30: ${t} — the only legitimate connections are flasher.49a (incoming) and the rly-turnR.30 jumper (outgoing).`).toBe(true);
+    }
   });
 });
 

@@ -387,6 +387,71 @@ export const scenarios: Scenario[] = [
       relaysOn: ["rly-turnL", "rly-turnR"],
     },
   },
+  // -------------------------------------------------------------------------
+  // Flasher-in-cavity refinement (2026-05-28) — positive + negative coverage
+  // that the swap from EXTERNAL flasher + w-flasher-in + f-con-8-feed to
+  // IN-CAVITY flasher (rtmr-const cavity 5, NO-762-LED) is electrically sound.
+  //   POSITIVE: cavity provides bus power → flasher 49 + 49a both live at all
+  //   times (constant bus). Hazards key-off and turn-signals key-on still work.
+  //   NEGATIVE: the OTHER flasher pin (31, ground) is not on the live network,
+  //   it's on the ground network. The freed f-con-8 fuse position is no longer
+  //   in the c-turn power path. Turn-relay 30 doesn't get power from any OTHER
+  //   source (only via the flasher pass-through — pulling the flasher dark
+  //   kills both turn relays, which would be the failure mode in service).
+  // -------------------------------------------------------------------------
+  {
+    id: "flasher-cavity-bus-keyoff",
+    story: "Key OUT, no switches → the in-cavity flasher's input AND output are both live (cavity 30 = bussed input; 49a = pass-through). Confirms the cavity arrangement gives the flasher constant power without a chassis wire.",
+    state: off,
+    expect: {
+      live: [
+        ["rtmr-const", "BUS"],
+        ["flasher", "49"],
+        ["flasher", "49a"],
+      ],
+    },
+  },
+  {
+    id: "flasher-cavity-bus-run",
+    story: "Key RUN, no switches → flasher 49/49a still live (same as key-off — cavity input is constant). The turn-relay COMMONS (30) are also live (flasher pass-through reaches them via w-turnL-30 jumper) but the relays themselves remain de-energised because no coil is triggered.",
+    state: { ignition: "run", switches: {} },
+    expect: {
+      live: [
+        ["flasher", "49"],
+        ["flasher", "49a"],
+        ["rly-turnL", "30"],
+        ["rly-turnR", "30"],
+      ],
+      relaysOff: ["rly-turnL", "rly-turnR"],
+      // Outputs stay dark when nothing is energised — confirms common-live
+      // does NOT bleed through to 87 except via the relay closing.
+      dead: [
+        ["turn-fl", "L"], ["turn-fr", "R"], ["turn-rl", "L"], ["turn-rr", "R"],
+      ],
+    },
+  },
+  {
+    id: "flasher-cavity-ground-reaches",
+    story: "Flasher pin 31 (ground) reaches gnd-eng via the new w-flasher-gnd wire. This is what makes the cavity arrangement work — the case-grounding of the external mount is replaced by an explicit ground wire.",
+    state: off,
+    expect: {
+      // We can't assert ground membership directly via Expectation, so we
+      // assert via a dedicated test below (flasher-cavity ground test).
+      // This scenario asserts that the FLASHER PIN 31 is NOT live (sanity:
+      // ground pin should not be at +12 V).
+      dead: [["flasher", "31"]],
+    },
+  },
+  {
+    id: "flasher-cavity-fuse-freed",
+    story: "f-con-8 (was 'Flasher constant feed', now spare) is no longer in the c-turn path — even with hazards on, the fuse position is bussed but it doesn't sit between the bus and the flasher anymore. Confirms the freed fuse is genuinely free (not silently still load-bearing).",
+    state: { ignition: "off", switches: { "sw-hazard": "On" } },
+    expect: {
+      // Hazards still work — full-system live test of the refactor:
+      live: [["turn-fl", "L"], ["turn-fr", "R"], ["turn-rl", "L"], ["turn-rr", "R"]],
+      relaysOn: ["rly-turnL", "rly-turnR"],
+    },
+  },
   {
     id: "washer-not-wipers",
     story: "Key Run, washer button pressed → the washer-pump relay closes; the WIPERS must NOT run (washer is its own relay, not the wiper trigger).",

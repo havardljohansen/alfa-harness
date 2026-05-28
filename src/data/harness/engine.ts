@@ -94,7 +94,14 @@ function staticEdges(): Edge[] {
   edges.push({ a: ep("rly-high", "87"), b: ep("pdm", "f-pdm-3"), directed: false });
   edges.push({ a: ep("rly-high", "87"), b: ep("pdm", "f-pdm-4"), directed: false });
 
-  // --- Flasher pass-through (we model "powered", not the oscillation) -------
+  // --- Flasher in rtmr-const cavity 5 (NO-762-LED, ISO-280 socket) ----------
+  // The flasher's 49 (input) pin sits in the cavity's 30 position, which is
+  // bussed to the constant input stud internally — no chassis wire. We model
+  // that internal bond as a static edge here.
+  edges.push({ a: ep("flasher", "49"), b: ep("rtmr-const", "BUS"), directed: false });
+  // Pass-through (we model "powered", not the oscillation). The flasher's 49a
+  // output is exposed at the cavity's 87 pin and jumpered to the turn-relay
+  // commons across the RTMR back panel (see w-turnL-30).
   edges.push({ a: ep("flasher", "49"), b: ep("flasher", "49a"), directed: false });
 
   // --- Instrument-light PWM dimmer: either preset input feeds the lamp out ---

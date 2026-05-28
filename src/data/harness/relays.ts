@@ -41,7 +41,7 @@ export const fuseBlocks: FuseBlock[] = [
     fuseWays: 10,
     relayWays: 5,
     grid: { fuseCols: 5, relayCols: 5 },
-    note: "Input stud fed direct from the battery. Hot at all times (hazard, horn, brake, tail/position, interior).",
+    note: "Input stud fed direct from the battery. Hot at all times (hazard, horn, brake, tail/position, interior). Cavity allocation: 1=turn-L, 2=turn-R, 3=horn, 4=starter, 5=flasher (Bussmann NO-762-LED, ISO-280-socket flasher — see components.ts/flasher and engine.ts cavity bus edge). All 5 cavities occupied; the future washer relay was evicted to external mounting when this swap happened.",
   },
 ];
 
@@ -133,15 +133,15 @@ export const relays: RelayAssignment[] = [
     id: "rly-washer",
     name: "Washer-pump relay (FUTURE / provisioned)",
     type: "SPST",
-    fn: "Keeps the period-correct dash washer button a low-current TRIGGER — the relay carries the modern electric pump. Reserves the constant-RTMR's last ISO-280 cavity; buy + fit the relay with the (deferred) pump.",
-    mountedIn: "rtmr-const",
+    fn: "Keeps the period-correct dash washer button a low-current TRIGGER — the relay carries the modern electric pump. Mounts EXTERNALLY next to the RTMR when the deferred pump is fitted (the LED flasher took the last cavity).",
+    mountedIn: "external-engine-front",
     partRef: SPST,
     future: true,
     coilFrom: "switched",
     coilTriggerLabel: "WASH.TRG",
     commonFrom: "bus",
     out87: "Electric washer pump (WASH.OUT)",
-    note: "Provisioned: reserves the last constant-RTMR cavity but isn't bought yet (the 11 owned relays cover everything in use now — this is a +1 SPST to buy with the pump). Taking this cavity bumps the LED flasher to EXTERNAL mounting (standard 3-pin next to the block). Vintage-look dash controls stay triggers; the modern pump hides behind this relay.",
+    note: "Provisioned: not bought yet (the 11 owned relays cover everything in use now — this is a +1 SPST to buy with the pump). EVICTED from rtmr-const cavity 5 on 2026-05-28 when the Bussmann NO-762-LED flasher moved into that cavity. When fitted, mount this relay external to the RTMR (panel-mount socket or DIN-rail base) and wire it conventionally. Vintage-look dash controls stay triggers; the modern pump hides behind this relay.",
   },
 
   // --- SPDT (5) -------------------------------------------------------------

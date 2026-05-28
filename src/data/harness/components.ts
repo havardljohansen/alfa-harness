@@ -607,7 +607,7 @@ const comfort: (DeviceComponent | SwitchComponent)[] = [
     kind: "flasher",
     zone: "engine-front",
     terminals: [t("49", "Feed in", "49"), t("49a", "Flashing out", "49a"), t("31", "Ground", "31")],
-    note: "MUST be electronic / load-independent — the indicators are LED, and this flasher feeds the turn-relay commons so it carries the (tiny) LED load; a thermal flasher won't flash on it. Mount it EXTERNALLY next to the RTMR (a standard 3-pin electronic LED flasher): the constant-RTMR's last ISO-280 cavity is reserved for the future washer relay, so the in-slot option is no longer free. The weak column switch is unaffected — it only triggers the relay coils.",
+    note: "MUST be electronic / load-independent — the indicators are LED, and this flasher feeds the turn-relay commons so it carries the (tiny) LED load; a thermal flasher won't flash on it. Mounts in rtmr-const cavity 5 (ISO-280 socket) using a Bussmann NO-762-LED: drop-in replacement for an ISO-280 relay, so it bypasses w-flasher-in entirely (cavity 30 = +12 bus, cavity 87 = flashing output, cavity 85 = ground via new w-flasher-gnd). The future washer relay was evicted from this cavity — when fitted, it goes external next to the RTMR. The weak column switch is unaffected — it only triggers the relay coils.",
   },
   {
     id: "fuel-pump",
