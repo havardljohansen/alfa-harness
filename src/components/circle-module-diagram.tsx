@@ -12,7 +12,7 @@ import { BlockGrid, ConnectorGrid } from "@/components/layout-grids";
 import type { CircuitGroup, GaugeClass } from "@/data/harness/types";
 import { solveCircle, optimalOrder, type REdge } from "@/lib/circle-route";
 import { parseWireColor, swatchBackground, FALLBACK as COLOR_FALLBACK } from "@/data/harness/wire-colors";
-import { Plug, Cpu, Lightbulb, Volume2, Battery, ToggleRight, Gauge } from "lucide-react";
+import { Plug, Cpu, Lightbulb, Volume2, Battery, BatteryCharging, ToggleRight, Gauge, Fan, Rainbow, Zap } from "lucide-react";
 
 const gauge = new Map(gaugeSpecs.map((g) => [g.class, g] as const));
 const cutByBand = new Map(lengthBands.map((b) => [b.id, b.cutMm] as const));
@@ -44,27 +44,41 @@ const TWO_PI = Math.PI * 2;
 type Box = { id: string; name: string; role: "connector" | "block" | "device"; external: boolean; kind: string };
 
 // Lucide icons for the box types most useful to spot at a glance. Mapped by
-// component kind (or role for connectors). Anything not in this list just
-// gets text-only — keep the icons sparing so they signal type, not noise.
+// component kind (or id for the few cases where a kind covers multiple kinds
+// of part — e.g. motor vs heater-fan). Anything not in this list just gets
+// text-only — keep the icons sparing so they signal type, not noise.
 function BoxIcon({ box, bw }: { box: Box; bw: number }) {
   const k = box.kind;
+  const size = bw * 0.6;
+  const xOffset = (bw - size) / 2;
+  const yOffset = bw * 0.08;
+  // Greek capital omega for resistors — Lucide doesn't have an omega icon, so
+  // we render the unicode character directly.
+  if (k === "resistor") {
+    return (
+      <g opacity="0.55" color="#7dd3fc">
+        <text x={bw / 2} y={yOffset + size / 2}
+          textAnchor="middle" dominantBaseline="central"
+          fontSize={size * 0.85} fontWeight={500} fill="currentColor">Ω</text>
+      </g>
+    );
+  }
   let Icon: typeof Plug | null = null;
   if (box.role === "connector") Icon = Plug;
   else if (k === "fuse-block" || k === "distribution") Icon = Cpu;
   else if (k === "lamp" || k === "warning-light") Icon = Lightbulb;
   else if (k === "horn") Icon = Volume2;
   else if (k === "battery") Icon = Battery;
+  else if (k === "alternator") Icon = BatteryCharging;
+  else if (k === "coil") Icon = Zap;
+  else if (box.id === "heater-fan") Icon = Fan;
+  else if (box.id === "wiper") Icon = Rainbow;
   else if (k === "switch" || k === "ignition-switch") Icon = ToggleRight;
   else if (k === "gauge") Icon = Gauge;
   if (!Icon) return null;
-  // Icon as a watermark filling most of the box: ~70% of box width, centred.
-  // Text overlays on top at full opacity; the icon stays low-opacity so it
-  // signals box type without fighting the label for legibility.
-  const size = bw * 0.7;
-  const offset = (bw - size) / 2;
   return (
-    <g opacity="0.3" color="#7dd3fc">
-      <Icon x={offset} y={offset} width={size} height={size} strokeWidth={1.5} />
+    <g opacity="0.55" color="#7dd3fc">
+      <Icon x={xOffset} y={yOffset} width={size} height={size} strokeWidth={1.5} />
     </g>
   );
 }
@@ -366,8 +380,8 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
                       strokeDasharray={box.external ? "3 2" : undefined} />
                     <g transform={`rotate(${p.labelRot} ${bw / 2} ${bw / 2})`}>
                       <BoxIcon box={box} bw={bw} />
-                      <text x={bw / 2} y={bw / 2}
-                        textAnchor="middle" dominantBaseline="central" fontSize={Math.max(7, Math.min(10, bw / 4))} fill="#e7ecf3">
+                      <text x={bw / 2} y={bw - 3}
+                        textAnchor="middle" dominantBaseline="text-after-edge" fontSize={Math.max(7, Math.min(10, bw / 4))} fill="#e7ecf3">
                         {code(box.id)}
                       </text>
                     </g>
