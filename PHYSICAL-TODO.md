@@ -23,17 +23,17 @@ this is the summary.
 | Charging system | ✅ match | B+/D+/case-gnd; w-wl-charge handles self-excitation correctly |
 | Coil + ballast | ⚠ **DECISION NEEDED** | Modern coil = current model OK. Original Marelli = need to add ballast + ign-switch terminal 16 bypass |
 | Starter | ✅ match | rly-starter SPDT → solenoid S; R terminal correctly omitted |
-| Brake light switch | ⚠ **REAL GAP** | Factory has TWO parallel hydraulic pressure switches; we have one. Safety redundancy missing. |
-| Brake-failure warning lamp | ⚠ minor gap | Separate diff-pressure warning lamp not modelled |
+| Brake light switch | ✅ provisioned (2026-05-28) | Second switch sw-brake-2 + parallel jumper wires added as future; today's harness pre-routes them so adding the second switch later is plug-in |
+| Brake-failure warning lamp | ✅ provisioned (2026-05-28) | wl-brake + sw-brake-diff + 3 wires added as future; bh1 sense wire pre-routed |
 | Reverse light switch | ✅ match | 2-wire switched +12 V in gearbox |
 | Senders (fuel/oil/temp) | ✅ topology match | Resistance curves documented for part sourcing |
 | Hazard switch | ✅ functional | Period switch has internal flashing lamp; we use the green turn tell-tale instead |
 | H4 bulbs both filaments | ✅ match | Confirmed normal-by-design (momentary); recommend Philips/Osram |
 
-**Open decisions:**
-1. **Coil**: stick with modern 3 Ω (current model) or restore original Marelli 1.5 Ω + ballast?
-2. **Brake redundancy**: add second parallel `sw-brake-2` for FMEA-correct fault tolerance?
-3. **Brake-failure warning lamp**: add `wl-brake` driven by master-cylinder diff switch?
+**Decisions taken 2026-05-28:**
+1. **Coil**: stick with modern 3 Ω (no ballast). Model unchanged.
+2. **Brake redundancy**: PROVISIONED as future — `sw-brake-2` + parallel jumper wires (w-brake-in-2, w-brake-out-2) present in the model as `future: true`. Today's build runs the jumpers + caps them; future install = plug in the second pressure switch.
+3. **Brake-failure warning lamp**: PROVISIONED as future — `wl-brake` + `sw-brake-diff` + 3 wires (w-wlbrake-feed, w-wlbrake-sense, w-brakediff-gnd) present as `future: true`. Bh1 absorbs the sense wire (now at 20/20 pin budget). 4 new test scenarios exercise the future architecture so we know it'll work when fitted.
 
 See `VERIFIED-COMPONENTS.md` for the full rationale + source quotes + AlfaBB
 thread links.

@@ -36,7 +36,7 @@ export const harnessModules: HarnessModule[] = [
     componentIds: [
       "rtmr-ign", "rtmr-const", "battery", "flasher",
       "wiper", "heater-fan", "washer-pump", "fan-resistor", "instr-pwm",
-      "sw-brake", "sw-reverse",
+      "sw-brake", "sw-brake-2", "sw-brake-diff", "sw-reverse",
       "rly-horn", "rly-fan", "rly-fuel", "rly-ignmain", "rly-turnL", "rly-turnR",
       "rly-wlow", "rly-whigh", "rly-starter", "rly-washer", "gnd-eng",
     ],
@@ -117,7 +117,7 @@ export const harnessModules: HarnessModule[] = [
     componentIds: [
       "ign-switch", "sw-headlight", "sw-flash", "sw-turn", "sw-hazard", "sw-horn",
       "sw-washer", "sw-door-l", "sw-door-r", "g-fuel", "g-temp", "g-oil", "g-speedo",
-      "g-tach", "g-afr", "wl-oil", "wl-charge", "wl-main", "wl-turn",
+      "g-tach", "g-afr", "wl-oil", "wl-charge", "wl-brake", "wl-main", "wl-turn",
       "int-light", "usb-charge", "stereo", "gnd-dash",
     ],
     contains: [

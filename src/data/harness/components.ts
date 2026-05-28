@@ -347,7 +347,7 @@ const switches: SwitchComponent[] = [
   },
   {
     id: "sw-brake",
-    name: "Brake-light switch",
+    name: "Brake-light switch (primary hydraulic pressure switch)",
     kind: "switch",
     zone: "engine-rear",
     terminals: [t("in", "Constant feed", "30"), t("out", "To brake lamps", "54")],
@@ -355,7 +355,36 @@ const switches: SwitchComponent[] = [
       { name: "Released", closes: [] },
       { name: "Pressed", closes: [["in", "out"]] },
     ],
-    note: "Brake lights kept on constant feed so they work key-off.",
+    note: "Hydraulic pressure switch on the master cylinder. Brake lights kept on constant feed so they work key-off. Factory wiring uses TWO switches in parallel (one per brake circuit) so a single hydraulic-circuit failure doesn't kill the brake lamps — sw-brake-2 is the future-provisioned twin; the harness has the jumper wires pre-run so adding the second switch is plug-in.",
+  },
+  {
+    id: "sw-brake-2",
+    name: "Brake-light switch — REAR circuit (future / parallel redundancy)",
+    kind: "switch",
+    zone: "engine-rear",
+    future: true,
+    terminals: [t("in", "Constant feed (paralleled with sw-brake)", "30"), t("out", "To brake lamps (paralleled with sw-brake)", "54")],
+    positions: [
+      { name: "Released", closes: [] },
+      { name: "Pressed", closes: [["in", "out"]] },
+    ],
+    note: "Future-provisioned twin to sw-brake. Wired in parallel — same input from f-con-3, same output to the brake-lamp feed. Period-correct safety redundancy: factory 105/115 has BOTH switches so a single hydraulic-circuit failure (front OR rear) still triggers the brake lamps via the surviving circuit. Harness today: jumper wires w-brake-in-2 + w-brake-out-2 are pre-run from sw-brake's spades to where this second switch will sit, terminated with sealed caps. When the second pressure switch is bought (modern hydraulic-pressure switch sized for ~5 bar, two-spade), it plugs in — no harness cuts needed.",
+  },
+  {
+    id: "sw-brake-diff",
+    name: "Brake-failure differential pressure switch (future / master cylinder)",
+    kind: "switch",
+    zone: "engine-rear",
+    future: true,
+    terminals: [
+      t("in", "From wl-brake.s (lamp ground side)", ""),
+      t("out", "Chassis ground (closes when circuits diverge)", "31"),
+    ],
+    positions: [
+      { name: "OK", closes: [], note: "Brake circuits in normal balance — differential piston centred, switch open." },
+      { name: "Failed", closes: [["in", "out"]], note: "One brake circuit has lost pressure — differential piston off-centre, switch closed, lamp grounded → wl-brake lights." },
+    ],
+    note: "Period-correct brake-failure warning: a piston in the master-cylinder body senses pressure differential between the two hydraulic circuits. If one fails, the piston shifts off-centre and closes the switch, lighting wl-brake on the dash. Future-provisioned — the sense wire w-wlbrake-sense + ground wire w-brakediff-gnd are pre-run; switch (typically a brass body that screws into the master cylinder differential bore) plugs in when fitted.",
   },
   {
     id: "sw-reverse",
@@ -499,6 +528,15 @@ const instruments: DeviceComponent[] = [
     kind: "warning-light",
     zone: "dash",
     terminals: [t("+", "Ignition feed", "15"), t("s", "From oil-pressure switch", "")],
+  },
+  {
+    id: "wl-brake",
+    name: "Warning — brake failure (future)",
+    kind: "warning-light",
+    zone: "dash",
+    future: true,
+    terminals: [t("+", "Ignition feed (daisy off wl-charge.+)", "15"), t("s", "To brake-failure differential pressure switch (lamp ground side)", "")],
+    note: "Future-provisioned brake-failure warning lamp. Lights red when sw-brake-diff (master-cylinder differential pressure switch) closes — i.e. one of the two hydraulic circuits has lost pressure. Feed daisy-chains off the existing warning-lamp jumper at the dash (wl-charge.+ → wl-brake.+ via w-wlbrake-feed); sense wire crosses bh1 to sw-brake-diff on the master cylinder. Lamp + switch + wires pre-provisioned today; lamp is a standard red dash-warning unit (e.g. Veglia 24 mm red lens or modern LED equivalent).",
   },
   {
     id: "wl-charge",

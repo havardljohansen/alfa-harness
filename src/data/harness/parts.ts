@@ -479,6 +479,25 @@ export const bomGaps: BomGap[] = [
     reason: "You own 6 TPA (15436200) — enough for 3 connector pairs (6 halves). The design needs 5 pairs (10 halves), so buy 4 more.",
     suggestion: "Aptiv 15436200 ×4.",
   },
+  // --- Future brake-redundancy + brake-failure warning parts (provisioned in harness; buy when fitted) ---
+  {
+    id: "brake-switch-2",
+    item: "Second hydraulic brake-light pressure switch (parallel redundancy — FUTURE)",
+    qty: "1",
+    category: "component",
+    reason:
+      "Period-correct safety redundancy: factory 105/115 wires TWO hydraulic pressure switches in parallel on the master cylinder so a single brake-circuit failure doesn't kill the brake lamps. Harness is pre-provisioned (jumper wires w-brake-in-2 + w-brake-out-2 already routed, sealed-capped at the future switch end). When the master cylinder is rebuilt / refitted, buy this switch and plug it in — no harness mods needed.",
+    suggestion: "Standard automotive hydraulic pressure switch — Mecatecno / FAE / Hella ~5 bar, 2-spade. Confirm thread + pressure rating against your master cylinder's spare port.",
+  },
+  {
+    id: "brake-failure-warning",
+    item: "Brake-failure warning lamp + master-cylinder differential pressure switch (FUTURE)",
+    qty: "1 + 1",
+    category: "component",
+    reason:
+      "Period-correct brake-failure warning. A differential pressure switch in the master cylinder closes when one of the two hydraulic circuits loses pressure, lighting a red warning lamp on the dash. Harness pre-provisions all three new wires (w-wlbrake-feed daisy off wl-charge, w-wlbrake-sense across bh1, w-brakediff-gnd to engine ground). Bh1 is now at its 20-wire budget — adding more here would push it to a third plug.",
+    suggestion: "Lamp: Veglia 24 mm red lens (period-correct) or modern LED equivalent matching the existing dash bezel. Diff switch: matches the brake-master-cylinder port — confirm part number when the master cylinder is in hand.",
+  },
 ];
 
 // ---------------------------------------------------------------------------

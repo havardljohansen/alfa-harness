@@ -395,6 +395,48 @@ export const scenarios: Scenario[] = [
     },
   },
   // -------------------------------------------------------------------------
+  // Future-provisioned brake redundancy + failure-warning lamp (2026-05-28).
+  // Exercises the future-marked components/wires so we know the architecture
+  // works when fitted. Today these scenarios pass with the parts unfitted
+  // because the future switches default to their "open" position — the same
+  // tests will validate behaviour the day the user installs them.
+  // -------------------------------------------------------------------------
+  {
+    id: "brake-redundancy-second-switch-alone",
+    story: "Brake pedal pressed, but only the SECOND pressure switch (sw-brake-2) closes — e.g. the primary sw-brake has failed or its hydraulic circuit has lost pressure. Brake lamps must STILL light via the parallel wiring (w-brake-in-2 + w-brake-out-2 joining the two switches' input + output). Proves the future redundancy plan works.",
+    state: { ignition: "off", switches: { "sw-brake-2": "Pressed" } },
+    expect: {
+      live: [["tail-rl", "54"], ["tail-rr", "54"]],
+    },
+  },
+  {
+    id: "brake-redundancy-primary-switch-alone",
+    story: "Brake pedal pressed, but only the PRIMARY sw-brake closes (the second hydraulic circuit / sw-brake-2 has failed). Brake lamps must still light — same parallel architecture, opposite side. Baseline (today's) behaviour with sw-brake-2 unfitted is identical to this state.",
+    state: { ignition: "off", switches: { "sw-brake": "Pressed" } },
+    expect: {
+      live: [["tail-rl", "54"], ["tail-rr", "54"]],
+    },
+  },
+  {
+    id: "brake-failure-warning-lamp",
+    story: "Key RUN, master-cylinder pressure differential switch (sw-brake-diff) closes — one hydraulic circuit has lost pressure. The warning lamp's ground side gets grounded via sw-brake-diff, lighting wl-brake. Proves the future brake-failure warning circuit works when fitted.",
+    state: { ignition: "run", switches: { "sw-brake-diff": "Failed" } },
+    expect: {
+      live: [["wl-brake", "+"]],     // feed side live via wl-charge daisy chain
+      grounded: [["wl-brake", "s"]], // sense side reaches ground via sw-brake-diff → gnd-eng
+    },
+  },
+  {
+    id: "brake-failure-lamp-dark-when-ok",
+    story: "Key RUN, diff switch at default OK (both brake circuits balanced) → wl-brake stays dark even though its feed side is live. Confirms the differential switch is the gate, not a permanent ground.",
+    state: { ignition: "run", switches: {} },
+    expect: {
+      live: [["wl-brake", "+"]],
+      floating: [["wl-brake", "s"]], // sense side has no path to ground when sw-brake-diff is open
+    },
+  },
+
+  // -------------------------------------------------------------------------
   // FAULT INJECTION — blown fuses + broken ground straps (2026-05-28).
   // Borrows the FMEA single-fault pattern: pull ONE protective element and
   // assert exactly the blast radius we expect. Catches:
