@@ -327,7 +327,7 @@ export const bomGaps: BomGap[] = [
     category: "connector-housing",
     reason:
       "The speedo and tach carry vintage 5-pin connectors; replacing them keeps the whole car on the Metri-Pack 280 terminal system. GT 280 has no 5-way (the ladder skips 5, 7, 9, 11), so use a GT 280 6-way with one cavity blanked (male 15326640 + matching female) — in-family, 1 spare. Alternative: a Metri-Pack 280 5-way (exact size, same terminals, different housing family).",
-    suggestion: "GT 280 6-way (15326640 M + matching F), one cavity blanked; reuse owned MP280 terminals/seals.",
+    suggestion: "GT 280 6-way: 15326640 M + 13521467 F (verified mating pair 2026-05-28). One cavity blanked. Uses GT 280 terminals/seals — NOT MP280 (the 6-way uses the same GT 280 sealed family as the bulkhead plugs). 6-way TPA = 15436198 if you want the secondary lock.",
   },
   {
     id: "instr-dimmer",
@@ -435,7 +435,7 @@ export const bomGaps: BomGap[] = [
     category: "component",
     reason:
       "Committed 2026-05-28: the LED flasher moves OFF the external bracket and INTO rtmr-const cavity 5. Drop-in for an ISO-280 relay socket — same 4 pins, 2.8 mm spades. Buy 2: one fitted, one identical spare in the glovebox so a roadside failure is a 30-second swap (the same socket that takes any other ISO-280 relay). Pick the -LED variant unconditionally even with current incandescent indicators — it's load-independent so it'll flash either way, and forward-compatibility with an eventual LED-indicator swap costs nothing extra.",
-    suggestion: "Mouser 'Bussmann NO-762-LED' (or NO.762-LED depending on listing). 4-pin 2.8 mm ISO-280, 12 V, 162 W max, electronic / load-independent. If Mouser's listing doesn't show stock, Crimp Supply / Swe-Check carry it. The non-LED NO.762 is interchangeable but offers no benefit here — skip.",
+    suggestion: "Mouser doesn't list the -LED variant in normal search (2026-05-28 — would need a special-order call). Direct alternates: Crimp Supply (US, crimpsupply.com), ozautoelectrics (AU). The plain NO.762 IS at Mouser BUT MUST NOT be substituted here: it sees only relay-coil current (~150-600 mA) in our setup, and the non-LED variant's minimum-current threshold is sized for incandescent bulb loads — risk of no-flash or hyperflash. Spec: 4-pin 2.8 mm ISO-280, 8-14 VDC operating, 162 W max (12.6 A), electronic / load-independent.",
   },
   {
     id: "term-16-14",
@@ -470,8 +470,8 @@ export const bomGaps: BomGap[] = [
     item: "GT 280 secondary lock / TPA — for the 2 extra connector pairs",
     qty: "4 more (5 pairs = 10 halves; you own 6)",
     category: "lock",
-    reason: "You own 6 TPA (15436200) — enough for 3 connector pairs (6 halves). The design needs 5 pairs (10 halves), so buy 4 more.",
-    suggestion: "Aptiv 15436200 ×4.",
+    reason: "GT 280 TPAs are SIZE-SPECIFIC — different Aptiv PN per connector way-count. You own 6 × 15436200 (12-way) — covers 12-way connectors (bh2 + bh4 + em1 = 3 pairs). Need 5 more 12-way (1 spare + 2 for em1/bh4 if not already covered), PLUS new TPAs for the smaller plugs (10-way for bh1, 6-way for gauges). The 8-way TPA PN couldn't be confirmed via distributor search (2026-05-28); 8-way GT 280 plugs may rely on primary lock only — investigate when bh3 is being built or skip TPA on that plug. Mouser 829-15436200 was qty 0 stock 2026-05-28 — backorder accepted (5 pcs).",
+    suggestion: "By size: 6-way TPA = 15436198 (×2 for the gauge connectors). 8-way TPA = PN unconfirmed (skip or source separately when building bh3). 10-way TPA = 15430900 (×2 for the two bh1 plugs). 12-way TPA = 15436200 (own 6, backorder 5 more). Alt sources for any out-of-stock: Waytek, Custom Connector Kits, Del City, EFI Connection.",
   },
   // --- Future brake-redundancy + brake-failure warning parts (provisioned in harness; buy when fitted) ---
   {
