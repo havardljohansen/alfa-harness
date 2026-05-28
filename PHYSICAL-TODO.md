@@ -11,63 +11,56 @@ so the history is preserved.
 
 ---
 
-## Headlight switching — pending physical verification
+## Headlight switching — RESOLVED via AlfaBB 2026-05-28
 
-### `[ ]` Headlight switch — does LOW + HIGH simultaneous output exist?
-**Why:** model currently has `Low+Hi` as a valid switch state where both H4
-filaments would light. Open question whether the 2-headlight Junior switch
-actually does this (4-headlight cars are documented to, the Junior is
-undocumented; the two cars use different switch parts).
+### `[x]` Headlight switch — does LOW + HIGH simultaneous output exist?
+**RESOLVED 2026-05-28 via AlfaBB forum thread** — three independent
+responders converged on the same answer: on the 2-headlight Junior switch,
+**LOW and HIGH are mutually exclusive at the contacts**. The 4-headlight
+GTV variant has overlapping contacts (its design intent: keep outers on
+when high is selected so all 4 lamps light), but that's a different switch
+part. The 2-headlight Junior switch never produces both outputs hot
+simultaneously from the dash. The ONLY path to both H4 filaments lighting
+on this car is the column flash stalk (sw-flash) held while the dash is at
+LOW — by design + matches every car with flash-to-pass.
 
-**How to check:** with the switch ideally OUT of the loom (or at least with
-the loom outputs accessible at BH2/the relay coils):
-1. Apply 12 V to the switch INPUT pin (terminal 30).
-2. Ground the test light's other lead.
-3. Click knob to LOW position + push lever to HIGH position simultaneously.
-4. Probe BOTH the LOW output (56b) and the HIGH output (56a):
-   - **Both 12 V** → interpretation 1: simultaneous-on is real. Keep `Low+Hi`
-     scenario. Operating discipline matters (don't run both together for long).
-     Optional: consider the interlock relay design from the convo.
-   - **Only ONE 12 V at a time** → interpretation 2/3: mutually exclusive.
-     Remove `Low+Hi` from `sw-headlight.positions` in `components.ts`,
-     drop the `low-plus-high-run` scenario from `scenarios.ts`, remove the
-     "both-on wear" warning from the headlight UX docs.
+**Action taken**: collapsed `sw-headlight` from the 6 compound positions
+(interpretation 1) to 4 mutually-exclusive positions (Off / Park / Low /
+High). Dropped the `low-plus-high-run` and `park-plus-high-key-off`
+scenarios; added `flash-while-low` to assert the only legitimate both-on
+path. Removed the "both-on wear" UX concern. No interlock relay needed.
 
-**Update:** record the date + result here when checked.
+**Sources**: AlfaBB responders BaselJ (1300 Junior 2-headlight S1),
+quadrifolio (general 2- vs 4-headlight switch knowledge), Neil Martin
+(Spider experience). Thread reference recorded in task #17 closure.
 
-### `[ ]` Headlight switch — rotary position count (2 or 3?)
-**Why:** model commits to 3 positions (OFF / PARK / LOW=HEADLIGHTS) based on
-wire-count math (4 wires = 1 in + 3 outs). If actually 2 positions, the model
-collapses — PARK detent vanishes, parking-light key-off override goes away
-(parking lamps would rely solely on the auto-ign feed), `w-park-override-fr`
-and `w-park-override-rear` get deleted.
+### `[ ]` Headlight switch — rotary + lever position count (final detail)
+**Status partially resolved by the above** — forum responses are consistent
+with the simpler 4-position model (Off / Park / Low / High, mutually
+exclusive). Physical confirmation of exact knob/lever geometry still
+useful when you're with the car but no longer blocks the design.
 
-**How to check:** rotate the knob through every detent and count active
-positions. Note which output pin (PARK / LOW) lights at each detent.
-
-### `[ ]` Headlight switch — lever direction (UP=LOW or UP=HIGH?)
-**Why:** the Owner's Manual #1490 page 15 says UP=LOW (dipped), DOWN=HIGH
-(beam). You described UP=HIGH. These may both be right for different switch
-variants. Model currently follows your description (UP=HIGH).
-
-**How to check:** with knob at LOW (headlights notch), watch which beam
-filament lights as you move the lever up vs down.
+**How to check:** rotate the knob + flip the lever through every
+combination. Probe the 4 output pins. Confirm the contact map matches
+what's now in `sw-headlight.positions`.
 
 ### `[ ]` Headlight switch — does the knob have a "press in" flash function?
-**Why:** the Owner's Manual mentions "press on the knob" as a separate action.
-We've put flash-to-pass on the column lever (`sw-flash`) — if your dash knob
-also has a press-in flash, we should model it.
+**Why:** the Owner's Manual mentions "press on the knob" as a separate
+action. We've put flash-to-pass on the column lever (`sw-flash`) — if your
+dash knob also has a press-in flash, we'd want to know (though it doesn't
+fundamentally change the architecture — same end behaviour as the column
+stalk).
 
-**How to check:** with knob at OFF or PARK, try pressing the knob inward and
-see if the HIGH output pin energises momentarily.
+**How to check:** with knob at OFF or PARK, try pressing the knob inward
+and see if the HIGH output pin energises momentarily.
 
 ### `[ ]` Headlight switch — count actual wires + their colours
 **Why:** confirms the 4-wire architecture. Cross-references which output
 terminal carries which colour in the factory loom (informs the wire colour
 assignments in `wires.ts`).
 
-**How to check:** count wires at the switch connector; note each colour and
-which switch terminal it leaves.
+**How to check:** count wires at the switch connector; note each colour
+and which switch terminal it leaves.
 
 ---
 

@@ -113,29 +113,14 @@ export const scenarios: Scenario[] = [
     },
   },
   {
-    // ASSUMES INTERPRETATION 1 (compound switch where lever HIGH is independent
-    // of knob rotation). If physical verification (task #17 / PHYSICAL-TODO)
-    // finds interpretation 2 or 3 (lever gated by knob), this scenario becomes
-    // meaningless and the sw-headlight position "Off+Hi" doesn't exist.
     id: "high-beams-key-off",
-    story: "Key out, dash knob OFF + lever HIGH → high beams light (key-independent — lever is wired straight from constant feed to HIGH relay coil); no low, no parking. Emergency lighting.",
-    state: { ignition: "off", switches: { "sw-headlight": "Off+Hi" } },
+    story: "Key out, dash switch to HIGH → high beams light (HIGH relay common is constant via PDM); no low, no parking. Emergency lighting use case.",
+    state: { ignition: "off", switches: { "sw-headlight": "High" } },
     expect: {
       live: [["hl-L", "56a"], ["hl-R", "56a"], ["wl-main", "in"]],
       dead: [["hl-L", "56b"], ["park-fl", "58"]],
       relaysOn: ["rly-high"],
       relaysOff: ["rly-low"],
-    },
-  },
-  {
-    // ASSUMES INTERPRETATION 1 (lever HIGH independent of knob rotation).
-    id: "park-plus-high-key-off",
-    story: "Key out, dash knob PARK + lever HIGH → parking lamps AND high beams together (both key-independent).",
-    state: { ignition: "off", switches: { "sw-headlight": "Park+Hi" } },
-    expect: {
-      live: [["park-fl", "58"], ["tail-rl", "58"], ["hl-L", "56a"], ["hl-R", "56a"]],
-      dead: [["hl-L", "56b"], ["rtmr-ign", "BUS"]],
-      relaysOn: ["rly-high"],
     },
   },
   {
@@ -167,10 +152,9 @@ export const scenarios: Scenario[] = [
     },
   },
   {
-    // ASSUMES INTERPRETATION 1 (lever HIGH independent of knob rotation).
-    id: "high-beams-run-knob-off",
-    story: "Key on, dash knob OFF + lever HIGH → high beams + blue tell-tale; low stays off (knob OFF means no low signal); parking on via auto-running-light feed.",
-    state: { ignition: "run", switches: { "sw-headlight": "Off+Hi" } },
+    id: "high-beams-run",
+    story: "Key on, dash switch to HIGH → high beams + blue tell-tale; low stays dead (mutually exclusive at the switch contacts); parking on via auto-running-light feed.",
+    state: { ignition: "run", switches: { "sw-headlight": "High" } },
     expect: {
       live: [["hl-L", "56a"], ["hl-R", "56a"], ["wl-main", "in"], ["park-fl", "58"]],
       dead: [["hl-L", "56b"]],
@@ -179,13 +163,12 @@ export const scenarios: Scenario[] = [
     },
   },
   {
-    // ASSUMES INTERPRETATION 1 (lever HIGH independent of knob rotation).
-    // This is THE most diagnostic scenario for the geometry question — if the
-    // physical switch has a mechanical or electrical interlock, this state
-    // can't physically exist and the scenario is meaningless.
-    id: "low-plus-high-run",
-    story: "Key on, dash knob LOW + lever HIGH → BOTH low and high filaments light (compound switch allows it). Acceptable for short bursts on H4 bulbs; the driver typically rotates the knob back to PARK or OFF before sustained high-beam driving. This is the canonical 'both lit' state on the compound switch.",
-    state: { ignition: "run", switches: { "sw-headlight": "Low+Hi" } },
+    // The only way both filaments can light on this car: dash at LOW + column
+    // flash stalk pressed. Matches Neil Martin's AlfaBB observation 2026-05-28
+    // and is the standard flash-to-pass-while-driving behaviour on every car.
+    id: "flash-while-low",
+    story: "Key on, dash switch at LOW + column flash stalk pressed → BOTH filaments lit momentarily. This is the ONLY combination that produces both-on (the dash switch contacts are mutually exclusive — only the flash stalk can add HIGH on top of LOW). Standard flash-to-pass-while-driving — every car does this. Not a sustained state.",
+    state: { ignition: "run", switches: { "sw-headlight": "Low", "sw-flash": "Flash" } },
     expect: {
       live: [["hl-L", "56a"], ["hl-R", "56a"], ["hl-L", "56b"], ["hl-R", "56b"], ["wl-main", "in"], ["park-fl", "58"]],
       relaysOn: ["rly-low", "rly-high"],
