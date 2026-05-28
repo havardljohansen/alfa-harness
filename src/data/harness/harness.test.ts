@@ -70,6 +70,16 @@ describe("model integrity", () => {
       "pdm.f-pdm-5",        // Spare / future front fog
       "rtmr-const.f-con-7", // Spare (was cigar lighter, removed)
       "rtmr-const.f-con-8", // Spare (was flasher feed, freed when flasher moved into cavity 5)
+      // EM1 spare pins (no engine uses them; reserved for future expansion)
+      "em1.pin-3",          // Was tach signal; both engines drive tach mechanically (cable). Pin reserved spare in case of future electric-tach upgrade.
+      "em1.pin-12",         // Sealed spare on both engine modules.
+      // K6+ coil-pack HT outputs — go to spark plugs via HT leads (not modeled as harness wires).
+      "k6plus-coil-1.HT-1", "k6plus-coil-1.HT-4",
+      "k6plus-coil-2.HT-2", "k6plus-coil-2.HT-3",
+      // 155 senders/switches — case-grounded via block thread (same pattern as Nord snd-oil.g / sw-oillight)
+      "snd-oil-155.g", "sw-oillight-155.g",
+      // 155 alternator/starter — wires now present (w-alt-155-b, w-alt-155-gnd, w-starter-155-30)
+      // so these need no orphan exceptions; they appear in the orphan list ONLY until those wires are added (now done above).
       // Lamp ground terminals — case-grounded via the lamp socket / housing
       // bonded to chassis sheet metal. The factory did this; we follow suit.
       // (Each lamp HOUSING gets a single ground bond at its mount; the

@@ -34,7 +34,7 @@ export const harnessModules: HarnessModule[] = [
     summary:
       "The trunk everything else plugs into: the two bussed RTMRs (constant + ignition bus) and every relay, plus the two PWM modules and the engine-mounted devices fed directly from the bus. The RTMR hub mounts on the LEFT side of the engine bay (looking forward through the windscreen) — so the firewall plugs land on the left.",
     componentIds: [
-      "rtmr-ign", "rtmr-const", "battery", "flasher",
+      "rtmr-ign", "rtmr-const", "battery", "flasher", "em1",
       "wiper", "heater-fan", "washer-pump", "fan-resistor", "instr-pwm",
       "sw-brake", "sw-brake-2", "sw-brake-diff", "sw-reverse",
       "rly-horn", "rly-fan", "rly-fuel", "rly-ignmain", "rly-turnL", "rly-turnR",
@@ -236,9 +236,10 @@ export const harnessModules: HarnessModule[] = [
     summary:
       "Documented-only — the future replacement engine and its Alfaholics 3D Mapped Ignition Kit (Emerald K6+). The kit ships with its own pre-fitted loom; our chassis harness needs zero modification at swap day, just plug the kit loom into the existing EM1 and bump f-ign-1's blade from 10 A to 20 A. See ARCHITECTURE.md for the full design.",
     componentIds: [
-      // Intentionally empty — the K6+ ECU, amplifiers, coil packs, CPS, TPS,
-      // and 155 TS sensors all live INSIDE the Alfaholics kit's universal loom
-      // (behind EM1) and are not in the chassis model.
+      "k6plus-ecu", "k6plus-amp-1", "k6plus-amp-2", "k6plus-coil-1", "k6plus-coil-2",
+      "k6plus-cps", "k6plus-tps",
+      "snd-temp-155", "snd-oil-155", "sw-oillight-155",
+      "alternator-155", "starter-155",
     ],
     contains: [
       "Alfaholics 3D Mapped Ignition Kit (Emerald K6+ ECU + 2 coil packs + 2 ignition amplifiers + crank position sensor + throttle position sensor + pre-fitted universal kit loom + programming kit)",

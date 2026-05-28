@@ -14,6 +14,7 @@ import { diodes } from "./diodes";
 import { relays, fuseBlocks } from "./relays";
 import { fuses } from "./fuses";
 import { switchComponents } from "./components";
+import { harnessModules } from "./modules";
 
 export type IgnitionPos = "off" | "run" | "start";
 
@@ -33,6 +34,29 @@ export interface SimState {
    * trunk failing). Also useful for any "what dies if this single wire is cut"
    * coverage. */
   brokenWire?: string;
+  /** Which engine module is currently fitted. Default "nord" (today's build).
+   * Switching to "155" excludes engine-nord wires from propagation and
+   * includes engine-155ts wires instead — simulates the K6+ swap-day state
+   * with the same unchanged chassis loom. Chassis-side wires are always
+   * included regardless. */
+  engine?: "nord" | "155";
+}
+
+// Component → owning engine module (precomputed for fast wire filtering).
+// A wire is "engine-nord owned" if EITHER endpoint sits in engine-nord (and
+// neither sits in engine-155ts). Same for engine-155ts. Wires with neither
+// endpoint in an engine module are always-included chassis wires.
+const ENGINE_NORD_COMPONENTS = new Set(
+  harnessModules.find((m) => m.id === "engine-nord")?.componentIds ?? []
+);
+const ENGINE_155_COMPONENTS = new Set(
+  harnessModules.find((m) => m.id === "engine-155ts")?.componentIds ?? []
+);
+function wireOwnedBy(w: { from: { component: string }; to: { component: string } }): "nord" | "155" | null {
+  const a = w.from.component, b = w.to.component;
+  if (ENGINE_NORD_COMPONENTS.has(a) || ENGINE_NORD_COMPONENTS.has(b)) return "nord";
+  if (ENGINE_155_COMPONENTS.has(a) || ENGINE_155_COMPONENTS.has(b)) return "155";
+  return null;
 }
 
 export interface SimResult {
@@ -76,12 +100,17 @@ const inlineDiodeByWire = new Map(
   diodes.filter((d) => d.inline).map((d) => [d.onWire, d]),
 );
 
-/** Edges that never change with state. */
-function staticEdges(): Edge[] {
+/** Edges that never change with state. Per-engine variant: only wires
+ * belonging to the FITTED engine module are included (chassis + that engine);
+ * the other engine's wires are excluded (it's physically unplugged). */
+function staticEdges(engine: "nord" | "155"): Edge[] {
   const edges: Edge[] = [];
 
   // --- Wires (bidirectional, or directional through an in-series diode) ----
   for (const w of wires) {
+    // Engine-side filter: skip wires owned by the OTHER engine module.
+    const owner = wireOwnedBy(w);
+    if (owner && owner !== engine) continue;
     const from = ep(w.from.component, w.from.terminal);
     const to = ep(w.to.component, w.to.terminal);
     const d = inlineDiodeByWire.get(w.id);
@@ -138,7 +167,11 @@ function staticEdges(): Edge[] {
   return edges;
 }
 
-const STATIC = staticEdges();
+// Pre-computed static edge sets for each engine selection. The simulator
+// picks one at runtime based on state.engine (default "nord"). Computed
+// once per module load — each set is ~250 edges.
+const STATIC_NORD = staticEdges("nord");
+const STATIC_155 = staticEdges("155");
 
 /** Switch-contact edges for the given state. */
 function switchEdges(state: SimState): Edge[] {
@@ -200,7 +233,7 @@ function canReach(edges: Edge[], targets: string[]): Set<string> {
 }
 
 export function simulate(state: SimState): SimResult {
-  let baseStatic: Edge[] = STATIC;
+  let baseStatic: Edge[] = state.engine === "155" ? STATIC_155 : STATIC_NORD;
 
   // Fault injection: blown fuse — remove every edge touching the fuse position.
   // Works uniformly for bussed RTMR fuses (drops the BUS↔fuse edge) and PDM

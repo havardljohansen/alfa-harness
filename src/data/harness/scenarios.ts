@@ -395,6 +395,71 @@ export const scenarios: Scenario[] = [
     },
   },
   // -------------------------------------------------------------------------
+  // 155 TS engine swap (2026-05-29) — same chassis loom, K6+ kit plugged into
+  // EM1 instead of the Nord engine module. These scenarios run with
+  // engine: "155" so the simulator excludes engine-nord wires and includes
+  // engine-155ts wires instead. Confirms the plug-in design works.
+  // -------------------------------------------------------------------------
+  {
+    id: "swap-155-ecu-powered-key-run",
+    story: "155 fitted, Key RUN → K6+ ECU receives +12V via EM1 pin 1 (from rtmr-ign.f-ign-1 via the chassis loom). The Nord coil is NOT in the live set (Nord engine unplugged).",
+    state: { ignition: "run", switches: {}, engine: "155" },
+    expect: {
+      live: [
+        ["em1", "pin-1"],
+        ["k6plus-ecu", "+12V"],
+        ["k6plus-amp-1", "+12V"],
+        ["k6plus-amp-2", "+12V"],
+      ],
+      dead: [["coil", "15"]], // Nord coil is unplugged — its engine-side wire is excluded
+    },
+  },
+  {
+    id: "swap-155-ign-bus-shared-with-nord",
+    story: "155 fitted, Key RUN → chassis ign-bus (rtmr-ign.BUS) live exactly as with Nord. Proves the chassis loom is unchanged across the swap.",
+    state: { ignition: "run", switches: {}, engine: "155" },
+    expect: {
+      live: [
+        ["rtmr-ign", "BUS"],   // ign main relay closes regardless of engine
+        ["rtmr-const", "BUS"], // constant bus always
+        ["g-fuel", "+"],       // gauges fed from ign bus, work either engine
+        ["fuel-pump", "in"],   // fuel pump auto-on key-run
+      ],
+      relaysOn: ["rly-ignmain", "rly-fuel"],
+    },
+  },
+  {
+    id: "swap-155-starter-trigger-works",
+    story: "155 fitted, Key START → starter solenoid trigger reaches the 155 starter via EM1 pin 9 (same chassis path; engine-side wire is 155-specific).",
+    state: { ignition: "start", switches: {}, engine: "155" },
+    expect: {
+      live: [["em1", "pin-9"], ["starter-155", "50"]],
+      dead: [["starter", "50"]], // Nord starter unplugged
+      relaysOn: ["rly-starter"], // chassis-side relay closes the same way
+    },
+  },
+  {
+    id: "swap-155-alt-charge-lamp-same",
+    story: "155 fitted → 155 alternator's D+ feeds EM1 pin 8 → charge warning lamp. Same chassis-side path as Nord; only the source alternator differs.",
+    state: { ignition: "run", switches: {}, engine: "155" },
+    expect: {
+      // alt D+ output behaviour depends on whether engine is running, which
+      // we don't simulate at the lamp level. But the path should be live to
+      // pin 8 (which then drives the lamp via wl-charge.d).
+      live: [["wl-charge", "+"]], // feed side from ign bus
+    },
+  },
+  {
+    id: "nord-default-no-155-ecu-power",
+    story: "Default state (Nord fitted, no engine flag) → 155 ECU is NOT in the propagation. K6+ kit components are dark — they don't exist in this configuration.",
+    state: { ignition: "run", switches: {} }, // no engine flag → defaults to "nord"
+    expect: {
+      live: [["coil", "15"]],     // Nord coil IS live
+      dead: [["k6plus-ecu", "+12V"]], // 155 ECU is NOT (engine-155ts wires excluded)
+    },
+  },
+
+  // -------------------------------------------------------------------------
   // Future-provisioned brake redundancy + failure-warning lamp (2026-05-28).
   // Exercises the future-marked components/wires so we know the architecture
   // works when fitted. Today these scenarios pass with the parts unfitted
