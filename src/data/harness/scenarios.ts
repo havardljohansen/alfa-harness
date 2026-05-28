@@ -14,6 +14,13 @@ export interface Expectation {
   dead?: Array<[string, string]>;
   relaysOn?: string[];
   relaysOff?: string[];
+  /** Terminals expected to reach GROUND (return path intact). Lets fault tests
+   * assert that a lamp's ground side is broken even when its +12 V side is
+   * still live — current can't flow without a return, so the lamp is "out"
+   * despite registering as live in the boolean propagation. */
+  grounded?: Array<[string, string]>;
+  /** Terminals expected NOT to reach ground (return path broken / floating). */
+  floating?: Array<[string, string]>;
 }
 
 export interface Scenario {
@@ -388,7 +395,136 @@ export const scenarios: Scenario[] = [
     },
   },
   // -------------------------------------------------------------------------
-  // Flasher-in-cavity refinement (2026-05-28) — positive + negative coverage
+  // FAULT INJECTION — blown fuses + broken ground straps (2026-05-28).
+  // Borrows the FMEA single-fault pattern: pull ONE protective element and
+  // assert exactly the blast radius we expect. Catches:
+  //   - fuse protecting more / fewer circuits than intended
+  //   - ground-strap topology that silently bonds things together
+  //   - downstream consumers we forgot the fuse / ground stud serves
+  // The fault state lives in SimState (blownFuse / brokenWire) — see engine.ts.
+  // -------------------------------------------------------------------------
+  {
+    id: "fuse-ign-1-blown-coil-dark",
+    story: "Key RUN, ignition coil fuse f-ign-1 blown → coil.15 goes dark (engine can't run) but the rest of the ignition bus stays live (gauges, fuel pump, accessory feed). Confirms f-ign-1 is single-purpose for the coil — not a cascade fuse.",
+    state: { ignition: "run", switches: {}, blownFuse: "f-ign-1" },
+    expect: {
+      dead: [["coil", "15"]],
+      live: [["rtmr-ign", "BUS"], ["g-fuel", "+"], ["fuel-pump", "in"], ["usb-charge", "in"]],
+      relaysOn: ["rly-ignmain", "rly-fuel"],
+    },
+  },
+  {
+    id: "fuse-ign-3-blown-accessory-dark",
+    story: "Key RUN, accessory fuse f-ign-3 blown → USB + stereo dark (stereo piggybacks the USB feed at the dash). Coil + gauges + fuel pump still live — confirms the accessory fuse only protects its own branch.",
+    state: { ignition: "run", switches: {}, blownFuse: "f-ign-3" },
+    expect: {
+      dead: [["usb-charge", "in"], ["stereo", "+B"]],
+      live: [["coil", "15"], ["g-fuel", "+"], ["fuel-pump", "in"]],
+    },
+  },
+  {
+    id: "fuse-ign-6-blown-low-beam-asymmetric",
+    story: "Key RUN, HL switch at Low, f-ign-6 blown (the ign-gating fuse for low-beam common) → low-beam relay COIL still energises (its trigger comes from sw-headlight via f-con-5) but the relay output is dark because the common feed is gone. Asymmetric design exposed: blowing this single fuse kills LOW even when the switch is set correctly.",
+    state: { ignition: "run", switches: { "sw-headlight": "Low" }, blownFuse: "f-ign-6" },
+    expect: {
+      dead: [["hl-L", "56b"], ["hl-R", "56b"]],
+      relaysOn: ["rly-low"],
+    },
+  },
+  {
+    id: "fuse-ign-10-blown-drl-dark",
+    story: "Key RUN, no switches changed, f-ign-10 blown (auto-on running lights) → all park/tail/plate lamps go dark. The dash-switch PARK override (sw-headlight at Park) would still light them via the other source — but with the dash at OFF (default), there's no override and the auto path is the only one.",
+    state: { ignition: "run", switches: {}, blownFuse: "f-ign-10" },
+    expect: {
+      dead: [["park-fl", "58"], ["park-fr", "58"], ["tail-rl", "58"], ["tail-rr", "58"], ["plate", "58"]],
+      live: [["rtmr-ign", "BUS"]], // bus itself still alive; only this fuse leg is dead
+    },
+  },
+  {
+    id: "fuse-con-3-blown-brakes-dark",
+    story: "Brake pedal pressed but f-con-3 (brake-lamp fuse) blown → brake lamps stay dark. Safety-critical fault that this matrix would catch at design time: if anything else gets accidentally hung off f-con-3, blowing it kills brakes AND that thing.",
+    state: { ignition: "run", switches: { "sw-brake": "Pressed" }, blownFuse: "f-con-3" },
+    expect: {
+      dead: [["tail-rl", "54"], ["tail-rr", "54"]],
+      live: [["rtmr-const", "BUS"]],
+    },
+  },
+  {
+    id: "fuse-con-5-blown-headlights-undriveable",
+    story: "Key RUN, dash switch at High, but f-con-5 blown (dash-switch + flash constant feed) → high-beam relay COIL can't energise because the trigger path through sw-headlight is dead at the source. ALSO flash-to-pass is dead. Single fuse failure = no headlight control at all.",
+    state: { ignition: "run", switches: { "sw-headlight": "High" }, blownFuse: "f-con-5" },
+    expect: {
+      dead: [["hl-L", "56a"], ["hl-R", "56a"], ["sw-headlight", "30"], ["sw-flash", "in"]],
+      relaysOff: ["rly-high"],
+    },
+  },
+  {
+    id: "fuse-pdm-1-blown-left-low-only",
+    story: "Key RUN, HL switch at Low, f-pdm-1 blown → LEFT low beam dark, RIGHT low beam still lit. Confirms the per-side PDM fusing keeps a single bulb's worth of brightness on the road (limp-home capability) instead of going fully dark.",
+    state: { ignition: "run", switches: { "sw-headlight": "Low" }, blownFuse: "f-pdm-1" },
+    expect: {
+      dead: [["hl-L", "56b"]],
+      live: [["hl-R", "56b"]],
+      relaysOn: ["rly-low"],
+    },
+  },
+  {
+    id: "fuse-pdm-3-blown-left-high-only",
+    story: "Key RUN, HL switch at High, f-pdm-3 blown → LEFT high beam dark, RIGHT high beam still lit. Per-side high-beam fusing — same limp-home benefit on high beams.",
+    state: { ignition: "run", switches: { "sw-headlight": "High" }, blownFuse: "f-pdm-3" },
+    expect: {
+      dead: [["hl-L", "56a"]],
+      live: [["hl-R", "56a"]],
+      relaysOn: ["rly-high"],
+    },
+  },
+  // --- Ground-strap fault scenarios ---------------------------------------
+  // The four chassis ground studs (eng/dash/rear/front) trunk back to gnd-eng
+  // via heavy strap wires. Break a strap, the stud floats — but power-side
+  // remains live in our boolean model, so we assert via the `grounded`/`floating`
+  // expectations (the ground reachability set). Components on that stud can't
+  // complete their circuit even though +12 V is present.
+  {
+    id: "ground-dash-strap-broken",
+    story: "w-gnd-dash broken → the dash ground stud floats. Gauge cluster, USB ground, horn-button ground, turn tell-tale all lose their return path. The components are still POWERED (live side intact) but won't function. Engine-grounded loads (fuel pump in rear, relay coils on gnd-eng) are unaffected because they ground elsewhere.",
+    state: { ignition: "run", switches: {}, brokenWire: "w-gnd-dash" },
+    expect: {
+      floating: [["g-fuel", "g"], ["wl-turn", "g"], ["sw-horn", "g"], ["usb-charge", "g"]],
+      grounded: [["fuel-pump", "g"], ["rly-fuel", "85"]], // grounded via rear / engine — unaffected
+      relaysOn: ["rly-ignmain", "rly-fuel"], // both coil-ground at gnd-eng, fine
+    },
+  },
+  {
+    id: "ground-rear-strap-broken",
+    story: "w-gnd-rear broken → rear ground stud floats. Tail/plate/fuel-pump lose return path. Fuel pump CAN'T RUN even though rly-fuel still energises (relay coil grounds at gnd-eng). This is an important asymmetry to catch: relay is happy, pump is dead.",
+    state: { ignition: "run", switches: {}, brokenWire: "w-gnd-rear" },
+    expect: {
+      floating: [["tail-rl", "g"], ["tail-rr", "g"], ["plate", "g"], ["fuel-pump", "g"]],
+      grounded: [["hl-L", "g"], ["g-fuel", "g"]],
+      relaysOn: ["rly-ignmain", "rly-fuel"], // pump relay still energises (coil ground via gnd-eng)
+    },
+  },
+  {
+    id: "ground-front-strap-broken-headlights-dead",
+    story: "w-gnd-front broken → front ground stud floats. CRITICAL: rly-low and rly-high coils ground at gnd-front (not gnd-eng), so blowing this single strap kills the headlight relays' coil-ground path — neither can energise even with the switch at High and the bulb feeds live. Also front lamps + horns lose their ground.",
+    state: { ignition: "run", switches: { "sw-headlight": "High" }, brokenWire: "w-gnd-front" },
+    expect: {
+      floating: [["rly-low", "85"], ["rly-high", "85"], ["hl-L", "g"], ["hl-R", "g"], ["horn-hi", "g"]],
+      relaysOff: ["rly-low", "rly-high"], // coil ground gone → no energise
+      dead: [["hl-L", "56a"], ["hl-R", "56a"]], // and therefore high-beam outputs dead too
+    },
+  },
+  {
+    id: "ground-bat-strap-broken-catastrophic",
+    story: "w-bat-gnd broken (battery − to gnd-eng) → the ENTIRE chassis loses connection to battery negative. Every ground node downstream (gnd-eng / dash / rear / front, all trunked through gnd-eng) floats. No relay can energise, no lamp can complete its circuit. This is the failure mode that a corroded battery-negative terminal causes.",
+    state: { ignition: "run", switches: {}, brokenWire: "w-bat-gnd" },
+    expect: {
+      floating: [["rly-ignmain", "85"], ["fuel-pump", "g"], ["g-fuel", "g"], ["hl-L", "g"]],
+      relaysOff: ["rly-ignmain", "rly-fuel"], // ign-main coil can't ground → entire ign bus stays dark
+      dead: [["rtmr-ign", "BUS"], ["coil", "15"], ["fuel-pump", "in"]],
+    },
+  },
+
   // that the swap from EXTERNAL flasher + w-flasher-in + f-con-8-feed to
   // IN-CAVITY flasher (rtmr-const cavity 5, NO-762-LED) is electrically sound.
   //   POSITIVE: cavity provides bus power → flasher 49 + 49a both live at all

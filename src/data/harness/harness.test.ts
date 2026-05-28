@@ -269,6 +269,12 @@ describe("user stories (power propagation)", () => {
       for (const id of s.expect.relaysOff ?? []) {
         expect(r.energizedRelays.has(id), `expected relay OFF: ${id}`).toBe(false);
       }
+      for (const [c, t] of s.expect.grounded ?? []) {
+        expect(r.ground.has(`${c}.${t}`), `expected GROUNDED: ${c}.${t}`).toBe(true);
+      }
+      for (const [c, t] of s.expect.floating ?? []) {
+        expect(r.ground.has(`${c}.${t}`), `expected FLOATING: ${c}.${t}`).toBe(false);
+      }
     });
   }
 });

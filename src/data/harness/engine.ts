@@ -23,6 +23,16 @@ export interface SimState {
   switches: Record<string, string>;
   /** Inertia / oil-pressure cut-off open (engine stopped / crash). */
   fuelSafetyOpen?: boolean;
+  /** Fuse id (e.g. "f-ign-3") to simulate as open-circuit / blown. Removes all
+   * edges touching that fuse position — bus side, downstream wires, and any
+   * PDM explicit edges land on the same endpoint. Boolean outcome: every load
+   * fed exclusively through that fuse goes dark. */
+  blownFuse?: string;
+  /** Wire id to simulate as physically broken / open-circuit. Use for ground-
+   * strap fault tests (e.g. "w-gnd-dash" simulates the dash-to-engine ground
+   * trunk failing). Also useful for any "what dies if this single wire is cut"
+   * coverage. */
+  brokenWire?: string;
 }
 
 export interface SimResult {
@@ -35,7 +45,15 @@ export interface SimResult {
 
 const ep = (comp: string, term: string) => `${comp}.${term}`;
 
-const GROUND_NODES = [ep("battery", "-"), ep("gnd-eng", "g"), ep("gnd-dash", "g"), ep("gnd-rear", "g"), ep("gnd-front", "g")];
+// Ground seed = battery negative only. The four chassis ground studs (gnd-eng,
+// gnd-dash, gnd-rear, gnd-front) reach battery.- via their explicit strap
+// wires (w-bat-gnd, w-gnd-dash, w-gnd-rear, w-gnd-front). Listing them here
+// as additional ground sinks would be redundant in normal operation AND would
+// silently mask ground-strap fault tests: if we broke w-gnd-dash, the dash
+// stud would still register as 'ground' just because it appears in this list,
+// and dash-grounded components would falsely propagate. Seed only at the real
+// sink (battery.-) and let the wires do the propagation honestly.
+const GROUND_NODES = [ep("battery", "-")];
 const HOT_NODES = [ep("battery", "+")];
 
 const IGN_POSITION_NAME: Record<IgnitionPos, string> = {
@@ -182,7 +200,29 @@ function canReach(edges: Edge[], targets: string[]): Set<string> {
 }
 
 export function simulate(state: SimState): SimResult {
-  const base = [...STATIC, ...switchEdges(state)];
+  let baseStatic: Edge[] = STATIC;
+
+  // Fault injection: blown fuse — remove every edge touching the fuse position.
+  // Works uniformly for bussed RTMR fuses (drops the BUS↔fuse edge) and PDM
+  // fuses with explicit incoming edges (drops the rly-X.87→f-pdm-N edge).
+  if (state.blownFuse) {
+    const fuse = fuses.find((f) => f.id === state.blownFuse);
+    if (fuse) {
+      const ep_blown = ep(fuse.block, fuse.id);
+      baseStatic = baseStatic.filter((e) => e.a !== ep_blown && e.b !== ep_blown);
+    }
+  }
+  // Fault injection: broken wire — remove that specific wire's edge(s).
+  if (state.brokenWire) {
+    const w = wires.find((x) => x.id === state.brokenWire);
+    if (w) {
+      const a = ep(w.from.component, w.from.terminal);
+      const b = ep(w.to.component, w.to.terminal);
+      baseStatic = baseStatic.filter((e) => !((e.a === a && e.b === b) || (e.a === b && e.b === a)));
+    }
+  }
+
+  const base = [...baseStatic, ...switchEdges(state)];
 
   let energized = new Set<string>();
   let live = new Set<string>();
