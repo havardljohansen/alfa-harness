@@ -169,6 +169,7 @@ export const connectorBom: ConnectorBuy[] = (() => {
   const need = new Map<number, number>();
   for (const c of connectors) need.set(c.ways, (need.get(c.ways) ?? 0) + 1);
   need.set(6, (need.get(6) ?? 0) + 2); // two device-side gauge 6-ways
+  need.set(12, (need.get(12) ?? 0) + 1); // EM1 engine-bay boundary (12-way): pin-level model in components.ts, no longer auto-derived via via:em1 since the refactor 2026-05-29. Manual +1 keeps the connector BOM accurate.
   const mk = (p: string) => ({ mfgPn: p, mouserPn: `829-${p}`, url: mouserUrl(p) });
   return [...need.keys()]
     .sort((a, b) => b - a)
