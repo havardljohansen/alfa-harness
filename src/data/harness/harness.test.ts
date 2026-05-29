@@ -160,6 +160,70 @@ describe("model integrity", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Parasitic drain — sweeping check that with the key OUT and no buttons
+// pressed, no load has a live power input. Catches future regressions where
+// a new load accidentally gets wired to the constant bus without a switch /
+// relay between it and the battery.
+//
+// "Load" = a component that consumes current when its input is live. Switches,
+// connectors, the flasher (intentionally constant-bus-powered so hazards work
+// key-off), and the PWM dimmer (control device) are excluded.
+// ---------------------------------------------------------------------------
+describe("parasitic drain — key out, no buttons pressed", () => {
+  // Loads that draw current when their power input is live AND their ground
+  // is connected.
+  const LOAD_KINDS = new Set([
+    "lamp", "warning-light", "motor", "pump", "gauge", "coil",
+    "audio", "horn", "sensor", "sender", "ecu",
+  ]);
+  // Component IDs to skip even though their kind would qualify. These have
+  // heavy battery feeds that are permanently +12V but draw zero current
+  // key-off — the boolean propagation engine can't model the physical reason
+  // (internal diodes, mechanical solenoid contacts) so they need explicit
+  // exclusion.
+  const NOT_REALLY_LOADS = new Set([
+    "alternator", "alternator-155", // internal diodes block reverse current
+    "starter", "starter-155",       // solenoid contacts open without DIN-50 trigger
+  ]);
+  const GROUND_TERMINAL_IDS = new Set(["g", "-", "31"]);
+  // Intentional key-off live load inputs — each entry needs a comment.
+  const EXPECTED_QUIESCENT = new Set<string>([
+    // flasher.49 is constant-bus-fed so the hazard switch can drive it key-off
+    // (the LED variant has ~10 mA quiescent — accepted trade for the function).
+    "flasher.49",
+    // int-light.+ is permanently live; door switches gate the GROUND side
+    // (door open → switch closes → light grounds → lit). Period-correct
+    // switched-ground topology — no drain with doors closed.
+    "int-light.+",
+  ]);
+
+  it("no load (lamp/motor/gauge/etc.) has a live input in the all-off state", () => {
+    const r = simulate({ ignition: "off", switches: {} });
+    const violations: string[] = [];
+    for (const node of allNodes) {
+      if (!LOAD_KINDS.has(node.kind)) continue;
+      if (NOT_REALLY_LOADS.has(node.id)) continue;
+      if (node.future) continue; // future loads aren't installed yet — propagation can still mark them live but they don't physically draw
+      for (const t of node.terminals) {
+        if (GROUND_TERMINAL_IDS.has(t.id)) continue;
+        const key = `${node.id}.${t.id}`;
+        if (r.live.has(key) && !EXPECTED_QUIESCENT.has(key)) {
+          violations.push(`${key}  (${node.name})`);
+        }
+      }
+    }
+    expect(violations, `loads with live inputs key-off — possible parasitic drain:\n  ${violations.join("\n  ")}`).toEqual([]);
+  });
+
+  it("the documented quiescent drain points ARE live (regression: don't accidentally cut the flasher feed)", () => {
+    const r = simulate({ ignition: "off", switches: {} });
+    for (const ep of EXPECTED_QUIESCENT) {
+      expect(r.live.has(ep), `expected ${ep} to be live key-off (intentional quiescent draw — remove from EXPECTED_QUIESCENT if no longer wanted)`).toBe(true);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Module coverage — every component belongs to exactly one detachable module.
 // This is the forcing function behind the build-sheet revision rule: add a new
 // component without assigning it to a module and this fails, reminding you to
