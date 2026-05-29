@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "precompute-routes": "tsx scripts/precompute-routes.ts",
     "build": "next build",
+    "prebuild": "npm run precompute-routes",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",

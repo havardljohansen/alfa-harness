@@ -65,12 +65,11 @@ export function optimalOrder(n: number, edges: REdge[]): number[] {
   // slot[orig] = slot position; cost = Σ edges circular slot distance
   const cost = (slot: number[]) => edges.reduce((a, e) => a + cdist(slot[e.a], slot[e.b]), 0);
   let bestSlot: number[] | null = null, bestCost = Infinity;
-  // 32 random restarts (was 8). 2-opt converges to local optima quickly, so
-  // more restarts → better chance of hitting the global. Box placement is
-  // foundational — every wire's length depends on slot-distance between its
-  // endpoints, so a poor placement makes every downstream routing pass
-  // struggle. Correctness > performance here.
-  for (let r = 0; r < 32; r++) {
+  // 12 random restarts (between the original 8 and the perf-blowing 32).
+  // 2-opt converges to local optima quickly; restart diversifies. Box
+  // placement is foundational, so paying a little more here is worth it,
+  // but 32 was overshoot — only marginal improvement past 12.
+  for (let r = 0; r < 12; r++) {
     const slot = Array.from({ length: n }, (_, i) => i);
     if (r > 0) for (let i = n - 1; i > 0; i--) { const k = (rng() * (i + 1)) | 0;[slot[i], slot[k]] = [slot[k], slot[i]]; }
     let cur = cost(slot), improved = true;
@@ -89,7 +88,41 @@ export function optimalOrder(n: number, edges: REdge[]): number[] {
   return boxAtSlot;
 }
 
+// Module-level cache: same (n, edges, active, size) → same Routed. The
+// solver is deterministic (RNG seeded off the graph hash), so identical
+// inputs always produce identical output. Pre-populated at module load
+// from scripts/precompute-routes.ts output so the modules page (which
+// renders 8 diagrams at once, ~9 s of compute) starts instant — first
+// render hits the pre-baked cache. Interactive isolation subgraphs
+// (where the user clicks to filter) aren't pre-known so they fall
+// through to live solve, but those are smaller graphs and fast.
+import precomputed from "../data/precomputed-routes.json";
+const routeCache = new Map<string, Routed>();
+const cacheKey = (n: number, edges: REdge[], active: number[], size: number) =>
+  `${n}|${size}|${edges.map((e) => `${e.a}-${e.b}`).join(",")}|${active.join(",")}`;
+// Pre-populate from JSON if shape matches (defensive — the precompute script
+// itself imports this file before the JSON is regenerated, and partial
+// rebuilds may leave the JSON in an old shape).
+try {
+  for (const p of precomputed as Array<{ n?: number; size?: number; slotEdges?: REdge[]; active?: number[]; routed?: Routed }>) {
+    if (p.n == null || p.size == null || !p.slotEdges || !p.active || !p.routed) continue;
+    routeCache.set(cacheKey(p.n, p.slotEdges, p.active, p.size), p.routed);
+  }
+} catch { /* missing or malformed JSON — caches will populate on first live solve */ }
+
 export function solveCircle(n: number, edges: REdge[], active: number[], size = 600): Routed {
+  const key = cacheKey(n, edges, active, size);
+  const cached = routeCache.get(key);
+  if (cached) return cached;
+  const result = solveCircleUncached(n, edges, active, size);
+  routeCache.set(key, result);
+  return result;
+}
+
+/** Solve without consulting the route cache. Used by the precompute script
+ *  so a build pass regenerates results from scratch when the algorithm
+ *  changes; do NOT use from runtime code paths (caching is a perf win). */
+export function solveCircleUncached(n: number, edges: REdge[], active: number[], size = 600): Routed {
   const rng = makeRng(hashEdges(n, edges));
   const CX = size / 2, CY = size / 2;
   const BOX = Math.max(22, Math.min(48, Math.floor((TWO_PI * (size * 0.34)) / Math.max(1, n) * 0.78)));
@@ -213,7 +246,16 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
         if (pc) { if (st.dir[i] === 2 || st.dir[j] === 2) violations += pc; else crossings += pc; }
       }
     }
-    return { cost: 1e9 * violations + 1000 * crossings + length + 80 * circles, crossings, length, violations, circles };
+    // Cost weights: violations are hard-forbidden; crossings get a strong
+    // penalty (each visually disruptive); length matters per-pixel; circles
+    // are penalised by size-scaled coefficient so that the trade between
+    // "add a ring" and "extend a wire" stays roughly constant regardless
+    // of the visualisation size. Was a flat 80, but at the bigger sizes
+    // the modules page uses (up to 720), length values are ~1.2× and the
+    // algorithm tolerated more rings — main-loom went from 8 rings at
+    // size 600 to 35 at size 720. Scaling by (size / 600) keeps the
+    // trade-off honest.
+    return { cost: 1e9 * violations + 1000 * crossings + length + (80 * size / 600) * circles, crossings, length, violations, circles };
   };
 
   const seed = (act: number[]): State => {
@@ -228,13 +270,8 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
     }
     return { dir, rank };
   };
-  // Two-wire rank swap. localDescent only does single-wire moves; when a
-  // pair (A,B) would BOTH improve by trading ranks (A short-sweep wants
-  // outer + currently has inner; B long-sweep wants inner + currently has
-  // outer), single-wire moves are stuck because moving A alone would
-  // conflict with B and vice-versa. Pair-swap unlocks these cascades.
-  // O(M²) per sweep, but for our largest module (51 wires) that's ~1300
-  // pairs × O(M²) evaluate cost ≈ 3M ops — well within budget.
+  // Two-wire rank swap. Iterated to a fixed point. Catches the 2-wire
+  // cascade case localDescent's single-wire moves can't escape.
   const pairSwap = (act: number[], st0: State, ord?: Order): State => {
     const st = { dir: st0.dir.slice(), rank: st0.rank.slice() };
     let cur = evaluate(act, st, buildGeometry(act, st, ord));
@@ -244,34 +281,39 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
       for (let x = 0; x < act.length; x++) {
         for (let y = x + 1; y < act.length; y++) {
           const i = act[x], j = act[y];
-          if (st.dir[i] === 2 || st.dir[j] === 2) continue; // skip chord wires (rank doesn't apply)
-          if (st.rank[i] === st.rank[j]) continue; // nothing to swap
+          if (st.dir[i] === 2 || st.dir[j] === 2) continue;
+          if (st.rank[i] === st.rank[j]) continue;
           [st.rank[i], st.rank[j]] = [st.rank[j], st.rank[i]];
           const e = evaluate(act, st, buildGeometry(act, st, ord));
-          if (e.cost < cur.cost - 1e-9) {
-            cur = e;
-            improved = true;
-          } else {
-            [st.rank[i], st.rank[j]] = [st.rank[j], st.rank[i]];
-          }
+          if (e.cost < cur.cost - 1e-9) { cur = e; improved = true; }
+          else [st.rank[i], st.rank[j]] = [st.rank[j], st.rank[i]];
         }
       }
     }
     return st;
   };
 
+  // Exhaustive per-wire (dir, rank) descent. Rank search is bounded to
+  // current ± K (default 4) for big modules; otherwise the M·R full sweep
+  // explodes (M=51 wires × R=31 ranks × 2 dirs × O(M²) evaluate ~75M ops
+  // per inner sweep → main-loom render hit 25s). K=4 catches the local
+  // optimum cheaply — over many outer iterations the wire still walks
+  // arbitrarily far if each step improves. For small modules (≤14) we
+  // do the full exhaustive search since it's cheap.
   const localDescent = (act: number[], st0: State, ord?: Order): State => {
     const st = { dir: st0.dir.slice(), rank: st0.rank.slice() };
     let cur = evaluate(act, st, buildGeometry(act, st, ord));
     const maxRank = Math.max(1, act.length - 1);
+    const K = act.length <= 14 ? maxRank : 4;
     let improved = true;
     while (improved) {
       improved = false;
       for (const i of act) {
         let bC = cur, bD = st.dir[i], bR = st.rank[i];
         const dirs = DIAMETRIC[i] ? [0, 1, 2] : [0, 1];
+        const lo = Math.max(0, st.rank[i] - K), hi = Math.min(maxRank, st.rank[i] + K);
         for (const dv of dirs) {
-          const ranks = dv === 2 ? [st.rank[i]] : Array.from({ length: maxRank + 1 }, (_, k) => k);
+          const ranks = dv === 2 ? [st.rank[i]] : Array.from({ length: hi - lo + 1 }, (_, k) => lo + k);
           for (const rv of ranks) { st.dir[i] = dv; st.rank[i] = rv; const e = evaluate(act, st, buildGeometry(act, st, ord)); if (e.cost < bC.cost - 1e-9) { bC = e; bD = dv; bR = rv; } }
         }
         st.dir[i] = bD; st.rank[i] = bR;
@@ -340,8 +382,12 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
   let order: Order = {};
   let stats = { crossings: 0, circles: 0, length: 0 };
   if (active.length) {
-    const iters = Math.max(400, active.length * 80); // was capped at 1600; lifted for correctness > perf
+    const iters = Math.max(400, Math.min(1600, active.length * 45));
     st = anneal(active, iters);
+    // Refinement loop: polish (per-box lane order) + localDescent (single-
+    // wire dir+rank, bounded for big modules) + pairSwap (2-wire rank trade
+    // — the move type localDescent's single-wire scope can't find). Iterated
+    // together to a fixed point. Each pass enables the others.
     let lastCost = Infinity;
     for (let iter = 0; iter < 8; iter++) {
       const p = polish(active, st);
