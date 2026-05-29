@@ -552,12 +552,12 @@ export const bomGaps: BomGap[] = [
       "Adding the 11 service-break connectors + the 4-way fan-adapter (fc) pulls more terminations from the GT 280 terminal + seal stock than order 280336112 covered. After both draws the 22-20 lines (female + male + seals) and the 14-12 lines (female + seals) go negative against the bulkhead need + 20% safety margin. This entry tops them up.",
     suggestion:
       "Per gauge (quantities include +20% margin):\n" +
-      "  22-20 AWG MALE:    829-15304730 × +25 (model PN; on order 50, need ~71)\n" +
+      "  22-20 AWG MALE:    BOTH 829-15304730 × +25 AND 829-15304724 × +25 (resolves the PN-to-AWG mapping uncertainty — model says 15304730 = 22-20, Aptiv catalog convention says 15304724 = 22-20. At ~kr 1.14 per terminal, ordering both = +kr 30 surplus to settle the question once the order arrives.)\n" +
       "  22-20 AWG FEMALE:  829-15304718 × +20 (have 60, need ~71)\n" +
       "  22-20 SEAL (ORN):  829-15366065 × +30 (have 125, need ~142)\n" +
       "  14-12 AWG FEMALE:  829-15304720 × +10 (have 10, need ~18)\n" +
       "  14-12 SEAL (TAN):  829-15366067 × +15 (have 25, need ~36)\n" +
-      "All other gauges (18-16 + 14-12 male) have comfortable margins from order 280336112. NOTE: if the Aptiv-catalog male-PN-to-AWG mapping is reversed vs the model's (open question — 15304724 might actually be 22-20 male, not 15304730), swap the 22-20 male buy to 829-15304724 × +25. Verify against the Aptiv datasheet before ordering.",
+      "18-16 + 14-12 male margins are comfortable from order 280336112 — no top-up needed there.",
   },
   {
     id: "service-break-strain-relief",
