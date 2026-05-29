@@ -224,7 +224,7 @@ const power: DeviceComponent[] = [
       t("pin-9", "Starter solenoid trigger (DIN 50)", ""),
       t("pin-10", "(Nord: unused) / (155: ECU fan trigger)", ""),
       t("pin-11", "(Nord: unused) / (155: CTS pass-through)", ""),
-      t("pin-12", "Wideband O2 sensor signal (engine-specific O2 sensor → permanent AFR gauge)", ""),
+      t("pin-12", "Spare (both engines)", ""),
     ],
     note: "The single 12-way Metri-Pack 280 boundary connector between the chassis loom and whatever engine is fitted. Chassis side = MALE pins (permanent, protected from shorts when engine disconnected); engine module side = FEMALE mating half (swappable). Pin functions are FIXED on the chassis side — both engine modules (engine-nord today, engine-155ts future) plug into the same chassis pin assignments. Each engine module wires its mating face to USE, REPURPOSE, or leave OPEN each pin per its needs. Today's Nord engine uses pins 1-9; future K6+ uses pins 1-12. The same chassis loom serves both, swap is unplug-one-plug-the-other. See ARCHITECTURE.md §4 for the canonical pin map.",
   },
@@ -845,22 +845,13 @@ const comfort: (DeviceComponent | SwitchComponent)[] = [
 // ===========================================================================
 const future: DeviceComponent[] = [
   {
-    id: "o2-sensor-nord",
-    name: "Wideband O2 sensor — Nord exhaust (future)",
+    id: "o2-sensor",
+    name: "Wideband O2 sensor (future — in exhaust)",
     kind: "sensor",
     zone: "engine-rear",
     future: true,
-    terminals: [t("htr+", "Heater +", ""), t("htr-", "Heater −", ""), t("sig", "Signal to gauge (via EM1 pin 12)", ""), t("g", "Ground", "31")],
-    note: "Capped pigtail at the manifold until fitted. Each engine module carries its OWN O2 sensor (one bolted into the Nord exhaust, one into the 155 TS exhaust). The signal converges on EM1 pin 12 — chassis loom routes pin 12 to the permanent AFR gauge in the dashboard. Swap engines = swap which O2 sensor is connected; the gauge stays.",
-  },
-  {
-    id: "o2-sensor-155",
-    name: "Wideband O2 sensor — 155 TS exhaust (future)",
-    kind: "sensor",
-    zone: "engine-rear",
-    future: true,
-    terminals: [t("htr+", "Heater +", ""), t("htr-", "Heater −", ""), t("sig", "Signal to gauge (via EM1 pin 12)", ""), t("g", "Ground", "31")],
-    note: "Future-fitted in the 155 TS exhaust manifold. Mates with the same EM1 pin 12 on the chassis loom — the AFR gauge sees a signal regardless of which engine is fitted.",
+    terminals: [t("htr+", "Heater +", ""), t("htr-", "Heater −", ""), t("sig", "Signal to AFR gauge", ""), t("g", "Ground", "31")],
+    note: "Mounted in the EXHAUST manifold / downpipe. The exhaust system stays with the car (it bolts to the chassis, not the engine), so the O2 sensor is a CHASSIS component — not part of either engine module. Single sensor regardless of which engine is fitted. Wired direct to the AFR gauge via BH1 (the gauge contains the wideband controller; sensor signal goes straight to gauge.sig). Capped pigtail until fitted.",
   },
   {
     id: "g-afr",

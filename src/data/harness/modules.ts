@@ -36,7 +36,7 @@ export const harnessModules: HarnessModule[] = [
     componentIds: [
       "rtmr-ign", "rtmr-const", "battery", "flasher", "em1",
       "wiper", "heater-fan", "washer-pump", "fan-resistor", "instr-pwm",
-      "sw-brake", "sw-brake-2", "sw-brake-diff", "sw-reverse",
+      "sw-brake", "sw-brake-2", "sw-brake-diff", "sw-reverse", "o2-sensor",
       "rly-horn", "rly-fan", "rly-fuel", "rly-ignmain", "rly-turnL", "rly-turnR",
       "rly-wlow", "rly-whigh", "rly-starter", "rly-washer", "gnd-eng",
     ],
@@ -197,7 +197,6 @@ export const harnessModules: HarnessModule[] = [
       "Everything physically on the original Nord engine, behind the EM1 connector. Detaches with the engine as one assembly. Today's active configuration.",
     componentIds: [
       "coil", "dist", "alternator", "starter", "snd-temp", "snd-oil", "sw-oillight",
-      "o2-sensor-nord",  // future O2 — lives on the Nord exhaust, capped until fitted
     ],
     contains: [
       "Ignition coil (single, distributor-fed) + distributor with mechanical advance",
@@ -240,7 +239,6 @@ export const harnessModules: HarnessModule[] = [
       "k6plus-cps", "k6plus-tps",
       "snd-temp-155", "snd-oil-155", "sw-oillight-155",
       "alternator-155", "starter-155",
-      "o2-sensor-155",
     ],
     contains: [
       "Alfaholics 3D Mapped Ignition Kit (Emerald K6+ ECU + 2 coil packs + 2 ignition amplifiers + crank position sensor + throttle position sensor + pre-fitted universal kit loom + programming kit)",
