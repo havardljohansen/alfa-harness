@@ -88,6 +88,17 @@ export function optimalOrder(n: number, edges: REdge[]): number[] {
   return boxAtSlot;
 }
 
+// KNOWN SUBOPTIMAL CASES (2026-05-29):
+// - front-clip purple bh4↔horn-hi wire sits on a deep inner ring when it
+//   could ride one ring shallower and eliminate a ring entirely. The wire's
+//   sweep (~135°) is just past the 115° threshold where inner becomes
+//   mathematically shorter, so single-wire and 2-wire-swap moves don't
+//   find the improvement (length cost just barely exceeds ring-cost
+//   savings, and pair-swap can't ELIMINATE a ring — it just trades two
+//   wires' ranks). A "ring-elimination" pass that tries to migrate ALL
+//   wires off a given ring would catch it, but we don't have one yet.
+//   Worth revisiting if more cases like this appear.
+
 // Module-level cache: same (n, edges, active, size) → same Routed. The
 // solver is deterministic (RNG seeded off the graph hash), so identical
 // inputs always produce identical output. Pre-populated at module load
