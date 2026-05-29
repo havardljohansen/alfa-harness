@@ -28,7 +28,7 @@ const power: DeviceComponent[] = [
     kind: "ground",
     zone: "engine-front",
     terminals: [t("g", "Front-clip ground block", "31")],
-    note: "Collects every ground in the detachable front clip (headlights, side repeaters, horns). One thick trunk (GND.FRONT) runs back to the battery hub; detaches with the clip as a heavy ring/stud, separate from the BH4 signal plug.",
+    note: "Collects every ground in the detachable front clip (headlights, side repeaters, horns). One thick trunk (GND.FRONT) runs back to the battery hub; detaches with the clip as a heavy ring/stud, separate from the BH4 signal plug. Since gnd-front and gnd-eng sit adjacent to each other in the engine bay (front clip terminates right next to the Bussmann blocks), the 'trunk' is intended as a SHORT (~15–30 cm) bolted copper strap between adjacent studs on the same physical ground bar — not a long cable run. Electrically still a star topology (local collection here, single trunk to the hub), but the physical implementation is essentially two ring lugs on the same block.",
   },
   {
     id: "gnd-dash",
