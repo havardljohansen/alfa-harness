@@ -149,6 +149,7 @@ export const connectorPairsOwned = 3;
 // 6-ways are device-side, added explicitly. Mouser PN = "829-" + the Aptiv PN.
 // ---------------------------------------------------------------------------
 const GT280_PN: Record<number, { m: string; f: string }> = {
+  2: { m: "13518847", f: "13518845" },  // sealed 2-way (was 15326678 / 15326679 — current PNs verified Custom Connector Kits 2026-05-29)
   4: { m: "13521461", f: "13521459" },
   6: { m: "15326640", f: "13521467" },
   8: { m: "15326655", f: "15326654" },
@@ -156,6 +157,7 @@ const GT280_PN: Record<number, { m: string; f: string }> = {
   12: { m: "15326915", f: "15326910" },
 };
 const SIZE_USE: Record<number, string> = {
+  2: "Service-break connectors at engine-bay devices (brake switch, O2, senders, fuel pump, reverse switch) + spares for front turn signals + side repeaters — 11 pairs total. Lets you unplug + replace any of these without cutting/recrimping.",
   4: "FC fan-adapter boundary (verified via Custom Connector Kits 2026-05-29)",
   6: "Speedo + tach gauge plugs (1 cavity blanked)",
   8: "BH3 rear · BH4 front · SW3 switch cluster",
@@ -169,6 +171,7 @@ const OWNED_PAIRS: Record<number, number> = {
   10: 2,  // bh1 dash power (two plugs) — 15326661 M + 15326660 F × 2
   12: 3,  // bh2 + bh4 + em1 — 15326915 M + 15326910 F × 3
   // 4: 0 — fan-adapter (fc connector) STILL TO BUY (13521461 + 13521459)
+  // 2: 0 — service-break connectors (11 pairs needed) STILL TO BUY (13518847 + 13518845)
 };
 
 export const mouserUrl = (mfgPn: string) => `https://www.mouser.com/c/?q=${mfgPn}`;
@@ -189,6 +192,7 @@ export const connectorBom: ConnectorBuy[] = (() => {
   need.set(6, (need.get(6) ?? 0) + 2); // two device-side gauge 6-ways
   need.set(12, (need.get(12) ?? 0) + 1); // EM1 engine-bay boundary (12-way): pin-level model in components.ts, no longer auto-derived via via:em1 since the refactor 2026-05-29. Manual +1 keeps the connector BOM accurate.
   need.set(4, (need.get(4) ?? 0) + 1); // FC fan-adapter boundary (4-way): pin-level model in components.ts; wires terminate AT fc rather than passing via, so the auto-derivation misses it. Manual +1 keeps the connector BOM accurate (added 2026-05-29).
+  need.set(2, (need.get(2) ?? 0) + 11); // Service-break connectors (2-way × 11): inline at engine-bay devices (brake, O2, senders, fuel pump, reverse switch) + spares for front turns + side repeaters. Not part of the chassis-loom topology — pure service convenience.
   const mk = (p: string) => ({ mfgPn: p, mouserPn: `829-${p}`, url: mouserUrl(p) });
   return [...need.keys()]
     .sort((a, b) => b - a)

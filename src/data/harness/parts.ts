@@ -501,6 +501,16 @@ export const bomGaps: BomGap[] = [
     suggestion: "Brass/lead post clamps to suit the battery; 16–25 mm² ring lugs + red/black boots.",
   },
   {
+    id: "service-break-connectors",
+    item: "Service-break connectors at engine-bay devices + indicator spares (2-way GT 280 sealed)",
+    qty: "11 pairs + 11 TPAs",
+    category: "connector-housing",
+    reason:
+      "Inline 2-way sealed connectors at devices that are routinely replaced (senders, brake switch, reverse switch) or environmentally exposed (O2 sensor, fuel pump pigtail) — unplug for swap instead of cut-and-recrimp. Plus 4 spare pairs at the wheel-arch turn signals + side repeaters (LED-upgrade or stone-damage replacements). Net: 7 engine-bay + 4 indicator = 11 pairs. Uses the same 22-20 / 18-16 GT 280 female terminals + cable seals from order 280336112 — no new terminal stock needed; just the small housings.",
+    suggestion:
+      "Per pair: 1× 13518847 (2-way GT 280 sealed MALE, was 15326678) + 1× 13518845 (2-way GT 280 sealed FEMALE, was 15326679) + 1× 15430899 (2-way GT 280 TPA grey, optional but recommended for engine-bay vibration). Mouser: 829-13518847 + 829-13518845 + 829-15430899. 11 of each. Terminals + seals already covered by existing stock (15304718/19/20-L female, 15304724/30/31-L male, 15366065/66/67 seals). Per-PN verified via Custom Connector Kits 2026-05-29. NOT modeled as wire-graph nodes — these are physical service-break points the builder inserts during assembly; the wires through them pass through transparently.",
+  },
+  {
     id: "fan-adapter-sub-build",
     item: "Fan-adapter module sub-build — items NOT covered by order 280336112",
     qty: "1 sub-harness",
