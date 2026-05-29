@@ -329,11 +329,7 @@ seal/protect afterward.
 
 **Context:** The 3-wire heater fan (GND + HIGH winding + LOW winding) plugs into the chassis loom via a new 4-pin connector `fc`. Behind `fc`, a tiny detachable `fan-adapter` sub-harness houses 1× SPDT relay (`rly-fa`) and the motor itself. The chassis loom carries a single gate relay (`rly-fan` in `rtmr-ign`) and a 2-diode OR (1N4007 × 2) for the gate-coil trigger.
 
-- [ ] **fc connector exact PN.** Today modelled as a generic "small 4-way Metri-Pack 280" placeholder (cluster-family in the connector model). The Aptiv catalog has a 4-way GT 280 / MP 280 variant — confirm exact male + female PNs that:
-  - Have ≥15 A continuous capability on pin 1 (motor inrush + steady)
-  - Are sealed (engine-bay environment)
-  - Accept the GT 280 22-20 AWG female terminals you already own + cable seals
-  - Have a TPA option if possible
+- [x] **fc connector exact PN — RESOLVED 2026-05-29.** Aptiv 4-way GT 280 sealed pair: male **13521461** + female **13521459** + optional grey 4-way TPA **15430898**. Same terminal/seal family as the existing 12-way bulkhead plugs (uses 15304718/19/20-L female, 15304724/30/31-L male, seals 15366065/66/67). NOT in either prior Mouser order — need to add to next order. Verified via Custom Connector Kits product page; confirm in-hand before crimping.
 - [ ] **Confirm fan-motor wire labelling.** Measure resistance between each pair on the 3-wire fan to confirm HIGH and LOW windings:
   - HIGH↔GND should read lower resistance (~0.5–1 Ω, draws ~15 A)
   - LOW↔GND should read higher resistance (~1–2 Ω, draws ~6–10 A)

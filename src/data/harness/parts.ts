@@ -318,7 +318,7 @@ export const bomGaps: BomGap[] = [
     qty: "1 sub-harness",
     category: "component",
     reason: "The chassis loom ends at the fc 4-pin connector; the actual fan-specific switching lives in a small detachable adapter behind it. Today's adapter handles the 3-wire fan (GND + HIGH winding + LOW winding) with one SPDT doing speed select. Loom is forward-compatible with 2-wire or 4-wire-smart fans via different adapter variants.",
-    suggestion: "Per-fan-adapter BOM: 1× Song Chuan 301-1C-S-R1 SPDT (you have spares) + 1× ISO-280 5-pin relay socket + 1× sealed 4-way Metri-Pack 280 connector pair (Aptiv — PN PHYSICAL-TODO) + MP 280 / GT 280 sealed terminals (4× per side) + 2× 1N4007 diodes for the chassis-side gate diode-OR (live near the rly-fan socket, not inside the adapter) + small sealed enclosure or heat-shrink bundle. Modest cost (a few €).",
+    suggestion: "Per-fan-adapter BOM: 1× Song Chuan 301-1C-S-R1 SPDT (+1 beyond the 5 owned) + 1× ISO-280 5-pin relay socket + 1× 4-way GT 280 sealed pair: male 13521461 + female 13521459 + 1× optional 4-way TPA 15430898 (grey) + 8× GT 280 terminals (4 per side — sizes match wire gauges per the connector page) + matching cable seals (15366065/66/67) + 2× 1N4007 diodes for the chassis-side gate diode-OR (live near the rly-fan socket, not inside the adapter) + small sealed enclosure or heat-shrink bundle. Per-PN verification via Custom Connector Kits 2026-05-29.",
   },
   {
     id: "gauge-connectors",

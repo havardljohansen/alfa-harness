@@ -88,11 +88,10 @@ export const logicalBulkheads: LogicalBulkhead[] = [
     name: "Fan-adapter interface (chassis loom ↔ fan adapter)",
     zoneA: "engine-front",
     zoneB: "engine-rear",
-    family: "cluster",
     ways: 4,
     expectedPlugs: 1,
     purpose:
-      "Boundary connector between the chassis loom and whatever heater-fan adapter is fitted. 4 pins fixed on the chassis side regardless of which fan variant is used: pin 1 = gated 12V (~15 A from Bussmann rly-fan) — needs MP 280 / GT 280-grade terminals; pin 2 = ground (carries motor return); pin 3 = HIGH-position signal (low current); pin 4 = LOW-position signal (low current). Today's adapter (3-wire fan = GND + HIGH winding + LOW winding) contains a single SPDT and uses pins 1/2/3 — pin 4 is provisioned for forward-compat with a future 4-wire smart fan. Swapping to a 2-wire fan: build an adapter that uses only pins 1+2 and caps 3+4. NEEDS PHYSICAL-TODO: confirm a 4-way Metri-Pack 280 PN (Aptiv catalog has one) — using cluster-family placeholder for now.",
+      "Boundary connector between the chassis loom and whatever heater-fan adapter is fitted. Aptiv 4-way GT 280 sealed pair (male 13521461 / female 13521459) — same in-family as the existing bulkhead plugs, uses the same GT 280 terminals + seals you already own. 4 pins fixed on the chassis side regardless of which fan variant is used: pin 1 = gated 12V (~15 A from Bussmann rly-fan); pin 2 = ground (carries motor return + coil ground); pin 3 = HIGH-position signal (low current); pin 4 = LOW-position signal (low current). Today's adapter (3-wire fan = GND + HIGH winding + LOW winding) contains a single SPDT and uses pins 1/2/3 — pin 4 is provisioned for forward-compat with a future 4-wire smart fan. Swapping to a 2-wire fan: build an adapter using only pins 1+2 and capping 3+4. 4-way TPA (15430898 grey) is optional but recommended for vibration. PNs sourced via Custom Connector Kits 2026-05-29; verify in person before crimping.",
   },
   {
     id: "sw3",
@@ -150,12 +149,14 @@ export const connectorPairsOwned = 3;
 // 6-ways are device-side, added explicitly. Mouser PN = "829-" + the Aptiv PN.
 // ---------------------------------------------------------------------------
 const GT280_PN: Record<number, { m: string; f: string }> = {
+  4: { m: "13521461", f: "13521459" },
   6: { m: "15326640", f: "13521467" },
   8: { m: "15326655", f: "15326654" },
   10: { m: "15326661", f: "15326660" },
   12: { m: "15326915", f: "15326910" },
 };
 const SIZE_USE: Record<number, string> = {
+  4: "FC fan-adapter boundary (verified via Custom Connector Kits 2026-05-29)",
   6: "Speedo + tach gauge plugs (1 cavity blanked)",
   8: "BH3 rear · BH4 front · SW3 switch cluster",
   10: "BH1 dash power (two plugs: 10 + 7)",
@@ -181,6 +182,7 @@ export const connectorBom: ConnectorBuy[] = (() => {
   for (const c of connectors) need.set(c.ways, (need.get(c.ways) ?? 0) + 1);
   need.set(6, (need.get(6) ?? 0) + 2); // two device-side gauge 6-ways
   need.set(12, (need.get(12) ?? 0) + 1); // EM1 engine-bay boundary (12-way): pin-level model in components.ts, no longer auto-derived via via:em1 since the refactor 2026-05-29. Manual +1 keeps the connector BOM accurate.
+  need.set(4, (need.get(4) ?? 0) + 1); // FC fan-adapter boundary (4-way): pin-level model in components.ts; wires terminate AT fc rather than passing via, so the auto-derivation misses it. Manual +1 keeps the connector BOM accurate (added 2026-05-29).
   const mk = (p: string) => ({ mfgPn: p, mouserPn: `829-${p}`, url: mouserUrl(p) });
   return [...need.keys()]
     .sort((a, b) => b - a)
