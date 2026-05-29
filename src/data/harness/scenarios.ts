@@ -283,11 +283,12 @@ export const scenarios: Scenario[] = [
   },
   {
     id: "fan-high",
-    story: "Key Run, heater fan High → fan relay closes, blower runs; the switch carries only coil current.",
+    story: "Key Run, heater fan High → gate relay closes AND fan-adapter SPDT energises, blower HIGH winding live; the dash switch carries only coil current.",
     state: { ignition: "run", switches: { "sw-heaterfan": "High" } },
     expect: {
-      relaysOn: ["rly-fan"],
-      live: [["heater-fan", "in"]],
+      relaysOn: ["rly-fan", "rly-fa"],
+      live: [["heater-fan", "high"]],
+      dead: [["heater-fan", "low"]],
     },
   },
   {
@@ -1028,20 +1029,32 @@ export const scenarios: Scenario[] = [
   },
   {
     id: "heater-fan-high",
-    story: "Key Run, heater-fan switch HIGH → fan relay energises, blower runs at full speed; switch carries only coil current.",
+    story: "Key Run, heater-fan switch HIGH → gate relay closes AND fan-adapter SPDT energises; blower HIGH winding live, LOW winding cold; dash switch carries only coil current.",
     state: { ignition: "run", switches: { "sw-heaterfan": "High" } },
     expect: {
+      relaysOn: ["rly-fan", "rly-fa"],
+      live: [["heater-fan", "high"]],
+      dead: [["heater-fan", "low"]],
+    },
+  },
+  {
+    id: "heater-fan-low",
+    story: "Key Run, heater-fan switch LOW → gate relay closes (via diode-OR) but fan-adapter SPDT stays at rest; blower LOW winding live, HIGH winding cold.",
+    state: { ignition: "run", switches: { "sw-heaterfan": "Low" } },
+    expect: {
       relaysOn: ["rly-fan"],
-      live: [["heater-fan", "in"]],
+      relaysOff: ["rly-fa"],
+      live: [["heater-fan", "low"]],
+      dead: [["heater-fan", "high"]],
     },
   },
   {
     id: "heater-fan-off",
-    story: "Key Run, heater-fan switch Off → fan relay de-energised, blower dark.",
+    story: "Key Run, heater-fan switch Off → gate relay de-energised; both windings dark, fan-adapter SPDT idle.",
     state: { ignition: "run", switches: { "sw-heaterfan": "Off" } },
     expect: {
-      relaysOff: ["rly-fan"],
-      dead: [["heater-fan", "in"]],
+      relaysOff: ["rly-fan", "rly-fa"],
+      dead: [["heater-fan", "high"], ["heater-fan", "low"]],
     },
   },
   {
@@ -1086,7 +1099,7 @@ export const scenarios: Scenario[] = [
       dead: [
         ["hl-L", "56a"], ["hl-L", "56b"], // headlamps off (dash switch default = Off)
         ["wiper", "53"], ["wiper", "53b"], // wipers not running (sw-wiper default = Off)
-        ["heater-fan", "in"], // blower off
+        ["heater-fan", "high"], ["heater-fan", "low"], // blower off (both windings)
         ["horn-hi", "in"], // horn quiet
         ["turn-fl", "L"], ["turn-fr", "R"], // no indicators
         ["reverse", "in"], // not in reverse

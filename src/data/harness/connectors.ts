@@ -84,14 +84,25 @@ export const logicalBulkheads: LogicalBulkhead[] = [
       "Engine-bay boundary connector — the single light-signal interface between the chassis loom and whatever engine is fitted. Today (Nord) carries 8 active pins: ignition feed + ground + tach + temp signal/ground + oil signal + oil warning + alt D+ + starter solenoid trigger. Future (155 TS + Alfaholics K6+ kit) carries the same 8 active pins to equivalent terminals inside the kit's universal loom, plus optionally lights up pins 10-12 (ECU fan trigger / CTS pass-through / spare). Pin assignment is identical for both engines — only the engine-side pigtail destinations differ. Heavy cables (alt B+, starter B+, alt case ground) bypass EM1 entirely as direct stud-mount terminations. See ARCHITECTURE.md for the full pin map.",
   },
   {
+    id: "fc",
+    name: "Fan-adapter interface (chassis loom ↔ fan adapter)",
+    zoneA: "engine-front",
+    zoneB: "engine-rear",
+    family: "cluster",
+    ways: 4,
+    expectedPlugs: 1,
+    purpose:
+      "Boundary connector between the chassis loom and whatever heater-fan adapter is fitted. 4 pins fixed on the chassis side regardless of which fan variant is used: pin 1 = gated 12V (~15 A from Bussmann rly-fan) — needs MP 280 / GT 280-grade terminals; pin 2 = ground (carries motor return); pin 3 = HIGH-position signal (low current); pin 4 = LOW-position signal (low current). Today's adapter (3-wire fan = GND + HIGH winding + LOW winding) contains a single SPDT and uses pins 1/2/3 — pin 4 is provisioned for forward-compat with a future 4-wire smart fan. Swapping to a 2-wire fan: build an adapter that uses only pins 1+2 and caps 3+4. NEEDS PHYSICAL-TODO: confirm a 4-way Metri-Pack 280 PN (Aptiv catalog has one) — using cluster-family placeholder for now.",
+  },
+  {
     id: "sw3",
     name: "3-way switch cluster (firewall)",
     zoneA: "engine-rear",
     zoneB: "dash",
     family: "cluster",
-    ways: 8,
+    ways: 10,
     purpose:
-      "The three vintage 3-way switches (wipers / instrument-lights / heater-fan) plug in here. They sit just above where the main loom enters the firewall, so the cluster taps the loom at that point rather than at the end of the dash harness — unplug this one connector to drop all three switches. 7 low-current pins used (1 piggybacked feed + 6 outputs); an 8-way connector fits with one spare — which also covers a shared ground pin if the switches are ever swapped for illuminated ones. Needn't be a GT 280.",
+      "The three vintage 3-way switches (wipers / instrument-lights / heater-fan) plug in here. They sit just above where the main loom enters the firewall, so the cluster taps the loom at that point rather than at the end of the dash harness — unplug this one connector to drop all three switches. 9 low-current pins used today (1 piggybacked feed + 8 outputs: wiper LOW/HIGH/WASH, instr DIM/BRIGHT, heater-fan HIGH/LOW signal pair × 2 destinations — gate diode-OR + fan-adapter SPDT); 10-way connector fits with 1 spare for a shared ground pin if the switches are ever swapped for illuminated ones. Needn't be a GT 280.",
   },
 ];
 

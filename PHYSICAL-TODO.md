@@ -325,6 +325,24 @@ seal/protect afterward.
 
 ---
 
+## Fan-adapter module — verify when adapter is built (added 2026-05-29)
+
+**Context:** The 3-wire heater fan (GND + HIGH winding + LOW winding) plugs into the chassis loom via a new 4-pin connector `fc`. Behind `fc`, a tiny detachable `fan-adapter` sub-harness houses 1× SPDT relay (`rly-fa`) and the motor itself. The chassis loom carries a single gate relay (`rly-fan` in `rtmr-ign`) and a 2-diode OR (1N4007 × 2) for the gate-coil trigger.
+
+- [ ] **fc connector exact PN.** Today modelled as a generic "small 4-way Metri-Pack 280" placeholder (cluster-family in the connector model). The Aptiv catalog has a 4-way GT 280 / MP 280 variant — confirm exact male + female PNs that:
+  - Have ≥15 A continuous capability on pin 1 (motor inrush + steady)
+  - Are sealed (engine-bay environment)
+  - Accept the GT 280 22-20 AWG female terminals you already own + cable seals
+  - Have a TPA option if possible
+- [ ] **Confirm fan-motor wire labelling.** Measure resistance between each pair on the 3-wire fan to confirm HIGH and LOW windings:
+  - HIGH↔GND should read lower resistance (~0.5–1 Ω, draws ~15 A)
+  - LOW↔GND should read higher resistance (~1–2 Ω, draws ~6–10 A)
+  - HIGH↔LOW should NOT be a direct short — these are separate windings sharing only the chassis-side ground
+  - Note the wire colours / any labels supplied with the fan, update `heater-fan` component note
+- [ ] **Measure actual HIGH + LOW current draws.** Inline DC ammeter on each winding's lead at 12 V. Update `f-con-4` rating if either draws > 15 A continuous (we have 20 A there with 5 A headroom).
+- [ ] **Pick the adapter enclosure.** Small sealed plastic box clipped near the heater housing is the current plan. Confirm fit — easier to do once the fan is mounted and the heater box is in place.
+- [ ] **Order the +1 SPDT** (Song Chuan 301-1C-S-R1 — same PN as existing chassis relays) when the next Mouser order goes out. Already noted in the fan-adapter sub-build BOM.
+
 ## Notes for future entries
 
 Add new items here as we discover them. Format: `[ ]` (or `[x]` if done, or

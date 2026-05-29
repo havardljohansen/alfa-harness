@@ -68,4 +68,22 @@ export const diodes: Diode[] = [
     currentA: 2.5,
     suggestion: "Schottky as above (1N5822 / SB540). Anode at the rtmr-ign side.",
   },
+  {
+    id: "d-fan-hi-or",
+    name: "Fan-gate diode-OR (HIGH leg)",
+    purpose: "Lets the dash switch HIGH position energise the Bussmann rly-fan coil without back-feeding the LOW signal line. Paired with d-fan-lo-or. Without these two diodes, back-feed at the gate-coil junction would make the SPDT in the fan-adapter see HIGH signal whenever the switch is in LOW too, putting 12V on the HIGH winding at both speeds. Anode at sw-heaterfan.high, cathode at rly-fan.86.",
+    onWire: "w-fan-trg-hi",
+    inline: true,
+    currentA: 0.15,
+    suggestion: "1N4007 (1 A / 1000 V) — generic black-stripe diode, every parts drawer has them. 1N4148 also fine at this current. Mounted inline near the rly-fan socket where the two legs join.",
+  },
+  {
+    id: "d-fan-lo-or",
+    name: "Fan-gate diode-OR (LOW leg)",
+    purpose: "Mirror of d-fan-hi-or for the LOW switch position. Together the two diodes form a classic diode-OR: gate relay coil sees 12V if EITHER switch position is closed, but neither switch leg back-feeds the other. Anode at sw-heaterfan.low, cathode at rly-fan.86.",
+    onWire: "w-fan-trg-lo",
+    inline: true,
+    currentA: 0.15,
+    suggestion: "1N4007 — pair with d-fan-hi-or. Anode at sw-heaterfan.low.",
+  },
 ];

@@ -34,17 +34,18 @@ export const harnessModules: HarnessModule[] = [
     summary:
       "The trunk everything else plugs into: the two bussed RTMRs (constant + ignition bus) and every relay, plus the two PWM modules and the engine-mounted devices fed directly from the bus. The RTMR hub mounts on the LEFT side of the engine bay (looking forward through the windscreen) — so the firewall plugs land on the left.",
     componentIds: [
-      "rtmr-ign", "rtmr-const", "battery", "flasher", "em1",
-      "wiper", "heater-fan", "washer-pump", "fan-resistor", "instr-pwm",
+      "rtmr-ign", "rtmr-const", "battery", "flasher", "em1", "fc",
+      "wiper", "washer-pump", "instr-pwm",
       "sw-brake", "sw-brake-2", "sw-brake-diff", "sw-reverse", "o2-sensor",
       "rly-horn", "rly-fan", "rly-fuel", "rly-ignmain", "rly-turnL", "rly-turnR",
       "rly-wlow", "rly-whigh", "rly-starter", "rly-washer", "gnd-eng",
     ],
     contains: [
       "RTMR constant bus + RTMR ignition bus",
-      "Relays: ignition-main, starter, fuel, horn, turn L/R, wiper low/high, fan, washer (future, in the spare constant-RTMR slot)",
-      "Instrument-light PWM dimmer + heater-fan PWM/resistor (loom-side)",
-      "Loom-side devices (engine-mounted devices are in the engine-nord module, plugged in via EM1)",
+      "Relays: ignition-main, starter, fuel, horn, turn L/R, wiper low/high, heater-fan gate, washer (future, external)",
+      "Instrument-light PWM dimmer (loom-side)",
+      "fc 4-pin Metri-Pack 280 boundary connector to the fan-adapter module",
+      "Loom-side devices (engine-mounted devices are in the engine-nord module, plugged in via EM1; the heater blower lives in the fan-adapter module, plugged in via fc)",
     ],
     interfaces: [
       "BH1 + BH2 → dashboard module",
@@ -57,10 +58,11 @@ export const harnessModules: HarnessModule[] = [
     ground: "Engine-bay HUB block (gnd-eng) — battery − and engine strap land here; the other modules' trunks return to it.",
     parts: [
       "Bussmann RTMR ×2 (bussed)",
-      "ISO-280 relays ×11 in use (6 SPST + 5 SPDT) — future washer SPST goes EXTERNAL next to the RTMR (flasher took the cavity)",
+      "ISO-280 relays ×11 in use (6 SPST + 5 SPDT) — future washer SPST goes EXTERNAL next to the RTMR (flasher took rtmr-const cavity 5)",
       "Bussmann NO-762-LED ISO-280 electronic flasher in rtmr-const cavity 5 (drop-in for an ISO-280 relay)",
       "MINI/ATM fuses (assorted) + spares",
-      "Instrument PWM dimmer + heater PWM/resistor module",
+      "Instrument PWM dimmer module (heater fan is now its own pluggable adapter module — see fan-adapter)",
+      "2× 1N4007 diodes inline near rly-fan socket for the gate diode-OR",
       "MIDI/MEGA holders for the bus feeds",
       "Metri-Pack 280 terminals/seals; 16 mm² hub cable",
     ],
@@ -269,6 +271,37 @@ export const harnessModules: HarnessModule[] = [
     ],
   },
   {
+    id: "fan-adapter",
+    name: "Fan adapter module (3-wire heater fan)",
+    summary:
+      "Detachable sub-harness behind the fc 4-pin connector that adapts the chassis loom's universal 4-pin (12V / GND / HIGH-sig / LOW-sig) to whichever fan is fitted. Today: 3-wire fan (GND + HIGH winding + LOW winding) with a single SPDT relay doing speed select. Swap-in compatible with: a 2-wire fan (use pins 1+2 only, cap 3+4), or a future 4-wire smart fan (pass all 4 through to the fan's matching connector).",
+    componentIds: ["heater-fan", "rly-fa"],
+    contains: [
+      "3-wire 2-speed heater blower motor (GND + HIGH winding ~15 A + LOW winding ~10 A)",
+      "Single SPDT speed-select relay (rly-fa) — NC defaults to LOW winding, NO routes to HIGH winding when fc pin 3 (HIGH signal) is hot",
+      "fc female half + adapter-side pigtails (~150 mm)",
+      "Small sealed box / heat-shrink bundle clipped near the heater housing",
+    ],
+    interfaces: [
+      "fc — 4-pin Metri-Pack 280 to the chassis loom. Pin 1 = gated 12V (high current), pin 2 = ground (motor return + coil ground), pin 3 = HIGH signal (drives SPDT coil), pin 4 = LOW signal (unused in this variant — capped or absent on the adapter side)",
+    ],
+    ground: "All adapter ground returns (motor + SPDT coil) tie at fc pin 2 inside the adapter, going back through one heavy ground wire to gnd-eng in the main loom.",
+    parts: [
+      "Song Chuan 301-1C-S-R1 SPDT relay (same as the rest of the harness; spare from prior orders) + 5-pin ISO-280 relay socket with crimp pins",
+      "fc connector — sealed 4-way Metri-Pack 280 (Aptiv) — PN PHYSICAL-TODO; needs MP 280 / GT 280-family pin terminals + cable seals for the ~15 A pin 1",
+      "~150 mm of HIGH-gauge wire (motor leads + relay common) and signal-gauge wire (coil trigger + ground)",
+      "Small sealed enclosure or large heat-shrink bundle for weatherproofing near the heater box",
+    ],
+    steps: [
+      "Bench-build the adapter on a small board or in a sealed box: mount the SPDT in its socket, run pigtails to the fc female half on one side and to the fan motor's HIGH / LOW / GND leads on the other.",
+      "Wire SPDT pin 30 ← fc pin 1; pin 86 ← fc pin 3; pin 85 → fc pin 2 (coil ground); pin 87 → fan HIGH; pin 87a → fan LOW; fan GND → fc pin 2.",
+      "Install: clip the adapter near the heater housing so it's accessible without removing the heater. Connect fc and route the pigtails to the fan body.",
+      "Bench-test: with 12V on fc pin 1, GND on pin 2, signal on pin 3 should pull the SPDT and route 12V to the HIGH wire; signal removed reverts to LOW. Both windings cold when fc pin 1 is dead (OFF).",
+      "FOR A 2-WIRE FAN SWAP: build a simpler variant skipping the SPDT — connect fc pin 1 directly to the fan's +12V wire and fc pin 2 to the fan's ground wire. Pins 3 + 4 stay capped on the adapter side. Dash switch LOW and HIGH both run the fan at full single speed.",
+      "FOR A 4-WIRE SMART FAN SWAP: build a pass-through variant carrying all four fc pins straight to the smart fan's matching 4-pin connector. The smart fan's internal controller interprets the signals.",
+    ],
+  },
+  {
     id: "switch-cluster",
     name: "3-way switch cluster (firewall)",
     summary:
@@ -310,13 +343,14 @@ export const harnessModules: HarnessModule[] = [
 /** The bulkhead/cluster connector(s) each module plugs through — its boundary
  *  in a per-module diagram (wires to other modules terminate here). */
 export const moduleConnectors: Record<string, string[]> = {
-  "main-loom": ["bh1", "bh2", "bh3", "bh4", "sw3", "em1"],
+  "main-loom": ["bh1", "bh2", "bh3", "bh4", "sw3", "em1", "fc"],
   "front-clip": ["bh4"],
   dashboard: ["bh1", "bh2"],
   "rear-boot": ["bh3"],
   "switch-cluster": ["sw3"],
   "engine-nord": ["em1"],
   "engine-155ts": ["em1"],
+  "fan-adapter": ["fc"],
 };
 
 const componentToModule: Map<string, string> = (() => {

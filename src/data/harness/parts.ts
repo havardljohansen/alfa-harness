@@ -313,12 +313,12 @@ export const bomGaps: BomGap[] = [
     suggestion: "Brass/lead post clamps to suit the battery; 16–25 mm² ring lugs + red/black boots.",
   },
   {
-    id: "fan-low",
-    item: "Heater-fan low-speed resistor or PWM controller",
-    qty: "1 (optional)",
+    id: "fan-adapter-sub-build",
+    item: "Fan-adapter module sub-build (SPDT relay + fc connector + diodes + enclosure)",
+    qty: "1 sub-harness",
     category: "component",
-    reason: "Only needed if you implement the switch's low position as a reduced-speed setting.",
-    suggestion: "Aftermarket (not Mouser) — a 10–20 A 12 V PWM motor controller, or a blower dropping resistor.",
+    reason: "The chassis loom ends at the fc 4-pin connector; the actual fan-specific switching lives in a small detachable adapter behind it. Today's adapter handles the 3-wire fan (GND + HIGH winding + LOW winding) with one SPDT doing speed select. Loom is forward-compatible with 2-wire or 4-wire-smart fans via different adapter variants.",
+    suggestion: "Per-fan-adapter BOM: 1× Song Chuan 301-1C-S-R1 SPDT (you have spares) + 1× ISO-280 5-pin relay socket + 1× sealed 4-way Metri-Pack 280 connector pair (Aptiv — PN PHYSICAL-TODO) + MP 280 / GT 280 sealed terminals (4× per side) + 2× 1N4007 diodes for the chassis-side gate diode-OR (live near the rly-fan socket, not inside the adapter) + small sealed enclosure or heat-shrink bundle. Modest cost (a few €).",
   },
   {
     id: "gauge-connectors",
