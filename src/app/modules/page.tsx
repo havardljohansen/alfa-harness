@@ -1,6 +1,7 @@
 import { harnessModules } from "@/data/harness/modules";
 import { CircleModuleDiagram } from "@/components/circle-module-diagram";
 import { ModuleWireSchedule } from "@/components/module-wire-schedule";
+import { ModuleBuildSteps } from "@/components/module-build-steps";
 import { resolvedWires, allNodes } from "@/data/harness";
 import { modulesForWire } from "@/data/harness/modules";
 import { bomGaps } from "@/data/harness/parts";
@@ -85,12 +86,7 @@ export default function ModulesPage() {
 
           {/* Build */}
           <div className="p-3 grid lg:grid-cols-2 gap-3">
-            <div>
-              <div className="text-[11px] uppercase tracking-wide text-muted mb-1">Build steps</div>
-              <ol className="space-y-1 text-sm list-decimal list-inside">
-                {m.steps.map((s, i) => <li key={i}>{s}</li>)}
-              </ol>
-            </div>
+            <ModuleBuildSteps moduleId={m.id} steps={m.steps} />
             <div>
               <div className="text-[11px] uppercase tracking-wide text-muted mb-1">Interfaces</div>
               <ul className="text-xs list-disc list-inside text-muted mb-2">
