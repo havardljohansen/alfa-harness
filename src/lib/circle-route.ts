@@ -286,6 +286,41 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
     return { order, stats: best };
   };
 
+  // Final outward-compaction: for each non-chord wire (innermost first), try
+  // every smaller rank and accept the OUTERMOST one that doesn't add
+  // violations / crossings and strictly shortens the wire's length. Catches
+  // cases where anneal landed a short-arc wire on a deep inner ring even
+  // though the outer rings have angular room — most visible on dashboard
+  // (where active.length > 14 so localDescent doesn't run at all). Cheap
+  // (O(M·R) evaluations per sweep, iterated to a fixed point — typically 1–2
+  // sweeps).
+  const compactOutward = (act: number[], st0: State, ord: Order): State => {
+    const result: State = { dir: st0.dir.slice(), rank: st0.rank.slice() };
+    let changed = true;
+    let guard = 0;
+    while (changed && guard++ < 4) {
+      changed = false;
+      const innermostFirst = [...act]
+        .filter((i) => result.dir[i] !== 2)
+        .sort((x, y) => result.rank[y] - result.rank[x]);
+      for (const i of innermostFirst) {
+        const oldRank = result.rank[i];
+        if (oldRank === 0) continue;
+        const baseline = evaluate(act, result, buildGeometry(act, result, ord));
+        for (let k = 0; k < oldRank; k++) {
+          result.rank[i] = k;
+          const e = evaluate(act, result, buildGeometry(act, result, ord));
+          if (e.violations <= baseline.violations && e.crossings <= baseline.crossings && e.length < baseline.length - 1e-6) {
+            changed = true;
+            break;
+          }
+          result.rank[i] = oldRank;
+        }
+      }
+    }
+    return result;
+  };
+
   // ---- run the pipeline on the active subset ----
   let st: State = { dir: edges.map(() => 0), rank: edges.map(() => 0) };
   let order: Order = {};
@@ -297,7 +332,13 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
     st = s;
     const p = polish(active, st);
     order = p.order;
-    stats = { crossings: p.stats.crossings, circles: p.stats.circles };
+    // outward-compact every wire to the smallest rank that doesn't create
+    // conflicts — runs ALWAYS, including past the localDescent threshold,
+    // since this is where dashboards with many wires accumulate stuck-inner
+    // routes.
+    st = compactOutward(active, st, order);
+    const after = evaluate(active, st, buildGeometry(active, st, order));
+    stats = { crossings: after.crossings, circles: after.circles };
     // compact circle ranks to 0..k-1 — drop unused rings (gaps left by the
     // search). Monotonic remap preserves the radius ORDER, so crossings are
     // unchanged; it only tightens the ring spacing.
