@@ -228,6 +228,38 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
     }
     return { dir, rank };
   };
+  // Two-wire rank swap. localDescent only does single-wire moves; when a
+  // pair (A,B) would BOTH improve by trading ranks (A short-sweep wants
+  // outer + currently has inner; B long-sweep wants inner + currently has
+  // outer), single-wire moves are stuck because moving A alone would
+  // conflict with B and vice-versa. Pair-swap unlocks these cascades.
+  // O(M²) per sweep, but for our largest module (51 wires) that's ~1300
+  // pairs × O(M²) evaluate cost ≈ 3M ops — well within budget.
+  const pairSwap = (act: number[], st0: State, ord?: Order): State => {
+    const st = { dir: st0.dir.slice(), rank: st0.rank.slice() };
+    let cur = evaluate(act, st, buildGeometry(act, st, ord));
+    let improved = true;
+    while (improved) {
+      improved = false;
+      for (let x = 0; x < act.length; x++) {
+        for (let y = x + 1; y < act.length; y++) {
+          const i = act[x], j = act[y];
+          if (st.dir[i] === 2 || st.dir[j] === 2) continue; // skip chord wires (rank doesn't apply)
+          if (st.rank[i] === st.rank[j]) continue; // nothing to swap
+          [st.rank[i], st.rank[j]] = [st.rank[j], st.rank[i]];
+          const e = evaluate(act, st, buildGeometry(act, st, ord));
+          if (e.cost < cur.cost - 1e-9) {
+            cur = e;
+            improved = true;
+          } else {
+            [st.rank[i], st.rank[j]] = [st.rank[j], st.rank[i]];
+          }
+        }
+      }
+    }
+    return st;
+  };
+
   const localDescent = (act: number[], st0: State, ord?: Order): State => {
     const st = { dir: st0.dir.slice(), rank: st0.rank.slice() };
     let cur = evaluate(act, st, buildGeometry(act, st, ord));
@@ -315,6 +347,7 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
       const p = polish(active, st);
       order = p.order;
       st = localDescent(active, st, order);
+      st = pairSwap(active, st, order);
       const cur = evaluate(active, st, buildGeometry(active, st, order));
       stats = { crossings: cur.crossings, circles: cur.circles, length: cur.length };
       if (cur.cost >= lastCost - 1e-6) break;
