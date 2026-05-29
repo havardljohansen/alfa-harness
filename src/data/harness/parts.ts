@@ -548,7 +548,7 @@ export const bomGaps: BomGap[] = [
       "  829-15430899 × 5 (2-way GT 280 TPA grey)\n" +
       "\nOne-way MP 280 sealed (for snd-oil, sw-oillight, o2-sensor — single-wire + case-grounded + 1 spare pair):\n" +
       "  829-12065171 × 4 (1-way MP 280 sealed MALE)\n" +
-      "  829-12065170 × 4 (1-way MP 280 sealed FEMALE — assumed paired by family suffix, verify before ordering)\n" +
+      "  829-12065170 × 4 (1-way MP 280 sealed FEMALE — pairing with 12065171 male verified 2026-05-29)\n" +
       "  (No TPA — 1-way primary lock is sufficient)\n" +
       "\nTerminals + seals: existing GT 280 + MP 280 stock covers both. 1-way uses MP 280 terminals (12110843/45/847/12129409 owned) and MP 280 single-wire seals (15324982/981/985 owned) — same as the block-rear / device-end crimps. 2-way uses GT 280 terminals + seals from order 280336112 (terminal top-up below covers the incremental draw). NOT modeled as wire-graph nodes — these are physical service-break points the builder inserts during assembly.",
   },
