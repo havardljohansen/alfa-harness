@@ -433,11 +433,18 @@ export const bomGaps: BomGap[] = [
   // the order is to hand. Kept off the active gap list to avoid double-buying.
   {
     id: "mini-fuses",
-    item: "MINI (ATM) blade fuses",
-    qty: "1 set per fuse position + spares",
+    item: "MINI (ATM) blade fuses — concrete quantities per rating actually used",
+    qty: "~50 fuses total (per per-rating breakdown below)",
     category: "fuse",
-    reason: "The PDM and RTMRs ship empty. Ratings are listed per position on the Fuses page.",
-    suggestion: "Assorted 3/5/7.5/10/15/20/25 A MINI fuses.",
+    reason: "The PDM and RTMRs ship empty — without fuses no circuit can come up. Quantities sized against the actual fuse list in fuses.ts (9 × 10 A, 4 × 5 A, 4 × 7.5 A, 2 × 20 A, 1 × 15 A, plus 3 unused 0 A positions) + ~50% spares since fuses are consumables.",
+    suggestion:
+      "Littelfuse 0297 MINI series — Mouser carries individually or as packs. PNs (Mouser format = 576- prefix):\n" +
+      "   5 A: 576-0287005.PXCN × 8  (4 in use + spares)\n" +
+      "   7.5 A: 576-0287007.5PXCN × 8\n" +
+      "   10 A: 576-0287010.PXCN × 15 (9 in use + spares — the most common rating)\n" +
+      "   15 A: 576-0287015.PXCN × 3\n" +
+      "   20 A: 576-0287020.PXCN × 5\n" +
+      "Verify exact Mouser PNs at order time — Littelfuse offers reel (PXCN), loose (.L), bagged variants. Or buy a single multi-rating assortment pack: e.g. 576-0287150KIT or equivalent Bussmann ATM kit; check the per-rating count matches needs.",
   },
   {
     id: "alt-charge",
@@ -451,11 +458,16 @@ export const bomGaps: BomGap[] = [
   {
     id: "main-fusing",
     item: "MIDI/MEGA fuse holders + fuses at the battery (+ optional master cut-off)",
-    qty: "2–3",
+    qty: "3 holders + 3 fuses + 1-2 spares",
     category: "fuse",
     reason:
-      "The battery→constant-bus and battery→PDM main feeds are otherwise unfused (fire risk). Add a ~60–80 A on the constant feed and ~40 A on the PDM feed, plus the alternator B+ mega-fuse. A battery master cut-off is a cheap classic-car safety add.",
-    suggestion: "Littelfuse/Blue Sea MIDI holders; battery isolator switch.",
+      "The battery→constant-bus, battery→PDM, and alternator-B+→battery main feeds are otherwise unfused (fire risk). Three holders: ~60–80 A on the constant feed, ~40 A on the PDM feed, ~60–80 A on the alternator B+. A battery master cut-off is a cheap classic-car safety add.",
+    suggestion:
+      "Mouser-orderable Littelfuse MIDI:\n" +
+      "  Holders: 576-0FHM0001ZXJ (MIDI bolt-on holder) × 3\n" +
+      "  Fuses:   576-0498040.WXNV (40 A MIDI) × 2 (PDM feed + 1 spare)\n" +
+      "           576-0498080.WXNV (80 A MIDI) × 4 (constant + alt B+ + 2 spares)\n" +
+      "Master cut-off (optional, non-Mouser): any 12 V battery isolator switch — Blue Sea, Hella, etc. Verify exact Mouser PNs at order time.",
   },
   {
     id: "ground",
@@ -643,10 +655,18 @@ export const bomGaps: BomGap[] = [
   // of GT 280 female terminals for the bulkhead-plug female halves.
   // gt280-seals — RESOLVED via order 280336112: 15366065 × 125 (orange 22-20),
   // 15366066 × 50 (yellow 18-16), 15366067 × 25 (tan 14-12).
-  // gt280-tpa — RESOLVED via order 280336112 for 6-way (15436198 × 2),
+  // gt280-tpa — PARTIALLY RESOLVED via order 280336112 for 6-way (15436198 × 2),
   // 10-way (15430900 × 2), and 12-way spares (15436200 × 2 added to the 6 in
-  // stock = 8). 8-way TPA: PN still unconfirmed (skip or source when bh3 is
-  // being built — primary lock is sufficient if TPA is unavailable).
+  // stock = 8). 8-way TPA: PN now CONFIRMED as 15430896 (verified via Waytek
+  // 2026-05-29) — still needs to be ordered. Listed separately below.
+  {
+    id: "gt280-tpa-8way",
+    item: "GT 280 8-way secondary lock / TPA (grey) — covers bh3",
+    qty: "2 (1 per side of bh3 + 1 spare)",
+    category: "lock",
+    reason: "Order 280336112 covered the 6-way + 10-way + 12-way TPAs but missed the 8-way (PN was unconfirmed at order time, now verified). Bh3 (rear loom) uses an 8-way GT 280 pair; adding TPAs gives secondary lock for the boot environment.",
+    suggestion: "Aptiv 15430896 (grey, 8-way GT 280 TPA). Mouser PN: 829-15430896. Order 2 (one per bh3 side + 1 spare).",
+  },
   // --- Future brake-redundancy + brake-failure warning parts (provisioned in harness; buy when fitted) ---
   {
     id: "brake-switch-2",
