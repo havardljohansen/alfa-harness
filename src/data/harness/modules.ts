@@ -311,11 +311,13 @@ export const harnessModules: HarnessModule[] = [
 /** The bulkhead/cluster connector(s) each module plugs through — its boundary
  *  in a per-module diagram (wires to other modules terminate here). */
 export const moduleConnectors: Record<string, string[]> = {
-  "main-loom": ["bh1", "bh2", "bh3", "bh4", "sw3"],
+  "main-loom": ["bh1", "bh2", "bh3", "bh4", "sw3", "em1"],
   "front-clip": ["bh4"],
   dashboard: ["bh1", "bh2"],
   "rear-boot": ["bh3"],
   "switch-cluster": ["sw3"],
+  "engine-nord": ["em1"],
+  "engine-155ts": ["em1"],
 };
 
 const componentToModule: Map<string, string> = (() => {

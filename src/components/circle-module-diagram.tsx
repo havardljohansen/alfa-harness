@@ -104,7 +104,20 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
     if (!mod) return { boxes: [] as Box[], conns: [] as Conn[], grounds: [] as string[] };
     const inModule = new Set(mod.componentIds);
     const ownedConn = new Set(moduleConnectors[moduleId] ?? []);
-    const resolve = (comp: string, via?: string[]) => (inModule.has(comp) ? displayId(comp) : (via ?? []).find((v) => ownedConn.has(v)) ?? comp);
+    // Resolve a wire endpoint to either: (a) the component itself if it's in
+    // this module, (b) a `via:` connector boundary if the wire is annotated
+    // with one this module owns, (c) the OTHER endpoint if it's a module-owned
+    // connector (covers em1 after the refactor — wires terminate AT em1 rather
+    // than passing through it, so the routing isn't a `via`), or (d) the raw
+    // external component as a last resort.
+    const resolve = (comp: string, w: { from: { component: string }; to: { component: string }; via?: string[] }) => {
+      if (inModule.has(comp)) return displayId(comp);
+      const fromVia = (w.via ?? []).find((v) => ownedConn.has(v));
+      if (fromVia) return fromVia;
+      const other = w.from.component === comp ? w.to.component : w.from.component;
+      if (ownedConn.has(other)) return other; // wire ends at one of our connectors → collapse external to that connector
+      return comp;
+    };
     const idIndex = new Map<string, number>();
     const boxes: Box[] = [];
     const addBox = (id: string) => {
@@ -124,7 +137,7 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
     const grounds = new Set<string>();
     for (const w of resolvedWires) {
       if (!(inModule.has(w.from.component) || inModule.has(w.to.component))) continue;
-      const s = resolve(w.from.component, w.via), t = resolve(w.to.component, w.via);
+      const s = resolve(w.from.component, w), t = resolve(w.to.component, w);
       if (s === t) continue;
       if (isGround(s)) { grounds.add(s); continue; }
       if (isGround(t)) { grounds.add(t); continue; }
