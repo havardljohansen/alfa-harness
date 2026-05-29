@@ -340,8 +340,12 @@ export function modulesForComponents(componentIds: string[]): string[] {
   return [...set];
 }
 
-/** Given a changed wire {from,to}, the module sheet(s) that must be revised. */
-export function modulesForWire(wire: { from: { component: string }; to: { component: string } }): string[] {
+/** Given a changed wire, the module sheet(s) that must be revised. Honors the
+ *  wire's explicit `module` override (used for heavy cross-module stud cables
+ *  that build with the engine pigtail even though one terminal lugs to a
+ *  main-loom component — the cable detaches with the engine). */
+export function modulesForWire(wire: { from: { component: string }; to: { component: string }; module?: string }): string[] {
+  if (wire.module) return [wire.module];
   return modulesForComponents([wire.from.component, wire.to.component]);
 }
 

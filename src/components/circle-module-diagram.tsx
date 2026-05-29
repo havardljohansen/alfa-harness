@@ -137,6 +137,12 @@ export function CircleModuleDiagram({ moduleId }: { moduleId: string }) {
     const grounds = new Set<string>();
     for (const w of resolvedWires) {
       if (!(inModule.has(w.from.component) || inModule.has(w.to.component))) continue;
+      // Explicit ownership override: heavy cross-module stud cables (alt B+,
+      // starter B+) build with the engine pigtail and detach with the engine,
+      // even though they terminate at a main-loom component (battery). Skip
+      // them in other modules' views so main-loom doesn't drag engine-side
+      // boxes back in. They still appear in their owning module's diagram.
+      if (w.module && w.module !== moduleId) continue;
       const s = resolve(w.from.component, w), t = resolve(w.to.component, w);
       if (s === t) continue;
       if (isGround(s)) { grounds.add(s); continue; }

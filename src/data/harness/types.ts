@@ -244,6 +244,14 @@ export interface Wire {
   complianceRef?: string; // ComplianceNote id
   /** Inline signal diode id(s) carried by this wire (see diodes.ts). */
   diodes?: string[];
+  /** Explicit module ownership override. Default: a wire belongs to whichever
+   *  module(s) its endpoint components live in (see `modulesForWire`). Set this
+   *  ONLY for wires that physically cross modules but build/source with one
+   *  side's harness — e.g. the heavy battery-to-alternator and battery-to-
+   *  starter stud cables, which terminate at the battery (main-loom) but are
+   *  bench-built with the engine pigtail and removed together with the engine.
+   *  Visualizations hide explicitly-owned wires from other modules' views. */
+  module?: string;
   /** Wire insulation colour. Solid = "Red", "Yellow", … Two-tone (base/stripe)
    *  = "Yellow/Black", "Blue/Black", … Factory-derived for the wires that have
    *  a clear 1969 equivalent; new colours for modern-only circuits. See
