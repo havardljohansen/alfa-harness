@@ -440,15 +440,16 @@ export const bomGaps: BomGap[] = [
       "  893-301-1C-S-R1-12VD × 1 (SPDT — was 5 owned; current allocation = 6; this makes 7 = +1 spare)\n" +
       "  893-3011ACR1U0312VDC × 1 (SPST — current = 7 owned, 6 active + 1 future washer; this makes 8 = +1 spare)\n" +
       "\nGT 280 housing spare pairs (1× M + 1× F each size in use):\n" +
-      "  829-13518847 + 829-13518845 (2-way) — order 12 instead of 11 (+1 spare pair)\n" +
-      "  829-13521461 + 829-13521459 (4-way) — order 2 instead of 1 (+1 spare pair)\n" +
+      "  829-13518847 + 829-13518845 (2-way GT 280) — order 5 instead of 4 (+1 spare pair) — see service-break-connectors\n" +
+      "  829-12065171 + 829-12065170 (1-way MP 280) — order 4 instead of 3 (+1 spare pair) — for snd-oil + sw-oillight + o2-sensor\n" +
+      "  829-13521461 + 829-13521459 (4-way GT 280) — order 3 instead of 2 (+1 spare pair) — fc + dl + spare\n" +
       "  829-15326640 + 829-13521467 (6-way) — order 1 spare pair (you have 2 build-spec)\n" +
       "  829-15326655 + 829-15326654 (8-way) — order 1 spare pair (you have 1 build-spec)\n" +
       "  829-15326661 + 829-15326660 (10-way) — order 1 spare pair (you have 2 build-spec)\n" +
       "  829-15326915 + 829-15326910 (12-way) — order 1 spare pair (you have 3 build-spec)\n" +
       "\nGT 280 TPA spares (1× each smaller size — 12-way already has 2 spares incoming from 280336112):\n" +
-      "  829-15430899 (2-way) — order 12 instead of 11 (+1 spare)\n" +
-      "  829-15430898 (4-way) — order 2 instead of 1 (+1 spare)\n" +
+      "  829-15430899 (2-way) — order 5 instead of 4 (+1 spare)\n" +
+      "  829-15430898 (4-way) — order 3 instead of 2 (+1 spare)\n" +
       "  829-15436198 (6-way) — order 3 instead of 2 (+1 spare)\n" +
       "  829-15430896 (8-way) — order 3 instead of 2 (+1 spare)\n" +
       "  829-15430900 (10-way) — order 3 instead of 2 (+1 spare)\n" +
@@ -535,13 +536,21 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "service-break-connectors",
-    item: "Service-break connectors at engine-bay devices + indicator spares (2-way GT 280 sealed) — housings only",
-    qty: "11 pairs + 11 TPAs + 2 cavity plugs",
+    item: "Service-break connectors at engine-bay devices — mix of 2-way GT 280 + 1-way MP 280",
+    qty: "5× 2-way GT 280 sealed pairs + 4× 1-way MP 280 sealed pairs (housings only — terminals/seals from existing stock)",
     category: "connector-housing",
     reason:
-      "Inline 2-way sealed connectors at devices that are routinely replaced (senders, brake switch, reverse switch) or environmentally exposed (O2 sensor, fuel pump pigtail) — unplug for swap instead of cut-and-recrimp. Plus 4 spare pairs at the wheel-arch turn signals + side repeaters (LED-upgrade or stone-damage replacements). Net: 7 engine-bay + 4 indicator = 11 pairs. Two of the engine-bay devices (snd-oil + sw-oillight) only need ONE wire so their 2nd cavity gets a cavity plug.",
+      "Inline sealed connectors at devices that are routinely replaced or environmentally exposed — unplug for swap instead of cut-and-recrimp. Indicator-spare pairs (front turns + side repeaters) DROPPED per design review 2026-05-29 (can be added later if needed). Refined to use the right connector size per actual wire count: true 2-wire devices get 2-way GT 280, single-wire-with-case-ground devices (senders + narrowband O2) get 1-way MP 280. No more capped cavities — when a cavity will permanently be unused, use the smaller housing instead.",
     suggestion:
-      "Per pair: 1× 13518847 (2-way GT 280 sealed MALE, was 15326678) + 1× 13518845 (2-way GT 280 sealed FEMALE, was 15326679) + 1× 15430899 (2-way GT 280 TPA grey, optional but recommended for engine-bay vibration). Plus 2× 15305170 (white cavity plug) for the capped cavities at snd-oil + sw-oillight. Mouser: 829-13518847 × 11 + 829-13518845 × 11 + 829-15430899 × 11 + 829-15305170 × 2 (or buy a 5-pack of plugs). Per-PN verified via Custom Connector Kits 2026-05-29. NOT modeled as wire-graph nodes — these are physical service-break points the builder inserts during assembly; the wires through them pass through transparently. Terminals + seals are a SEPARATE line — see `service-break-terminals-topup` below (existing stock is insufficient).",
+      "Two-way GT 280 sealed (for sw-brake, snd-temp, sw-reverse, fuel-pump — all true 2-wire devices + 1 spare pair):\n" +
+      "  829-13518847 × 5 (2-way GT 280 MALE, was 15326678)\n" +
+      "  829-13518845 × 5 (2-way GT 280 FEMALE, was 15326679)\n" +
+      "  829-15430899 × 5 (2-way GT 280 TPA grey)\n" +
+      "\nOne-way MP 280 sealed (for snd-oil, sw-oillight, o2-sensor — single-wire + case-grounded + 1 spare pair):\n" +
+      "  829-12065171 × 4 (1-way MP 280 sealed MALE)\n" +
+      "  829-12065170 × 4 (1-way MP 280 sealed FEMALE — assumed paired by family suffix, verify before ordering)\n" +
+      "  (No TPA — 1-way primary lock is sufficient)\n" +
+      "\nTerminals + seals: existing GT 280 + MP 280 stock covers both. 1-way uses MP 280 terminals (12110843/45/847/12129409 owned) and MP 280 single-wire seals (15324982/981/985 owned) — same as the block-rear / device-end crimps. 2-way uses GT 280 terminals + seals from order 280336112 (terminal top-up below covers the incremental draw). NOT modeled as wire-graph nodes — these are physical service-break points the builder inserts during assembly.",
   },
   {
     id: "service-break-terminals-topup",
@@ -551,10 +560,10 @@ export const bomGaps: BomGap[] = [
     reason:
       "Adding the 11 service-break connectors + the 4-way fan-adapter (fc) pulls more terminations from the GT 280 terminal + seal stock than order 280336112 covered. After both draws the 22-20 lines (female + male + seals) and the 14-12 lines (female + seals) go negative against the bulkhead need + 20% safety margin. This entry tops them up.",
     suggestion:
-      "Per gauge (quantities include +20% margin):\n" +
-      "  22-20 AWG MALE:    BOTH 829-15304730 × +25 AND 829-15304724 × +25 (resolves the PN-to-AWG mapping uncertainty — model says 15304730 = 22-20, Aptiv catalog convention says 15304724 = 22-20. At ~kr 1.14 per terminal, ordering both = +kr 30 surplus to settle the question once the order arrives.)\n" +
-      "  22-20 AWG FEMALE:  829-15304718 × +20 (have 60, need ~71)\n" +
-      "  22-20 SEAL (ORN):  829-15366065 × +30 (have 125, need ~142)\n" +
+      "Per gauge (quantities include +20% margin). NOTE: counts updated 2026-05-29 after dropping the 4 indicator-spare connectors AND moving 3 single-wire devices (snd-oil, sw-oillight, o2-sensor) to MP 280 1-way (which uses owned MP 280 terminals, NOT GT 280 stock). Net 22-20 GT 280 reduction: 11 fewer wires than the previous count.\n" +
+      "  22-20 AWG MALE:    BOTH 829-15304730 × +15 AND 829-15304724 × +15 (resolves the PN-to-AWG mapping uncertainty — model says 15304730 = 22-20, Aptiv catalog convention says 15304724 = 22-20. At ~kr 1.14 per terminal, ordering both = +kr 18 surplus to settle the question once the order arrives.)\n" +
+      "  22-20 AWG FEMALE:  829-15304718 × +10 (have 60, need ~64 incl service-break + fc + dl)\n" +
+      "  22-20 SEAL (ORN):  829-15366065 × +15 (have 125, need ~130)\n" +
       "  14-12 AWG FEMALE:  829-15304720 × +10 (have 10, need ~18)\n" +
       "  14-12 SEAL (TAN):  829-15366067 × +15 (have 25, need ~36)\n" +
       "18-16 + 14-12 male margins are comfortable from order 280336112 — no top-up needed there.",

@@ -203,7 +203,7 @@ export const connectorBom: ConnectorBuy[] = (() => {
   need.set(12, (need.get(12) ?? 0) + 1); // EM1 engine-bay boundary (12-way): pin-level model in components.ts, no longer auto-derived via via:em1 since the refactor 2026-05-29. Manual +1 keeps the connector BOM accurate.
   need.set(4, (need.get(4) ?? 0) + 1); // FC fan-adapter boundary (4-way): pin-level model in components.ts; wires terminate AT fc rather than passing via, so the auto-derivation misses it. Manual +1 keeps the connector BOM accurate (added 2026-05-29).
   need.set(4, (need.get(4) ?? 0) + 1); // DL dim-adapter boundary (4-way): same situation as fc — wires terminate AT dl. Manual +1 (added 2026-05-29).
-  need.set(2, (need.get(2) ?? 0) + 11); // Service-break connectors (2-way × 11): inline at engine-bay devices (brake, O2, senders, fuel pump, reverse switch) + spares for front turns + side repeaters. Not part of the chassis-loom topology — pure service convenience.
+  need.set(2, (need.get(2) ?? 0) + 4); // Service-break 2-way GT 280 (×4 build): sw-brake, snd-temp, sw-reverse, fuel-pump. True 2-wire devices. Pure service convenience, not part of the chassis-loom topology. 1-way devices (snd-oil, sw-oillight, o2) use MP 280 1-way instead (12065171/170) — not tracked in connectorBom (different family). Indicator-spare connectors dropped per design review 2026-05-29.
   const mk = (p: string) => ({ mfgPn: p, mouserPn: `829-${p}`, url: mouserUrl(p) });
   return [...need.keys()]
     .sort((a, b) => b - a)
