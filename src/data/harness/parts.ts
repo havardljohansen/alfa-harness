@@ -502,13 +502,39 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "service-break-connectors",
-    item: "Service-break connectors at engine-bay devices + indicator spares (2-way GT 280 sealed)",
-    qty: "11 pairs + 11 TPAs",
+    item: "Service-break connectors at engine-bay devices + indicator spares (2-way GT 280 sealed) — housings only",
+    qty: "11 pairs + 11 TPAs + 2 cavity plugs",
     category: "connector-housing",
     reason:
-      "Inline 2-way sealed connectors at devices that are routinely replaced (senders, brake switch, reverse switch) or environmentally exposed (O2 sensor, fuel pump pigtail) — unplug for swap instead of cut-and-recrimp. Plus 4 spare pairs at the wheel-arch turn signals + side repeaters (LED-upgrade or stone-damage replacements). Net: 7 engine-bay + 4 indicator = 11 pairs. Uses the same 22-20 / 18-16 GT 280 female terminals + cable seals from order 280336112 — no new terminal stock needed; just the small housings.",
+      "Inline 2-way sealed connectors at devices that are routinely replaced (senders, brake switch, reverse switch) or environmentally exposed (O2 sensor, fuel pump pigtail) — unplug for swap instead of cut-and-recrimp. Plus 4 spare pairs at the wheel-arch turn signals + side repeaters (LED-upgrade or stone-damage replacements). Net: 7 engine-bay + 4 indicator = 11 pairs. Two of the engine-bay devices (snd-oil + sw-oillight) only need ONE wire so their 2nd cavity gets a cavity plug.",
     suggestion:
-      "Per pair: 1× 13518847 (2-way GT 280 sealed MALE, was 15326678) + 1× 13518845 (2-way GT 280 sealed FEMALE, was 15326679) + 1× 15430899 (2-way GT 280 TPA grey, optional but recommended for engine-bay vibration). Mouser: 829-13518847 + 829-13518845 + 829-15430899. 11 of each. Terminals + seals already covered by existing stock (15304718/19/20-L female, 15304724/30/31-L male, 15366065/66/67 seals). Per-PN verified via Custom Connector Kits 2026-05-29. NOT modeled as wire-graph nodes — these are physical service-break points the builder inserts during assembly; the wires through them pass through transparently.",
+      "Per pair: 1× 13518847 (2-way GT 280 sealed MALE, was 15326678) + 1× 13518845 (2-way GT 280 sealed FEMALE, was 15326679) + 1× 15430899 (2-way GT 280 TPA grey, optional but recommended for engine-bay vibration). Plus 2× 15305170 (white cavity plug) for the capped cavities at snd-oil + sw-oillight. Mouser: 829-13518847 × 11 + 829-13518845 × 11 + 829-15430899 × 11 + 829-15305170 × 2 (or buy a 5-pack of plugs). Per-PN verified via Custom Connector Kits 2026-05-29. NOT modeled as wire-graph nodes — these are physical service-break points the builder inserts during assembly; the wires through them pass through transparently. Terminals + seals are a SEPARATE line — see `service-break-terminals-topup` below (existing stock is insufficient).",
+  },
+  {
+    id: "service-break-terminals-topup",
+    item: "Additional GT 280 terminals + seals — covers service-break connectors + fan-adapter draws on stock",
+    qty: "see per-gauge breakdown",
+    category: "terminal",
+    reason:
+      "Adding the 11 service-break connectors + the 4-way fan-adapter (fc) pulls more terminations from the GT 280 terminal + seal stock than order 280336112 covered. After both draws the 22-20 lines (female + male + seals) and the 14-12 lines (female + seals) go negative against the bulkhead need + 20% safety margin. This entry tops them up.",
+    suggestion:
+      "Per gauge (quantities include +20% margin):\n" +
+      "  22-20 AWG MALE:    829-15304730 × +25 (model PN; on order 50, need ~71)\n" +
+      "  22-20 AWG FEMALE:  829-15304718 × +20 (have 60, need ~71)\n" +
+      "  22-20 SEAL (ORN):  829-15366065 × +30 (have 125, need ~142)\n" +
+      "  14-12 AWG FEMALE:  829-15304720 × +10 (have 10, need ~18)\n" +
+      "  14-12 SEAL (TAN):  829-15366067 × +15 (have 25, need ~36)\n" +
+      "All other gauges (18-16 + 14-12 male) have comfortable margins from order 280336112. NOTE: if the Aptiv-catalog male-PN-to-AWG mapping is reversed vs the model's (open question — 15304724 might actually be 22-20 male, not 15304730), swap the 22-20 male buy to 829-15304724 × +25. Verify against the Aptiv datasheet before ordering.",
+  },
+  {
+    id: "service-break-strain-relief",
+    item: "Heat-shrink for the 11 service-break pigtail strain reliefs",
+    qty: "~1.5 m of ⌀6 mm + ~1 m of ⌀9 mm (3:1 adhesive-lined)",
+    category: "consumable",
+    reason:
+      "Each service-break connector has a short (~5-15 cm) device-side pigtail that needs strain relief + moisture barrier at the connector body. Adhesive-lined 3:1 heat-shrink slipped over the wire bundle before the connector is crimped, then shrunk over the connector backshell + first few cm of wire. ~10-15 cm of shrink per pigtail × 11 = ~1.5 m total. Sizes match the existing heatshrink-spade order: ⌀6 mm for the 22-20 / 18-16 single-wire devices, ⌀9 mm for the 14-12 fuel-pump pigtail.",
+    suggestion:
+      "Already covered by the heatshrink-spade BOM line if you ordered generous quantities (the ~3 m of ⌀9 + ~1 m of ⌀6 noted there). If you ordered thin (just enough for spades), add another ~1.5 m of ⌀6 + ~1 m of ⌀9 dual-wall 3:1 adhesive-lined shrink — generic / non-Mouser.",
   },
   {
     id: "fan-adapter-sub-build",
