@@ -428,6 +428,32 @@ export const ownedParts: PartItem[] = [
 // Gaps — what the harness needs that the two orders do NOT cover.
 // ---------------------------------------------------------------------------
 export const bomGaps: BomGap[] = [
+  {
+    id: "recommended-spares",
+    item: "Field-replacement spares — 1× of each relay type + 1× spare pair of each GT 280 housing size + 1× of each smaller TPA",
+    qty: "2 relays + 6 housing pairs + 5 TPAs (~17 line items, ~kr 400-500)",
+    category: "consumable",
+    reason:
+      "Both relay families (SPDT + SPST) and every GT 280 housing size are at EXACT build-count today — every owned part is allocated to a specific cavity. Dropping one connector on the garage floor or losing a relay to a roadside fault means stop-the-build (or stop-the-trip). One spare of each, kept in the glovebox / parts drawer, turns those moments into a 5-minute swap. The 2-way and 4-way bumps absorb naturally into the already-needed add-on quantities; the bigger pairs are deliberate +1 line items.",
+    suggestion:
+      "Relay spares (1× each):\n" +
+      "  893-301-1C-S-R1-12VD × 1 (SPDT — was 5 owned; current allocation = 6; this makes 7 = +1 spare)\n" +
+      "  893-3011ACR1U0312VDC × 1 (SPST — current = 7 owned, 6 active + 1 future washer; this makes 8 = +1 spare)\n" +
+      "\nGT 280 housing spare pairs (1× M + 1× F each size in use):\n" +
+      "  829-13518847 + 829-13518845 (2-way) — order 12 instead of 11 (+1 spare pair)\n" +
+      "  829-13521461 + 829-13521459 (4-way) — order 2 instead of 1 (+1 spare pair)\n" +
+      "  829-15326640 + 829-13521467 (6-way) — order 1 spare pair (you have 2 build-spec)\n" +
+      "  829-15326655 + 829-15326654 (8-way) — order 1 spare pair (you have 1 build-spec)\n" +
+      "  829-15326661 + 829-15326660 (10-way) — order 1 spare pair (you have 2 build-spec)\n" +
+      "  829-15326915 + 829-15326910 (12-way) — order 1 spare pair (you have 3 build-spec)\n" +
+      "\nGT 280 TPA spares (1× each smaller size — 12-way already has 2 spares incoming from 280336112):\n" +
+      "  829-15430899 (2-way) — order 12 instead of 11 (+1 spare)\n" +
+      "  829-15430898 (4-way) — order 2 instead of 1 (+1 spare)\n" +
+      "  829-15436198 (6-way) — order 3 instead of 2 (+1 spare)\n" +
+      "  829-15430896 (8-way) — order 3 instead of 2 (+1 spare)\n" +
+      "  829-15430900 (10-way) — order 3 instead of 2 (+1 spare)\n" +
+      "\nSkippable but worth considering for completeness: 1-2 spare faston terminals (1217084-1 and 170187-2) if existing stock is thin — currently 15 × 187-series owned which has ~3 spare.",
+  },
   // Silicone wire was ordered separately (2026-05-28) from a non-Mouser
   // supplier; quantities by gauge tier to be transcribed to ownedParts when
   // the order is to hand. Kept off the active gap list to avoid double-buying.
