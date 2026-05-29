@@ -131,13 +131,19 @@ export function validateModel(): ValidationIssue[] {
   if (spdtUsed > spdtOwned) issues.push({ severity: "error", where: "relays", message: `${spdtUsed} SPDT used > ${spdtOwned} owned` });
   if (spstUsed > spstOwned) issues.push({ severity: "error", where: "relays", message: `${spstUsed} SPST used > ${spstOwned} owned` });
 
-  // Bulkhead connector capacity vs owned 12-way GT 280 pairs.
-  if (connectorPairsNeeded > connectorPairsOwned) {
-    issues.push({
-      severity: "warn",
-      where: "connectors",
-      message: `dash/bulkhead crossings need ${connectorPairsNeeded}× 12-way GT 280 pairs but only ${connectorPairsOwned} owned — buy ${connectorPairsNeeded - connectorPairsOwned} more pairs (or use a larger bulkhead connector)`,
-    });
+  // Per-size GT 280 connector shortfalls — the connectorBom is the canonical
+  // size-aware view; surface any row with pairsToBuy > 0 as a warn so it
+  // shows up on /shopping and /modules audits. (Old single-line check that
+  // assumed everything was 12-way was misleading once 6/8/10/4/2-way
+  // bulkheads + sub-connectors entered the design.)
+  for (const row of connectorBom) {
+    if (row.pairsToBuy > 0) {
+      issues.push({
+        severity: "warn",
+        where: "connectors",
+        message: `${row.ways}-way GT 280: need ${row.pairsNeeded} pair${row.pairsNeeded === 1 ? "" : "s"}, own ${row.pairsOwned}, buy ${row.pairsToBuy} more — ${row.use}`,
+      });
+    }
   }
 
   // Fuse positions within block capacity.

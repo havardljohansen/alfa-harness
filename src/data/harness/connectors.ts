@@ -198,7 +198,14 @@ export interface ConnectorBuy {
 
 export const connectorBom: ConnectorBuy[] = (() => {
   const need = new Map<number, number>();
-  for (const c of connectors) need.set(c.ways, (need.get(c.ways) ?? 0) + 1);
+  // Only count GT 280 family connectors here — cluster-family connectors
+  // (sw3 today) use a smaller / different housing that isn't a GT 280 part.
+  // (Without this filter, sw3's 10-way ways:10 was being charged against
+  // the 10-way GT 280 stock — false-positive 'buy 1 more'.)
+  for (const c of connectors) {
+    if (c.family === "cluster") continue;
+    need.set(c.ways, (need.get(c.ways) ?? 0) + 1);
+  }
   need.set(6, (need.get(6) ?? 0) + 2); // two device-side gauge 6-ways
   need.set(12, (need.get(12) ?? 0) + 1); // EM1 engine-bay boundary (12-way): pin-level model in components.ts, no longer auto-derived via via:em1 since the refactor 2026-05-29. Manual +1 keeps the connector BOM accurate.
   need.set(4, (need.get(4) ?? 0) + 1); // FC fan-adapter boundary (4-way): pin-level model in components.ts; wires terminate AT fc rather than passing via, so the auto-derivation misses it. Manual +1 keeps the connector BOM accurate (added 2026-05-29).
