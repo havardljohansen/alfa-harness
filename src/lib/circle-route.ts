@@ -20,6 +20,8 @@ export type Routed = {
   rings: number[];
   paths: Record<number, string>;
   crossings: number;
+  /** Total wire length in pixels at the chosen `size`. Diagnostic only. */
+  length: number;
 };
 
 const TWO_PI = Math.PI * 2;
@@ -63,7 +65,12 @@ export function optimalOrder(n: number, edges: REdge[]): number[] {
   // slot[orig] = slot position; cost = Σ edges circular slot distance
   const cost = (slot: number[]) => edges.reduce((a, e) => a + cdist(slot[e.a], slot[e.b]), 0);
   let bestSlot: number[] | null = null, bestCost = Infinity;
-  for (let r = 0; r < 8; r++) {
+  // 32 random restarts (was 8). 2-opt converges to local optima quickly, so
+  // more restarts → better chance of hitting the global. Box placement is
+  // foundational — every wire's length depends on slot-distance between its
+  // endpoints, so a poor placement makes every downstream routing pass
+  // struggle. Correctness > performance here.
+  for (let r = 0; r < 32; r++) {
     const slot = Array.from({ length: n }, (_, i) => i);
     if (r > 0) for (let i = n - 1; i > 0; i--) { const k = (rng() * (i + 1)) | 0;[slot[i], slot[k]] = [slot[k], slot[i]]; }
     let cur = cost(slot), improved = true;
@@ -299,9 +306,9 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
   // Final compact remap drops any unused rank gaps.
   let st: State = { dir: edges.map(() => 0), rank: edges.map(() => 0) };
   let order: Order = {};
-  let stats = { crossings: 0, circles: 0 };
+  let stats = { crossings: 0, circles: 0, length: 0 };
   if (active.length) {
-    const iters = Math.max(400, Math.min(1600, active.length * 45));
+    const iters = Math.max(400, active.length * 80); // was capped at 1600; lifted for correctness > perf
     st = anneal(active, iters);
     let lastCost = Infinity;
     for (let iter = 0; iter < 8; iter++) {
@@ -309,7 +316,7 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
       order = p.order;
       st = localDescent(active, st, order);
       const cur = evaluate(active, st, buildGeometry(active, st, order));
-      stats = { crossings: cur.crossings, circles: cur.circles };
+      stats = { crossings: cur.crossings, circles: cur.circles, length: cur.length };
       if (cur.cost >= lastCost - 1e-6) break;
       lastCost = cur.cost;
     }
@@ -321,7 +328,7 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
       const remap = new Map(used.map((r, k) => [r, k]));
       for (const i of active) if (st.dir[i] !== 2) st.rank[i] = remap.get(st.rank[i])!;
       const fin = evaluate(active, st, buildGeometry(active, st, order));
-      stats = { crossings: fin.crossings, circles: fin.circles };
+      stats = { crossings: fin.crossings, circles: fin.circles, length: fin.length };
     }
   }
 
@@ -355,5 +362,5 @@ export function solveCircle(n: number, edges: REdge[], active: number[], size = 
   });
   const rings = Array.from({ length: stats.circles }, (_, k) => radiusOf(k, stats.circles));
 
-  return { size, box: BOX, boxR: R_BOX, positions, circles: stats.circles, rings, paths, crossings: stats.crossings };
+  return { size, box: BOX, boxR: R_BOX, positions, circles: stats.circles, rings, paths, crossings: stats.crossings, length: stats.length };
 }
