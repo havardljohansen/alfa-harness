@@ -49,22 +49,22 @@ export const ownedParts: PartItem[] = [
     mouserPn: "893-301-1C-S-R1-12VD",
     desc: "Song Chuan ISO-280 micro relay — SPDT (1 Form C), 12 Vdc, 35 A.",
     category: "relay",
-    qtyOwned: 5,
+    qtyOwned: 6, // 5 from order 77657766 + 1 from order 280336112 (fan-adapter sub-build)
     unitPrice: 6.79,
     currency: "USD",
-    order: "77657766",
-    role: "Change-over relays: headlight enable, hi/lo, wiper self-park, starter interlock, + spare.",
+    order: "77657766 + 280336112",
+    role: "Change-over relays: headlight enable, hi/lo, wiper self-park, starter interlock, fan-adapter SPDT, + spare.",
   },
   {
     mfgPn: "301-1A-C-R1-U03-12VDC",
     mouserPn: "893-3011ACR1U0312VDC",
     desc: "Song Chuan ISO-280 micro relay — SPST (1 Form A), 12 Vdc, 35 A.",
     category: "relay",
-    qtyOwned: 6,
+    qtyOwned: 7, // 6 from order 87705868 + 1 from order 280336112 (washer relay-base-extra)
     unitPrice: 38.98, // NOK incl. VAT
     currency: "NOK",
-    order: "87705868",
-    role: "On/off load relays: low beam, high beam, horn, heater fan, fuel pump, ignition main.",
+    order: "87705868 + 280336112",
+    role: "On/off load relays: low beam, high beam, horn, heater fan gate, fuel pump, ignition main, + the deferred washer relay.",
   },
 
   // --- Inter-harness connectors (Metri-Pack 280 GT, sealed) -------------------
@@ -93,13 +93,103 @@ export const ownedParts: PartItem[] = [
   {
     mfgPn: "15436200",
     mouserPn: "829-15436200",
-    desc: "Aptiv/Delphi secondary lock / TPA for GT 280 connector.",
+    desc: "Aptiv/Delphi 12-way GT 280 secondary lock / TPA (grey).",
     category: "lock",
-    qtyOwned: 6,
+    qtyOwned: 8, // 6 from order 77657766 + 2 spares from order 280336112
     unitPrice: 0.832,
     currency: "USD",
-    order: "77657766",
-    role: "Terminal position assurance for the 6 connector halves.",
+    order: "77657766 + 280336112",
+    role: "TPA for the 6 × 12-way GT 280 halves (bh2 + bh4 + em1 ×2 sides each), + 2 spares.",
+  },
+  {
+    mfgPn: "15436198",
+    mouserPn: "829-15436198",
+    desc: "Aptiv/Delphi 6-way GT 280 secondary lock / TPA (grey).",
+    category: "lock",
+    qtyOwned: 2,
+    unitPrice: 8.08,
+    currency: "NOK",
+    order: "280336112",
+    role: "TPA for the 2 × 6-way GT 280 gauge connectors (speedo + tach).",
+  },
+  {
+    mfgPn: "15430900",
+    mouserPn: "829-15430900",
+    desc: "Aptiv/Delphi 10-way GT 280 secondary lock / TPA (grey).",
+    category: "lock",
+    qtyOwned: 2,
+    unitPrice: 6.38,
+    currency: "NOK",
+    order: "280336112",
+    role: "TPA for the 2 × 10-way GT 280 halves on bh1 (dash power).",
+  },
+
+  // --- 6/8/10-way GT 280 connector housings (order 280336112) ----------------
+  {
+    mfgPn: "15326640",
+    mouserPn: "829-15326640",
+    desc: "Aptiv/Delphi 6-way MALE GT 280 sealed connector.",
+    category: "connector-housing",
+    qtyOwned: 2,
+    unitPrice: 37.83,
+    currency: "NOK",
+    order: "280336112",
+    role: "Male half × 2 — speedo + tach gauge plugs (one cavity blanked each).",
+  },
+  {
+    mfgPn: "13521467",
+    mouserPn: "829-13521467",
+    desc: "Aptiv/Delphi 6-way FEMALE GT 280 sealed connector.",
+    category: "connector-housing",
+    qtyOwned: 2,
+    unitPrice: 38.06,
+    currency: "NOK",
+    order: "280336112",
+    role: "Female half × 2 — speedo + tach gauge plugs.",
+  },
+  {
+    mfgPn: "15326655",
+    mouserPn: "829-15326655",
+    desc: "Aptiv/Delphi 8-way MALE GT 280 sealed connector.",
+    category: "connector-housing",
+    qtyOwned: 1,
+    unitPrice: 26.78,
+    currency: "NOK",
+    order: "280336112",
+    role: "Male half × 1 — bh3 (rear/boot bulkhead).",
+  },
+  {
+    mfgPn: "15326654",
+    mouserPn: "829-15326654",
+    desc: "Aptiv/Delphi 8-way FEMALE GT 280 sealed connector.",
+    category: "connector-housing",
+    qtyOwned: 1,
+    unitPrice: 38.95,
+    currency: "NOK",
+    order: "280336112",
+    role: "Female half × 1 — bh3 (rear/boot bulkhead).",
+  },
+  {
+    mfgPn: "15326661",
+    mouserPn: "829-15326661",
+    desc: "Aptiv/Delphi 10-way MALE GT 280 sealed connector.",
+    category: "connector-housing",
+    qtyOwned: 2,
+    unitPrice: 29.46,
+    currency: "NOK",
+    order: "280336112",
+    role: "Male half × 2 — bh1 dash power (split into two 10-way plugs).",
+  },
+  {
+    mfgPn: "15326660",
+    mouserPn: "829-15326660",
+    desc: "Aptiv/Delphi 10-way FEMALE GT 280 sealed connector.",
+    category: "connector-housing",
+    qtyOwned: 2,
+    unitPrice: 31.36,
+    currency: "NOK",
+    order: "280336112",
+    role: "Female half × 2 — bh1 dash power.",
   },
 
   // --- Metri-Pack 280 terminals ----------------------------------------------
@@ -161,13 +251,93 @@ export const ownedParts: PartItem[] = [
   {
     mfgPn: "15304730-L",
     mouserPn: "829-15304730",
-    desc: "Aptiv/Delphi GT 280 MALE terminal, tin (for the GT 280 bulkhead plug MALE halves).",
+    desc: "Aptiv/Delphi GT 280 MALE terminal, tin (14-12 AWG).",
     category: "terminal",
-    qtyOwned: 25,
+    qtyOwned: 50, // 25 from order 77657766 + 25 from order 280336112
     unitPrice: 0.389,
     currency: "USD",
-    order: "77657766",
-    role: "GT 280 male crimp — for the GT 280 bulkhead plug MALE halves (≈41 male needed; you own ~75).",
+    order: "77657766 + 280336112",
+    role: "GT 280 male crimp — for the GT 280 bulkhead plug MALE halves (heavy gauge tier).",
+  },
+  // --- GT 280 FEMALE terminals (order 280336112) — was the audit gap ---------
+  {
+    mfgPn: "15304718-L",
+    mouserPn: "829-15304718",
+    desc: "Aptiv/Delphi GT 280 FEMALE terminal, tin (22-20 AWG, cable rng 1.85-1.20 mm).",
+    category: "terminal",
+    qtyOwned: 60,
+    unitPrice: 1.16,
+    currency: "NOK",
+    order: "280336112",
+    role: "GT 280 female crimp — bulkhead-plug female halves at the signal gauge tier (22-20 AWG).",
+  },
+  {
+    mfgPn: "15304719-L",
+    mouserPn: "829-15304719",
+    desc: "Aptiv/Delphi GT 280 FEMALE terminal, tin (18-16 AWG, cable rng 2.25-1.70 mm).",
+    category: "terminal",
+    qtyOwned: 25,
+    unitPrice: 1.22,
+    currency: "NOK",
+    order: "280336112",
+    role: "GT 280 female crimp — bulkhead-plug female halves at the medium gauge tier (18-16 AWG).",
+  },
+  {
+    mfgPn: "15304720-L",
+    mouserPn: "829-15304720",
+    desc: "Aptiv/Delphi GT 280 FEMALE terminal, tin (14-12 AWG, cable rng 3.20-2.20 mm).",
+    category: "terminal",
+    qtyOwned: 10,
+    unitPrice: 2.05,
+    currency: "NOK",
+    order: "280336112",
+    role: "GT 280 female crimp — bulkhead-plug female halves at the heavy gauge tier (14-12 AWG).",
+  },
+  // --- MP 280 FEMALE 16-14 AWG (order 280336112) — fills the existing MP 280 gap
+  {
+    mfgPn: "12129409-L",
+    mouserPn: "829-12129409",
+    desc: "Aptiv/Delphi Metri-Pack 280 FEMALE sealed terminal, tin (16-14 AWG, cable rng 3.05-2.48 mm).",
+    category: "terminal",
+    qtyOwned: 25,
+    unitPrice: 2.40,
+    currency: "NOK",
+    order: "280336112",
+    role: "MP 280 female crimp at the 1.5 mm² (16-14 AWG) tier — block rears + device ends. The owned MP280 female set (12110843/45/847) skipped this gauge.",
+  },
+  // --- GT 280 cable seals (order 280336112) — was the audit gap --------------
+  {
+    mfgPn: "15366065",
+    mouserPn: "829-15366065",
+    desc: "Aptiv/Delphi GT 280 single-wire cable seal — ORANGE (22-20 AWG).",
+    category: "seal",
+    qtyOwned: 125,
+    unitPrice: 0.212,
+    currency: "NOK",
+    order: "280336112",
+    role: "GT 280 cable seal at the signal gauge tier — one per terminated cavity (both halves of every wire).",
+  },
+  {
+    mfgPn: "15366066",
+    mouserPn: "829-15366066",
+    desc: "Aptiv/Delphi GT 280 single-wire cable seal — YELLOW (18-16 AWG).",
+    category: "seal",
+    qtyOwned: 50,
+    unitPrice: 0.246,
+    currency: "NOK",
+    order: "280336112",
+    role: "GT 280 cable seal at the medium gauge tier.",
+  },
+  {
+    mfgPn: "15366067",
+    mouserPn: "829-15366067",
+    desc: "Aptiv/Delphi GT 280 single-wire cable seal — TAN (14-12 AWG).",
+    category: "seal",
+    qtyOwned: 25,
+    unitPrice: 0.246,
+    currency: "NOK",
+    order: "280336112",
+    role: "GT 280 cable seal at the heavy gauge tier.",
   },
 
   // --- Single-wire seals ------------------------------------------------------
@@ -228,21 +398,39 @@ export const ownedParts: PartItem[] = [
     order: "77657766",
     role: "Standard spade terminations — lamps, switches, horns, relays' device side.",
   },
+
+  // --- Diodes (order 280336112) ----------------------------------------------
+  {
+    mfgPn: "1N4007G",
+    mouserPn: "863-1N4007G",
+    desc: "ON Semi 1N4007G rectifier diode (1000 V / 1 A, DO-41).",
+    category: "component",
+    qtyOwned: 10,
+    unitPrice: 1.23,
+    currency: "NOK",
+    order: "280336112",
+    role: "Signal-OR isolation diodes: hazard→turn (d-haz-L/R), turn tell-tale (d-tell-L/R), fan-gate diode-OR (d-fan-hi-or, d-fan-lo-or) — six in use + spares.",
+  },
+  {
+    mfgPn: "1N5822",
+    mouserPn: "637-1N5822",
+    desc: "Schottky rectifier diode (40 V / 3 A, DO-201).",
+    category: "component",
+    qtyOwned: 5,
+    unitPrice: 4.42,
+    currency: "NOK",
+    order: "280336112",
+    role: "Park-override OR-isolation Schottky on the ign-feed legs of the front/rear parking lights (d-park-ign-iso + d-park-ign-iso-rear) — 2 in use + 3 spares.",
+  },
 ];
 
 // ---------------------------------------------------------------------------
 // Gaps — what the harness needs that the two orders do NOT cover.
 // ---------------------------------------------------------------------------
 export const bomGaps: BomGap[] = [
-  {
-    id: "wire",
-    item: "Silicone-insulated tinned-copper wire (single colour + Dymo labels)",
-    qty: "≈ see length report — by gauge",
-    category: "wire",
-    reason:
-      "Silicone-insulated tinned-copper chosen for heat resistance + long-term durability. One colour throughout — identity is the Dymo heat-shrink labels. Order by gauge tier: 0.75 / 1.5 / 2.5 / 6 / 25 mm² (totals on the Lengths page). Note: silicone insulation is FATTER than PVC/XLPE of the same gauge, which sizes up the label + heat-shrink (see the Dymo line).",
-    suggestion: "Silicone tinned-copper, AWG matched to each gauge tier.",
-  },
+  // Silicone wire was ordered separately (2026-05-28) from a non-Mouser
+  // supplier; quantities by gauge tier to be transcribed to ownedParts when
+  // the order is to hand. Kept off the active gap list to avoid double-buying.
   {
     id: "mini-fuses",
     item: "MINI (ATM) blade fuses",
@@ -314,21 +502,15 @@ export const bomGaps: BomGap[] = [
   },
   {
     id: "fan-adapter-sub-build",
-    item: "Fan-adapter module sub-build (SPDT relay + fc connector + diodes + enclosure)",
+    item: "Fan-adapter module sub-build — items NOT covered by order 280336112",
     qty: "1 sub-harness",
     category: "component",
-    reason: "The chassis loom ends at the fc 4-pin connector; the actual fan-specific switching lives in a small detachable adapter behind it. Today's adapter handles the 3-wire fan (GND + HIGH winding + LOW winding) with one SPDT doing speed select. Loom is forward-compatible with 2-wire or 4-wire-smart fans via different adapter variants.",
-    suggestion: "Per-fan-adapter BOM: 1× Song Chuan 301-1C-S-R1 SPDT (+1 beyond the 5 owned) + 1× ISO-280 5-pin relay socket + 1× 4-way GT 280 sealed pair: male 13521461 + female 13521459 + 1× optional 4-way TPA 15430898 (grey) + 8× GT 280 terminals (4 per side — sizes match wire gauges per the connector page) + matching cable seals (15366065/66/67) + 2× 1N4007 diodes for the chassis-side gate diode-OR (live near the rly-fan socket, not inside the adapter) + small sealed enclosure or heat-shrink bundle. Per-PN verification via Custom Connector Kits 2026-05-29.",
+    reason: "PARTIAL: order 280336112 covered the +1 SPDT (301-1C-S-R1) and the 2× 1N4007 fan-gate diodes. STILL MISSING: 4-way GT 280 connector pair (male 13521461 + female 13521459), 4-way GT 280 TPA grey 15430898, ISO-280 5-pin relay socket, and a small sealed enclosure. The 4-way GT 280 pair specifically was added to the BOM after the latest Mouser order shipped (fan-adapter refactor 2026-05-29).",
+    suggestion: "Next Mouser order: 1× 13521461 (male) + 1× 13521459 (female) + 1× 15430898 (4-way grey TPA, optional). Source separately: 1× ISO-280 5-pin relay socket + small sealed enclosure (Amazon / local). GT 280 terminals (4 per side at the matching wire gauges) + cable seals are already covered from order 280336112.",
   },
-  {
-    id: "gauge-connectors",
-    item: "Gauge connectors for the two main dials (speedo + tach) — replace the vintage 5-pin plugs",
-    qty: "2 pairs",
-    category: "connector-housing",
-    reason:
-      "The speedo and tach carry vintage 5-pin connectors; replacing them keeps the whole car on the Metri-Pack 280 terminal system. GT 280 has no 5-way (the ladder skips 5, 7, 9, 11), so use a GT 280 6-way with one cavity blanked (male 15326640 + matching female) — in-family, 1 spare. Alternative: a Metri-Pack 280 5-way (exact size, same terminals, different housing family).",
-    suggestion: "GT 280 6-way: 15326640 M + 13521467 F (verified mating pair 2026-05-28). One cavity blanked. Uses GT 280 terminals/seals — NOT MP280 (the 6-way uses the same GT 280 sealed family as the bulkhead plugs). 6-way TPA = 15436198 if you want the secondary lock.",
-  },
+  // gauge-connectors — RESOLVED via order 280336112 (15326640 × 2 + 13521467 × 2
+  // + 15436198 × 2 TPA). Both speedo + tach plugs covered with the 6-way GT 280
+  // pair (one cavity blanked each).
   {
     id: "instr-dimmer",
     item: "Instrument-light PWM dimmer module",
@@ -338,15 +520,9 @@ export const bomGaps: BomGap[] = [
       "Panel illumination now runs as one circuit through a PWM dimmer; the 3-way instrument-light switch picks two brightness presets. A simple low-side LED/bulb PWM dimmer (with a rotary pot, or two preset inputs) carries the small lamp load.",
     suggestion: "Aftermarket (not Mouser) — any 12 V LED PWM dimmer module rated ≥ 3 A (Amazon/eBay/icstation, ~$8–15).",
   },
-  {
-    id: "relay-base-extra",
-    item: "SPST relay ×1 — for the deferred washer pump",
-    qty: "1",
-    category: "relay",
-    reason:
-      "The 6 SPST + 5 SPDT you own are all allocated; the deferred washer needs one more SPST (it reserves the constant-RTMR's last cavity). Buy it with the pump. (Spare relays to carry for limp-home are listed under 'Recommended spares'.)",
-    suggestion: "Song Chuan 301-1A-C-R1-U03-12VDC (same as owned) ×1.",
-  },
+  // relay-base-extra — RESOLVED via order 280336112 (1× extra 301-1A-C-R1
+  // SPST). The 7 SPST now owned cover all current allocations + the deferred
+  // washer relay slot.
   {
     id: "washer",
     item: "Electric washer pump + period-correct dash push button (DEFERRED install)",
@@ -410,24 +586,11 @@ export const bomGaps: BomGap[] = [
     reason: "Heat gun for the Dymo shrink labels + adhesive heat-shrink; strippers for clean cuts; a meter/test light to verify each circuit against its build sheet as you bring it up.",
     suggestion: "Any decent heat gun; auto-stripper; a basic DMM or a 12 V test light.",
   },
-  {
-    id: "diodes-signal",
-    item: "Signal isolation diodes (1N4007 or 1N4148)",
-    qty: "4 + spares (buy a 10-pack ~£3)",
-    category: "component",
-    reason:
-      "4 inline signal diodes for OR-isolation on coil-trigger / tell-tale nodes: hazard→turn isolation (×2, d-haz-L + d-haz-R) and the shared green turn tell-tale OR-ed from both sides (×2, d-tell-L + d-tell-R). All on ≤0.2 A signal-level wires. (Relay-coil flyback diodes deliberately omitted — our Song Chuan 301-1A-C-R1 / 301-1C-S-R1 relays carry an integral 1 kΩ coil-suppression resistor per the R1 suffix, which is sufficient for the mechanical-switch coil-trigger application.)",
-    suggestion: "1N4007 (1 A / 1000 V) general purpose; 1N4148 also fine for the tell-tale OR-ing.",
-  },
-  {
-    id: "diodes-park-iso",
-    item: "Schottky diodes for PARK-override OR-isolation (3 A / 40 V)",
-    qty: "2 + 2 spares (4 total ~£2)",
-    category: "component",
-    reason:
-      "2 inline Schottky power diodes (d-park-ign-iso front + d-park-ign-iso-rear) — sit on the ign-feed leg of the parking-light feed at park-fl.58 and tail-rl.58. Prevent the dash-switch PARK key-off override from back-feeding the ignition bus when engaged with the key off (would otherwise phantom-power gauges, coil etc.). Schottky preferred over 1N400x for the lower forward drop at the ~2 A continuous parking-light load. Added to the model in the headlight refactor — see ARCHITECTURE.md + diodes.ts.",
-    suggestion: "1N5822 (3 A / 40 V) or SB540 — both common Mouser stock. Anode at the rtmr-ign side.",
-  },
+  // diodes-signal — RESOLVED via order 280336112 (10× 1N4007G). Covers the 6
+  // in-use signal diodes (hazard→turn ×2, turn tell-tale ×2, fan-gate ×2) + 4
+  // spares.
+  // diodes-park-iso — RESOLVED via order 280336112 (5× 1N5822 Schottky).
+  // Covers the 2 in-use park-override Schottky diodes + 3 spares.
   {
     id: "flasher-iso280",
     item: "Bussmann NO-762-LED electronic flasher (ISO-280 socket mount)",
@@ -437,42 +600,17 @@ export const bomGaps: BomGap[] = [
       "Committed 2026-05-28: the LED flasher moves OFF the external bracket and INTO rtmr-const cavity 5. Drop-in for an ISO-280 relay socket — same 4 pins, 2.8 mm spades. Buy 2: one fitted, one identical spare in the glovebox so a roadside failure is a 30-second swap (the same socket that takes any other ISO-280 relay). Pick the -LED variant unconditionally even with current incandescent indicators — it's load-independent so it'll flash either way, and forward-compatibility with an eventual LED-indicator swap costs nothing extra.",
     suggestion: "Mouser doesn't list the -LED variant in normal search (2026-05-28 — would need a special-order call). Direct alternates: Crimp Supply (US, crimpsupply.com), ozautoelectrics (AU). The plain NO.762 IS at Mouser BUT MUST NOT be substituted here: it sees only relay-coil current (~150-600 mA) in our setup, and the non-LED variant's minimum-current threshold is sized for incandescent bulb loads — risk of no-flash or hyperflash. Spec: 4-pin 2.8 mm ISO-280, 8-14 VDC operating, 162 W max (12.6 A), electronic / load-independent.",
   },
-  {
-    id: "term-16-14",
-    item: "Metri-Pack 280 terminals, 16-14 AWG (block/device side) — for the 1.5 mm² wires",
-    qty: "~20 + spares",
-    category: "terminal",
-    reason:
-      "MP280-side only (RTMR/PDM rears + device ends): the owned MP280 terminals skip 16-14, the ideal range for 1.5 mm² medium wires. (1.5 mm² wires that land on a GT 280 plug use the GT 280 18-16 terminal instead — see below.)",
-    suggestion: "Female 12129409-L (sealed, verified); pair with the matching 16-14 AWG sealed male (confirm PN at order).",
-  },
-  // --- GT 280 plug terminals/seals — the audit gap (you own the MALE side only) -
-  {
-    id: "gt280-female-terms",
-    item: "GT 280 FEMALE terminals — for the bulkhead-plug female halves (you own ZERO)",
-    qty: "~50 (41 wires cross per side + spares)",
-    category: "terminal",
-    reason:
-      "AUDIT FINDING: the 5 bulkhead plugs are GT 280, and a GT 280 female connector needs GT 280 female SOCKETS. The only female terminals you own (12110xxx) are Metri-Pack 280 — they fit the RTMR/PDM rears + device ends, NOT the GT 280 plugs. Your GT 280 MALE terminals (15304730/31/724, ~75) cover the male halves; the female side has nothing. 41 wires cross the GT 280 bulkheads per side.",
-    suggestion: "GT 280 sealed female: 15304718-L (22-20 AWG), 15304719-L (18-16), 15304720-L (14-12) — buy to match your bulkhead wire gauges (mostly 22-20 + 18-16) + spares.",
-  },
-  {
-    id: "gt280-seals",
-    item: "GT 280 cable seals — for the bulkhead plugs (you own ZERO GT 280 seals)",
-    qty: "~100 (82 = both halves of 41 wires + spares)",
-    category: "seal",
-    reason:
-      "AUDIT FINDING: the seals you own (15324982/981/985) are Metri-Pack 280 single-wire seals (MP280 block/device side). The GT 280 sealed plugs need GT 280 cable seals — one per wire, per half.",
-    suggestion: "GT 280 seals: 15366065 (orange, 22-20), 15366066 (yellow, 18-16), 15366067 (tan, 14-12) — match to wire gauge.",
-  },
-  {
-    id: "gt280-tpa",
-    item: "GT 280 secondary lock / TPA — size-specific PN per way-count",
-    qty: "2× 6-way + 2× 10-way; 0-2 spare 12-way (you own exact count)",
-    category: "lock",
-    reason: "GT 280 TPAs are SIZE-SPECIFIC — different Aptiv PN per connector way-count. You own 6 × 15436200 (12-way) which is the EXACT need for the 3 × 12-way connector pairs (bh2 + bh4 + em1, ×2 halves each = 6 TPAs). No new 12-way required for build coverage — 0-2 spare is the sane buy. The smaller plug sizes need their own TPA PN: 10-way for bh1 (2 plugs) and 6-way for the gauge connectors. The 8-way TPA PN couldn't be confirmed via distributor search (2026-05-28); 8-way GT 280 plugs may rely on primary lock only — investigate when bh3 is being built or skip TPA on that plug.",
-    suggestion: "Per size: 6-way TPA = 15436198 (×2 for the gauge connectors). 8-way TPA = PN unconfirmed (skip or source separately when building bh3). 10-way TPA = 15430900 (×2 for the two bh1 plugs). 12-way TPA = 15436200 (own 6, exact match for build — buy 0-2 only as spares). Alt sources if any out-of-stock at Mouser: Waytek, Custom Connector Kits, Del City, EFI Connection.",
-  },
+  // term-16-14 — RESOLVED via order 280336112 (12129409-L × 25, MP280 sealed
+  // female at the 1.5 mm² / 16-14 AWG tier).
+  // gt280-female-terms — RESOLVED via order 280336112: 15304718-L × 60 (22-20),
+  // 15304719-L × 25 (18-16), 15304720-L × 10 (14-12) — covers all three tiers
+  // of GT 280 female terminals for the bulkhead-plug female halves.
+  // gt280-seals — RESOLVED via order 280336112: 15366065 × 125 (orange 22-20),
+  // 15366066 × 50 (yellow 18-16), 15366067 × 25 (tan 14-12).
+  // gt280-tpa — RESOLVED via order 280336112 for 6-way (15436198 × 2),
+  // 10-way (15430900 × 2), and 12-way spares (15436200 × 2 added to the 6 in
+  // stock = 8). 8-way TPA: PN still unconfirmed (skip or source when bh3 is
+  // being built — primary lock is sufficient if TPA is unavailable).
   // --- Future brake-redundancy + brake-failure warning parts (provisioned in harness; buy when fitted) ---
   {
     id: "brake-switch-2",
@@ -512,9 +650,9 @@ export interface TerminalSpec {
 }
 
 export const terminalByGauge: TerminalSpec[] = [
-  { mm2: 0.5, awg: "22-20", femalePn: "12110843-L", malePn: "15304730-L", owned: true, ownedF: 50, ownedM: 25, note: "Signal wires (20 AWG / 0.5 mm²) — 22-20 AWG terminal covers them." },
+  { mm2: 0.5, awg: "22-20", femalePn: "12110843-L", malePn: "15304730-L", owned: true, ownedF: 50, ownedM: 50, note: "Signal wires (20 AWG / 0.5 mm²) — 22-20 AWG terminal covers them. Male bumped to 50 in order 280336112." },
   { mm2: 0.75, awg: "18-16", femalePn: "12110847-L", malePn: "15304731-L", owned: true, ownedF: 50, ownedM: 25 },
-  { mm2: 1.5, awg: "16-14", femalePn: "12129409-L", malePn: "16-14 male (confirm)", owned: false, ownedF: 0, ownedM: 0, note: "Buy — owned set skips 16-14. Female 12129409-L verified." },
+  { mm2: 1.5, awg: "16-14", femalePn: "12129409-L", malePn: "16-14 male (confirm)", owned: true, ownedF: 25, ownedM: 0, note: "Female 12129409-L now in stock (25 from order 280336112). Male side at this gauge still TBD — confirm need based on final pin assignments." },
   { mm2: 2.5, awg: "14-12", femalePn: "12110845-L", malePn: "15304724-L", owned: true, ownedF: 25, ownedM: 25 },
   { mm2: 6, awg: "—", owned: false, isRing: true, note: "Ring terminal on a stud — not a connector terminal." },
   { mm2: 25, awg: "—", owned: false, isRing: true, note: "Ring terminal on a stud (battery/starter/ground hub)." },

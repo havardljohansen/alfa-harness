@@ -162,8 +162,14 @@ const SIZE_USE: Record<number, string> = {
   10: "BH1 dash power (two plugs: 10 + 7)",
   12: "BH2 dash lighting",
 };
-/** Owned housing pairs by size (from the Mouser orders): three 12-ways only. */
-const OWNED_PAIRS: Record<number, number> = { 12: 3 };
+/** Owned housing pairs by size (across orders 77657766 + 280336112). */
+const OWNED_PAIRS: Record<number, number> = {
+  6: 2,   // gauge connectors (speedo + tach) — 15326640 M + 13521467 F × 2
+  8: 1,   // bh3 rear bulkhead — 15326655 M + 15326654 F × 1
+  10: 2,  // bh1 dash power (two plugs) — 15326661 M + 15326660 F × 2
+  12: 3,  // bh2 + bh4 + em1 — 15326915 M + 15326910 F × 3
+  // 4: 0 — fan-adapter (fc connector) STILL TO BUY (13521461 + 13521459)
+};
 
 export const mouserUrl = (mfgPn: string) => `https://www.mouser.com/c/?q=${mfgPn}`;
 
