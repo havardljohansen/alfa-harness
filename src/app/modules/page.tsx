@@ -1,5 +1,6 @@
 import { harnessModules } from "@/data/harness/modules";
 import { CircleModuleDiagram } from "@/components/circle-module-diagram";
+import { ModuleWireSchedule } from "@/components/module-wire-schedule";
 
 export default function ModulesPage() {
   return (
@@ -24,6 +25,7 @@ export default function ModulesPage() {
           {/* Circular routing diagram + toggles + per-component detail */}
           <div className="p-3 border-b">
             <CircleModuleDiagram moduleId={m.id} />
+            <ModuleWireSchedule moduleId={m.id} />
           </div>
 
           {/* Build */}
