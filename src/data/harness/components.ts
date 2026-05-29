@@ -242,6 +242,19 @@ const power: DeviceComponent[] = [
     note: "4-pin Metri-Pack 280 boundary between the chassis loom and the fan-adapter module. Chassis side = MALE (permanent, protected); adapter side = FEMALE (swappable for fan variant). Pin functions FIXED on the chassis side — three fan-adapter variants (3-wire today, 2-wire fallback, 4-wire smart-fan future) all consume the same chassis pin assignments differently. PN PHYSICAL-TODO: confirm an exact 4-way MP 280 / GT 280 PN with high-current terminals + cable seals for pin 1.",
   },
   {
+    id: "dl",
+    name: "Dash-lights interface (chassis ↔ dim adapter)",
+    kind: "connector",
+    zone: "dash",
+    terminals: [
+      t("pin-1", "Gated 12V — diode-OR of sw-instr.dim + sw-instr.bright via 2× 1N5822 (signal gauge, ~2 A panel-light load)", ""),
+      t("pin-2", "Ground — local gnd-dash (signal gauge, panel-light return)", ""),
+      t("pin-3", "BRIGHT-signal — from sw-instr.bright (signal gauge)", ""),
+      t("pin-4", "DIM-signal — from sw-instr.dim (signal gauge)", ""),
+    ],
+    note: "4-pin GT 280 sealed boundary between the chassis side and the dashboard-illumination adapter. Chassis side = MALE (permanent); adapter side = FEMALE (swappable variant — PWM today, passthrough as a fallback option). Pin functions FIXED on the chassis side: pin 1 supplies the no-PWM passthrough case (LEDs at full brightness whenever switch != OFF), pins 3/4 drive a PWM module's lo/hi preset inputs. Adapter side chooses which pins to use. NOTE: this controls DASHBOARD ILLUMINATION ONLY — gauge faces, warning-lamp legends, panel symbols. Interior light (int-light) is a SEPARATE circuit on the constant bus with switched-ground via door switches — not dimmed, no PWM, no relation to this connector.",
+  },
+  {
     id: "alternator",
     name: "Alternator (internally regulated)",
     kind: "alternator",

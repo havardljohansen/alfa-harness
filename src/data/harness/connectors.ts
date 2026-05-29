@@ -84,6 +84,16 @@ export const logicalBulkheads: LogicalBulkhead[] = [
       "Engine-bay boundary connector — the single light-signal interface between the chassis loom and whatever engine is fitted. Today (Nord) carries 8 active pins: ignition feed + ground + tach + temp signal/ground + oil signal + oil warning + alt D+ + starter solenoid trigger. Future (155 TS + Alfaholics K6+ kit) carries the same 8 active pins to equivalent terminals inside the kit's universal loom, plus optionally lights up pins 10-12 (ECU fan trigger / CTS pass-through / spare). Pin assignment is identical for both engines — only the engine-side pigtail destinations differ. Heavy cables (alt B+, starter B+, alt case ground) bypass EM1 entirely as direct stud-mount terminations. See ARCHITECTURE.md for the full pin map.",
   },
   {
+    id: "dl",
+    name: "Dash-lights interface (chassis loom ↔ dim adapter or passthrough)",
+    zoneA: "dash",
+    zoneB: "dash",
+    ways: 4,
+    expectedPlugs: 1,
+    purpose:
+      "Boundary connector between the chassis side and whichever dashboard-illumination adapter is fitted. Aptiv 4-way GT 280 sealed pair (male 13521461 / female 13521459) — same family + same terminals as fc and the bulkheads. 4 pins fixed on the chassis side regardless of adapter: pin 1 = gated 12V via the diode-OR (sw-instr.dim + sw-instr.bright through 2× 1N5822 Schottky) — carries the ~2 A panel-light load directly when no PWM is installed; pin 2 = ground (local gnd-dash, not gnd-eng — load is light enough); pin 3 = BRIGHT signal (12V when switch in BRIGHT); pin 4 = DIM signal (12V when switch in DIM). Today's adapter (PWM via the existing instr-pwm module) uses pins 2/3/4 only and ignores pin 1. A future PASSTHROUGH variant (no PWM module — LEDs at full brightness whenever switch != OFF) uses pins 1+2 and caps 3+4. Same swap-an-adapter pattern as fc.",
+  },
+  {
     id: "fc",
     name: "Fan-adapter interface (chassis loom ↔ fan adapter)",
     zoneA: "engine-front",
@@ -192,6 +202,7 @@ export const connectorBom: ConnectorBuy[] = (() => {
   need.set(6, (need.get(6) ?? 0) + 2); // two device-side gauge 6-ways
   need.set(12, (need.get(12) ?? 0) + 1); // EM1 engine-bay boundary (12-way): pin-level model in components.ts, no longer auto-derived via via:em1 since the refactor 2026-05-29. Manual +1 keeps the connector BOM accurate.
   need.set(4, (need.get(4) ?? 0) + 1); // FC fan-adapter boundary (4-way): pin-level model in components.ts; wires terminate AT fc rather than passing via, so the auto-derivation misses it. Manual +1 keeps the connector BOM accurate (added 2026-05-29).
+  need.set(4, (need.get(4) ?? 0) + 1); // DL dim-adapter boundary (4-way): same situation as fc — wires terminate AT dl. Manual +1 (added 2026-05-29).
   need.set(2, (need.get(2) ?? 0) + 11); // Service-break connectors (2-way × 11): inline at engine-bay devices (brake, O2, senders, fuel pump, reverse switch) + spares for front turns + side repeaters. Not part of the chassis-loom topology — pure service convenience.
   const mk = (p: string) => ({ mfgPn: p, mouserPn: `829-${p}`, url: mouserUrl(p) });
   return [...need.keys()]

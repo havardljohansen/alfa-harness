@@ -570,6 +570,26 @@ export const bomGaps: BomGap[] = [
       "Already covered by the heatshrink-spade BOM line if you ordered generous quantities (the ~3 m of ⌀9 + ~1 m of ⌀6 noted there). If you ordered thin (just enough for spades), add another ~1.5 m of ⌀6 + ~1 m of ⌀9 dual-wall 3:1 adhesive-lined shrink — generic / non-Mouser.",
   },
   {
+    id: "dim-adapter-sub-build",
+    item: "Dim-adapter (dashboard illumination) module sub-build",
+    qty: "1 sub-harness",
+    category: "component",
+    reason:
+      "Detachable PWM dimmer for dashboard gauge illumination only — the existing instr-pwm module now lives BEHIND the new dl 4-pin connector. Mirrors the fan-adapter pattern: chassis loom universal, adapter is variant-specific (PWM today, passthrough swap available). DASHBOARD ONLY — interior dome light is on a separate constant-bus circuit with door-switch ground, unaffected by any of this.",
+    suggestion:
+      "Mouser add-on items (per dim-adapter):\n" +
+      "  829-13521461 × 1 (4-way GT 280 male — chassis-side half of dl)\n" +
+      "  829-13521459 × 1 (4-way GT 280 female — adapter-side half of dl)\n" +
+      "  829-15430898 × 1 (4-way TPA grey, optional)\n" +
+      "Already-stocked items (drawn from existing inventory):\n" +
+      "  2× 1N5822 Schottky diodes (out of 5 owned from order 280336112; 2 already used for park-iso; 1 spare remains after dim-adapter)\n" +
+      "  4× GT 280 male terminals + 3× GT 280 female terminals + 7-8× cable seals at 22-20 AWG (absorbed by the existing terminal top-up margin)\n" +
+      "  1× cavity plug 15305170 (pin 1 unused on adapter-side female in PWM variant — absorbed by the 5 already in the order)\n" +
+      "Non-Mouser:\n" +
+      "  PWM dimmer module — aftermarket 12 V low-current dimmer with DIM + BRIGHT preset inputs and a PWM output (Amazon / eBay / icstation, ~$8-15). NOT Mouser.\n" +
+      "  Small sealed plastic enclosure for the dimmer PCB (Amazon / local, ~$5).",
+  },
+  {
     id: "fan-adapter-sub-build",
     item: "Fan-adapter module sub-build — items NOT covered by order 280336112",
     qty: "1 sub-harness",
@@ -580,15 +600,10 @@ export const bomGaps: BomGap[] = [
   // gauge-connectors — RESOLVED via order 280336112 (15326640 × 2 + 13521467 × 2
   // + 15436198 × 2 TPA). Both speedo + tach plugs covered with the 6-way GT 280
   // pair (one cavity blanked each).
-  {
-    id: "instr-dimmer",
-    item: "Instrument-light PWM dimmer module",
-    qty: "1",
-    category: "component",
-    reason:
-      "Panel illumination now runs as one circuit through a PWM dimmer; the 3-way instrument-light switch picks two brightness presets. A simple low-side LED/bulb PWM dimmer (with a rotary pot, or two preset inputs) carries the small lamp load.",
-    suggestion: "Aftermarket (not Mouser) — any 12 V LED PWM dimmer module rated ≥ 3 A (Amazon/eBay/icstation, ~$8–15).",
-  },
+  // instr-dimmer — see `dim-adapter-sub-build` entry above. Per the dim-adapter
+  // refactor 2026-05-29, the PWM module lives behind the dl 4-pin connector
+  // inside the dim-adapter module (not loom-side as before). Aftermarket
+  // sourcing unchanged — still Amazon / eBay / icstation, ~$8–15.
   // relay-base-extra — RESOLVED via order 280336112 (1× extra 301-1A-C-R1
   // SPST). The 7 SPST now owned cover all current allocations + the deferred
   // washer relay slot.

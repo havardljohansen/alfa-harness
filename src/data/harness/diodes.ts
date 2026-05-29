@@ -86,4 +86,22 @@ export const diodes: Diode[] = [
     currentA: 0.15,
     suggestion: "1N4007 — pair with d-fan-hi-or. Anode at sw-heaterfan.low.",
   },
+  {
+    id: "d-instr-or-dim",
+    name: "Dash-light gate diode-OR (DIM leg)",
+    purpose: "Carries the ~2 A panel-light load when switch is in DIM, isolating the DIM-signal wire so it doesn't back-feed BRIGHT (which would corrupt the PWM module's preset selection). Together with d-instr-or-brt forms the diode-OR feeding dl pin 1 — the passthrough-mode power path. Anode at sw-instr.dim, cathode at dl.pin-1 splice.",
+    onWire: "w-instr-or-dim",
+    inline: true,
+    currentA: 2.0,
+    suggestion: "1N5822 (3 A / 40 V Schottky — already in BOM for park-iso). Anode at sw-instr.dim. 3 of 5 currently spare in stock, 2 used here.",
+  },
+  {
+    id: "d-instr-or-brt",
+    name: "Dash-light gate diode-OR (BRIGHT leg)",
+    purpose: "Mirror of d-instr-or-dim for the BRIGHT switch position.",
+    onWire: "w-instr-or-brt",
+    inline: true,
+    currentA: 2.0,
+    suggestion: "1N5822 (3 A / 40 V Schottky). Anode at sw-instr.bright.",
+  },
 ];

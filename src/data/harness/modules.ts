@@ -34,8 +34,8 @@ export const harnessModules: HarnessModule[] = [
     summary:
       "The trunk everything else plugs into: the two bussed RTMRs (constant + ignition bus) and every relay, plus the two PWM modules and the engine-mounted devices fed directly from the bus. The RTMR hub mounts on the LEFT side of the engine bay (looking forward through the windscreen) — so the firewall plugs land on the left.",
     componentIds: [
-      "rtmr-ign", "rtmr-const", "battery", "flasher", "em1", "fc",
-      "wiper", "washer-pump", "instr-pwm",
+      "rtmr-ign", "rtmr-const", "battery", "flasher", "em1", "fc", "dl",
+      "wiper", "washer-pump",
       "sw-brake", "sw-brake-2", "sw-brake-diff", "sw-reverse", "o2-sensor",
       "rly-horn", "rly-fan", "rly-fuel", "rly-ignmain", "rly-turnL", "rly-turnR",
       "rly-wlow", "rly-whigh", "rly-starter", "rly-washer", "gnd-eng",
@@ -302,6 +302,36 @@ export const harnessModules: HarnessModule[] = [
     ],
   },
   {
+    id: "dim-adapter",
+    name: "Dashboard-illumination adapter module (PWM today, passthrough optional)",
+    summary:
+      "Tiny detachable sub-harness behind the dl 4-pin connector that controls the dashboard gauge / panel illumination. Today: PWM variant — a small dimmer module (instr-pwm) driven by the switch's DIM / BRIGHT preset signals. Swap-in compatible with a PASSTHROUGH variant (no PWM, switch positions both = full brightness via dl pin 1). Controls DASHBOARD ILLUMINATION ONLY — gauge faces, warning-lamp legends, panel symbols. The interior dome light is a completely separate circuit (constant-bus + door-switch ground); this connector and module have no relation to it.",
+    componentIds: ["instr-pwm"],
+    contains: [
+      "PWM dimmer module (instr-pwm) — small low-current dimmer driven by the preset inputs (.lo / .hi). Outputs one daisy-chained PWM feed to every gauge illumination bulb.",
+      "dl female half + adapter-side pigtails (~50–100 mm)",
+      "Small inline plastic enclosure or heat-shrink bundle behind the dashboard",
+    ],
+    interfaces: [
+      "dl — 4-pin GT 280 sealed pair to the chassis side. Pin 1 = gated 12V from the diode-OR (PASSTHROUGH path — unused in PWM variant), pin 2 = ground (local gnd-dash), pin 3 = BRIGHT signal → instr-pwm.hi, pin 4 = DIM signal → instr-pwm.lo. PWM output is a separate daisy-chain wire (w-ill-out) from instr-pwm.out into the gauge cluster.",
+    ],
+    ground: "Local gnd-dash via dl pin 2. The dim adapter sits on the dash side so no firewall crossing is needed for the ground return.",
+    parts: [
+      "PWM dimmer module — aftermarket low-current 12 V dimmer with two preset inputs (DIM + BRIGHT) and a single PWM output (Amazon / eBay / icstation, ~$8–15). NOT Mouser.",
+      "dl connector — 4-way GT 280 sealed pair: male 13521461 + female 13521459 (chassis-side male, adapter-side female). Plus 4-way TPA 15430899 (optional).",
+      "~50–100 mm of signal-gauge wire (4 conductors, mostly 22-20 AWG) for the adapter pigtails.",
+      "Small sealed plastic enclosure or large heat-shrink bundle for the dimmer PCB.",
+      "1 × cavity plug 15305170 if pin 1 unused on the adapter-side female (PWM variant).",
+    ],
+    steps: [
+      "Bench-build the adapter on a small PCB or in a sealed plastic box: mount the dimmer module, run pigtails to the dl female half on one side (pins 2/3/4) and to a single daisy-chain output wire on the other (instr-pwm.out → first gauge.ill).",
+      "Wire: dl pin 2 → dimmer GND, pin 3 → dimmer BRIGHT preset (.hi input), pin 4 → dimmer DIM preset (.lo input), dimmer OUT → daisy-chained gauge .ill terminals. Pin 1 LEAVE UNCONNECTED on the adapter side (cavity plug it).",
+      "Install behind the dashboard, accessible without removing the gauges. Mate dl; route the daisy-chain output to the first gauge, then jumper across to the rest.",
+      "Bench-test: 12V on pin 3 (BRIGHT) should give a bright PWM output to the bulbs; 12V on pin 4 (DIM) should give a dimmer PWM output. Both signals dead → output dead.",
+      "FOR THE PASSTHROUGH VARIANT (no PWM, simpler build): skip the dimmer module. Wire dl pin 1 → first gauge .ill (daisy-chain). Cap pins 3 + 4 on the adapter side. Result: switch DIM and BRIGHT both give full brightness; switch OFF kills the lamps.",
+    ],
+  },
+  {
     id: "switch-cluster",
     name: "3-way switch cluster (firewall)",
     summary:
@@ -343,7 +373,7 @@ export const harnessModules: HarnessModule[] = [
 /** The bulkhead/cluster connector(s) each module plugs through — its boundary
  *  in a per-module diagram (wires to other modules terminate here). */
 export const moduleConnectors: Record<string, string[]> = {
-  "main-loom": ["bh1", "bh2", "bh3", "bh4", "sw3", "em1", "fc"],
+  "main-loom": ["bh1", "bh2", "bh3", "bh4", "sw3", "em1", "fc", "dl"],
   "front-clip": ["bh4"],
   dashboard: ["bh1", "bh2"],
   "rear-boot": ["bh3"],
@@ -351,6 +381,7 @@ export const moduleConnectors: Record<string, string[]> = {
   "engine-nord": ["em1"],
   "engine-155ts": ["em1"],
   "fan-adapter": ["fc"],
+  "dim-adapter": ["dl"],
 };
 
 const componentToModule: Map<string, string> = (() => {
