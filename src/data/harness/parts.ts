@@ -433,18 +433,13 @@ export const bomGaps: BomGap[] = [
   // the order is to hand. Kept off the active gap list to avoid double-buying.
   {
     id: "mini-fuses",
-    item: "MINI (ATM) blade fuses — concrete quantities per rating actually used",
-    qty: "~50 fuses total (per per-rating breakdown below)",
+    item: "MINI (ATM) blade fuse assortment kit",
+    qty: "1 kit (40 pieces, assorted ratings)",
     category: "fuse",
-    reason: "The PDM and RTMRs ship empty — without fuses no circuit can come up. Quantities sized against the actual fuse list in fuses.ts (9 × 10 A, 4 × 5 A, 4 × 7.5 A, 2 × 20 A, 1 × 15 A, plus 3 unused 0 A positions) + ~50% spares since fuses are consumables.",
+    reason:
+      "The PDM and RTMRs ship empty — without fuses no circuit can come up. Design uses 9 × 10 A, 4 × 5 A, 4 × 7.5 A, 2 × 20 A, 1 × 15 A (~20 fuses installed). Buying the Littelfuse 'Super Value Pack' 40-piece kit covers every rating used plus a healthy spare of each — one line item, break-even with individual buys, more spares for the glovebox.",
     suggestion:
-      "Littelfuse 0297 MINI series — Mouser carries individually or as packs. PNs (Mouser format = 576- prefix):\n" +
-      "   5 A: 576-0287005.PXCN × 8  (4 in use + spares)\n" +
-      "   7.5 A: 576-0287007.5PXCN × 8\n" +
-      "   10 A: 576-0287010.PXCN × 15 (9 in use + spares — the most common rating)\n" +
-      "   15 A: 576-0287015.PXCN × 3\n" +
-      "   20 A: 576-0287020.PXCN × 5\n" +
-      "Verify exact Mouser PNs at order time — Littelfuse offers reel (PXCN), loose (.L), bagged variants. Or buy a single multi-rating assortment pack: e.g. 576-0287150KIT or equivalent Bussmann ATM kit; check the per-rating count matches needs.",
+      "Mouser 576-00940462Z (Littelfuse 00940462Z 'MINI Super Value Pack' — 40 fuses assorted across 5/7.5/10/15/20/25/30 A ratings, ~$25-30). One kit covers the whole car + spares; no per-rating ordering needed. (Per-rating individual buys are an alternative if the kit's mix doesn't match well, but the design ratings overlap nicely with the kit assortment.)",
   },
   {
     id: "alt-charge",
