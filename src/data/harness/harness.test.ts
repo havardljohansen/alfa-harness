@@ -57,8 +57,11 @@ describe("model integrity", () => {
     // this test; documented exceptions don't.
     const ALLOWED_ORPHANS = new Set([
       // Future O2 sensor wideband heater pins — capped at the sensor connector
-      // until the O2 sensor is fitted (deferred — see w-o2-* wires marked future).
-      "o2-sensor.htr+", "o2-sensor.htr-",
+      // until the O2 sensor is fitted. Two variants — one per engine module
+      // (each engine has its own O2 sensor in its exhaust; both share EM1 pin
+      // 12 on the chassis side to reach the dashboard AFR gauge).
+      "o2-sensor-nord.htr+", "o2-sensor-nord.htr-",
+      "o2-sensor-155.htr+", "o2-sensor-155.htr-",
       // Future AFR gauge — illumination + ground will be wired when the gauge
       // is physically fitted (w-o2-feed is the only AFR wire so far, marked future).
       "g-afr.ill", "g-afr.g",
@@ -72,7 +75,9 @@ describe("model integrity", () => {
       "rtmr-const.f-con-8", // Spare (was flasher feed, freed when flasher moved into cavity 5)
       // EM1 spare pins (no engine uses them; reserved for future expansion)
       "em1.pin-3",          // Was tach signal; both engines drive tach mechanically (cable). Pin reserved spare in case of future electric-tach upgrade.
-      "em1.pin-12",         // Sealed spare on both engine modules.
+      // em1.pin-12 was a sealed spare; now repurposed for the engine-specific
+      // O2 sensor → chassis-side AFR gauge path (two future wires touch it:
+      // w-em1-o2-engine-nord + w-em1-o2-engine-155 + w-em1-o2-chassis).
       // K6+ coil-pack HT outputs — go to spark plugs via HT leads (not modeled as harness wires).
       "k6plus-coil-1.HT-1", "k6plus-coil-1.HT-4",
       "k6plus-coil-2.HT-2", "k6plus-coil-2.HT-3",
